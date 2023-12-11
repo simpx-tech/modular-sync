@@ -1,0 +1,20 @@
+{
+  "name": "@simpx/sync-incremental-modifications-engine",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "viniciusaportela <vinicius.portela.stm@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "src/sync-incremental-modifications-engine.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node ./__tests__/sync-incremental-modifications-engine.test.js",
+    "tsc": "tsc"
+  }
+}

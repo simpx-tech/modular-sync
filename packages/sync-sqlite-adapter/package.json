@@ -1,0 +1,30 @@
+{
+  "name": "@simpx/sync-sqlite-adapter",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "viniciusaportela <vinicius.portela.stm@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "src/sqlite-adapter.ts",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "node ./__tests__/@simpx/sync-sqlite-adapter.test.js",
+    "tsc": "tsc"
+  },
+  "dependencies": {
+    "@simpx/sync-core": "1.0.0",
+    "better-sqlite3": "^9.2.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8"
+  }
+}
