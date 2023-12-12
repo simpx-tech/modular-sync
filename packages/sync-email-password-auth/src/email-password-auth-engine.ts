@@ -1,11 +1,11 @@
-import {AuthEngine} from "@simpx/sync-core/src/interfaces/auth-engine";
-import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {EmailPasswordCredentials} from "./interfaces/email-password-credentials";
 import {EmailPasswordAuthEngineOptions} from "./interfaces/email-assword-auth-engine-options";
-import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import {UserEntity} from "./interfaces/user-entity";
+import {AuthEngine} from "@simpx/sync-core/src/interfaces/auth-engine";
+import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
+import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 
 export class EmailPasswordAuthEngine implements AuthEngine {
   private syncEngine: ServerSyncEngine;

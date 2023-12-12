@@ -1,0 +1,26 @@
+{
+  "name": "@simpx/sync-database-merger",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "viniciusaportela <vinicius.portela.stm@gmail.com>",
+  "homepage": "https://github.com/simpx-tech/modular-sync#readme",
+  "license": "ISC",
+  "main": "src/sync-database-merger.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simpx-tech/modular-sync.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/sync-database-merger.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/simpx-tech/modular-sync/issues"
+  }
+}
