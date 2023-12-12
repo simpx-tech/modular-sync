@@ -1,0 +1,32 @@
+{
+  "name": "@simpx/sync-express-router-adapter",
+  "version": "1.0.0",
+  "description": "> TODO: description",
+  "author": "viniciusaportela <vinicius.portela.stm@gmail.com>",
+  "homepage": "https://github.com/simpx-tech/modular-sync#readme",
+  "license": "ISC",
+  "main": "src/sync-express-router.js",
+  "directories": {
+    "lib": "src",
+    "test": "__tests__"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simpx-tech/modular-sync.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/sync-express-router.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/simpx-tech/modular-sync/issues"
+  },
+  "dependencies": {
+    "@simpx/sync-core": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21"
+  }
+}

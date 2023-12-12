@@ -23,30 +23,41 @@ export class SqliteAdapter implements DatabaseAdapter {
     this.connection.close();
   };
 
-  async getFirst(entity: string): Promise<any> {
-    return this.connection.prepare(`SELECT * FROM ? LIMIT 1`).get(entity);
+  async getFirst<T = any>(entity: string): Promise<T> {
+    return this.connection.prepare(`SELECT * FROM ? LIMIT 1`).get(entity) as T;
   }
 
-  async getById(entity: string, id: number): Promise<any> {
-    return this.connection.prepare(`SELECT * FROM ? WHERE id = ?`).get(entity, id);
+  async getById<T = any>(entity: string, id: number): Promise<T> {
+    return this.connection.prepare(`SELECT * FROM ? WHERE id = ?`).get(entity, id) as T;
   }
 
-  async getAll(entity: string): Promise<any> {
-    return this.connection.prepare(`SELECT * FROM ?`).all(entity);
+  async getAll<T = any>(entity: string): Promise<T> {
+    return this.connection.prepare(`SELECT * FROM ?`).all(entity) as T;
+  }
+
+  async getByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T> {
+    const formattedMapping = this.formatSelectMapping(mapping);
+    return this.connection.prepare(`SELECT * FROM ? WHERE ?`).all(entity, formattedMapping) as T;
+  }
+
+  private formatSelectMapping(mapping: Record<string, any>) {
+    return Object.entries(mapping).reduce((acc, [key, value]) => {
+      return `${acc}, ${key} = ${value}`
+    }, "")
   }
 
   async create(entity: string, data: UpsertData) {
     const formattedData = this.formatInsertData(data);
-    return this.connection.prepare(`INSERT INTO ? VALUES (?)`).run(entity, formattedData);
+    this.connection.prepare(`INSERT INTO ? VALUES (?)`).run(entity, formattedData);
   }
 
   async update(entity: string, id: number, data: UpsertData) {
     const formattedData = this.formatUpdateData(data);
-    return this.connection.prepare(`UPDATE ? SET ? WHERE id = ?`).run(entity, formattedData, id);
+    this.connection.prepare(`UPDATE ? SET ? WHERE id = ?`).run(entity, formattedData, id);
   }
 
   async delete(entity: string, id: number) {
-    return this.connection.prepare(`DELETE FROM ? WHERE id = ?`).run(entity, id);
+    this.connection.prepare(`DELETE FROM ? WHERE id = ?`).run(entity, id);
   }
 
   async raw<T = any>(options: SQLiteRawOptions): Promise<T> {

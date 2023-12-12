@@ -59,7 +59,9 @@ export class ClientSyncEngine {
     }
   }
 
-  async syncIncremental() {}
+  async syncIncremental() {
+    await this.modificationsEngine.sync();
+  }
 
   async hasLocalAlreadyMigrated() {
     const metadata = await this.databaseAdapter.getFirst<MetadataEntity>("sync-metadata");
