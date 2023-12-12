@@ -1,4 +1,4 @@
-import {SyncCredentialsOptions} from "../interfaces/sync-credentials-options";
+import {SyncCredentialsOptions} from "./interfaces/sync-credentials-options";
 import * as crypto from "crypto";
 
 export class SyncCredentials {

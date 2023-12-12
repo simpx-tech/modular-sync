@@ -1,6 +1,6 @@
 import {SqliteAdapterOptions} from "./interfaces/sqlite-adapter-options";
 import BetterSqlite, {Database} from "better-sqlite3";
-import {DatabaseAdapter, UpsertData} from "@simpx/sync-core/src/interfaces/database-adapter";
+import {DatabaseAdapter, EntitySchema, SchemaType, UpsertData} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {SQLiteRawOptions} from "./interfaces/sqlite-raw-options";
 
 export class SqliteAdapter implements DatabaseAdapter {
@@ -11,16 +11,21 @@ export class SqliteAdapter implements DatabaseAdapter {
   private updateMiddlewares = [];
   private deleteMiddlewares = [];
 
-  constructor(options?: SqliteAdapterOptions) {
+  constructor(options: SqliteAdapterOptions) {
     this.connectionPath = options.databasePath
   }
 
   async connect(){
-    this.connection = new BetterSqlite(this.connectionPath);
+    if (!this.connection) {
+      this.connection = new BetterSqlite(this.connectionPath);
+    }
   };
 
   async disconnect() {
-    this.connection.close();
+    if (this.connection) {
+      this.connection.close();
+      this.connection = undefined;
+    }
   };
 
   async getFirst<T = any>(entity: string): Promise<T> {
@@ -37,27 +42,40 @@ export class SqliteAdapter implements DatabaseAdapter {
 
   async getByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T> {
     const formattedMapping = this.formatSelectMapping(mapping);
-    return this.connection.prepare(`SELECT * FROM ? WHERE ?`).all(entity, formattedMapping) as T;
+    return this.connection.prepare(`SELECT * FROM ${entity} WHERE ?`).get(formattedMapping) as T;
   }
 
   private formatSelectMapping(mapping: Record<string, any>) {
-    return Object.entries(mapping).reduce((acc, [key, value]) => {
-      return `${acc}, ${key} = ${value}`
+    return Object.entries(mapping).reduce((acc, [key, value], index) => {
+      return `${acc}${key} = ${this.applyQuotes(value)}${this.applyAnd(mapping, index)}`
     }, "")
   }
 
+  private applyAnd(mapping: Record<string, any>, index: number) {
+    return `${index !== Object.keys(mapping).length - 1 ? " AND " : ""}`;
+  }
+
+  private applyQuotes(value: any) {
+    return typeof value === "string" ? `'${value}'` : value;
+  }
+
+  private applyComma(mapping: Record<string, any>, index: number){
+    return `${index !== Object.keys(mapping).length - 1 ? ", " : ""}`;
+  }
+
   async create(entity: string, data: UpsertData) {
+    const formattedFields = this.formatInsertFields(data);
     const formattedData = this.formatInsertData(data);
-    this.connection.prepare(`INSERT INTO ? VALUES (?)`).run(entity, formattedData);
+    this.connection.prepare(`INSERT INTO ${entity}${formattedFields} VALUES (${formattedData})`).run();
   }
 
   async update(entity: string, id: number, data: UpsertData) {
     const formattedData = this.formatUpdateData(data);
-    this.connection.prepare(`UPDATE ? SET ? WHERE id = ?`).run(entity, formattedData, id);
+    this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE id = ?`).run(id);
   }
 
   async delete(entity: string, id: number) {
-    this.connection.prepare(`DELETE FROM ? WHERE id = ?`).run(entity, id);
+    this.connection.prepare(`DELETE FROM ${entity} WHERE id = ?`).run(id);
   }
 
   async raw<T = any>(options: SQLiteRawOptions): Promise<T> {
@@ -72,9 +90,56 @@ export class SqliteAdapter implements DatabaseAdapter {
     }
   }
 
+  async createEntity(entity: string, schema: EntitySchema) {
+    await this.raw({
+      sql: `CREATE TABLE IF NOT EXISTS ${entity} (${this.formatSchema(schema)});`,
+      params: [],
+    });
+  }
+
+  private formatSchema(schema: EntitySchema) {
+    const INITIAL = "id INTEGER PRIMARY KEY AUTOINCREMENT";
+
+    const stringifiedSchema = Object.entries(schema).reduce<string>((acc, [key, value]) => {
+      return `${acc}, ${key} ${this.formatType(value)}`
+    }, INITIAL)
+
+    return `${stringifiedSchema} ${this.generateForeignKeys(schema)}`
+  }
+
+  private generateForeignKeys(schema: EntitySchema) {
+    return Object.entries(schema).reduce<string>((acc, [key, value]) => {
+      if (typeof value === "object") {
+        return `${acc}, FOREIGN KEY(${key}) REFERENCES ${value.entity}(id)`
+      }
+
+      return acc;
+    }, "");
+  }
+
+  private formatType(type: SchemaType) {
+      if (typeof type === "object") {
+        return `INTEGER`
+      }
+
+      const bindings: Record<string, string> = {
+        [SchemaType.String]: "TEXT",
+        [SchemaType.Float]: "REAL",
+        [SchemaType.Integer]: "INTEGER",
+        [SchemaType.Boolean]: "TINYINT",
+        [SchemaType.Date]: "DATETIME",
+      } as const;
+
+      return bindings[type as keyof typeof bindings];
+  }
+
+  private formatInsertFields(data: UpsertData) {
+    return `(${Object.keys(data).join(", ")})`
+  }
+
   private formatInsertData(data: UpsertData) {
-    return Object.entries(data).reduce<string>((acc, [key, value]) => {
-      return `${acc}, ${value}`
+    return Object.entries(data).reduce<string>((acc, [key, value], index) => {
+      return `${acc}${this.applyQuotes(value)}${this.applyComma(data, index)}`
     }, "")
   }
 

@@ -42,16 +42,18 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Node.js.backend.ts.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "ShowUsagesActions.previewPropertyKey": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/sync-database-merger",
+    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/example/src/backend.ts",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
     "ts.external.directory.path": "/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   },
@@ -72,11 +74,17 @@
       <recent name="$PROJECT_DIR$/packages/common" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/client/interfaces" />
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/server/interfaces" />
       <recent name="$PROJECT_DIR$/packages/core/src/interfaces" />
       <recent name="$PROJECT_DIR$/packages/core/src/client" />
       <recent name="$PROJECT_DIR$/packages/example/src" />
-      <recent name="$PROJECT_DIR$/packages/core/src" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="backend.ts" type="NodeJSConfigurationType" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
+      <method v="2" />
+    </configuration>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -94,7 +102,9 @@
       <workItem from="1702315654843" duration="3840000" />
       <workItem from="1702319505741" duration="6897000" />
       <workItem from="1702349200823" duration="1983000" />
-      <workItem from="1702351190206" duration="870000" />
+      <workItem from="1702351190206" duration="1002000" />
+      <workItem from="1702388064095" duration="5501000" />
+      <workItem from="1702400264908" duration="11491000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -120,7 +130,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702351809845</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="refactor: rename ModificationsEngine to DiffEngine">
+      <option name="closed" value="true" />
+      <created>1702352086005</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1702352086005</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -131,6 +149,19 @@
     <MESSAGE value="feat: add express-router package, add email-password-auth package" />
     <MESSAGE value="feat: rename core to sync-core" />
     <MESSAGE value="feat: add sync-database-merger package, update email-password imports" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add sync-database-merger package, update email-password imports" />
+    <MESSAGE value="refactor: rename ModificationsEngine to DiffEngine" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: rename ModificationsEngine to DiffEngine" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/sync-core/src/interfaces/database-adapter.ts</url>
+          <line>9</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

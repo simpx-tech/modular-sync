@@ -1,16 +1,16 @@
-import {RouterAdapter} from "@simpx/sync-core/src/interfaces/router-adapter";
+import {RouterAdapter} from "@simpx/sync-core/src/server/interfaces/router-adapter";
 import {Express, Request} from "express";
 import {ExpressRouterAdapterOptions} from "./interfaces/express-router-adapter-options";
-import {RouterCallback, RouterRequest} from "@simpx/sync-core/src/interfaces/router-callback";
+import {RouterCallback, RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 
 export class ExpressRouterAdapter implements RouterAdapter {
   private readonly app: Express;
   private readonly path: string;
 
-  constructor({ app, path }: ExpressRouterAdapterOptions) {
+  constructor({ app, basePath }: ExpressRouterAdapterOptions) {
     this.app = app;
-    this.path = path;
+    this.path = basePath;
   }
 
   registerRoute(method: HttpMethod, route: string, callback: RouterCallback) {

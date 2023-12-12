@@ -1,30 +1,56 @@
 import {DatabaseAdapter} from "../interfaces/database-adapter";
-import {MergeEngine} from "../interfaces/merge-engine";
-import {AuthEngine} from "../interfaces/auth-engine";
-import {RouterAdapter} from "../interfaces/router-adapter";
-import {ServerSyncEngineOptions} from "../interfaces/server-sync-engine-options";
+import {RouterRequest} from "./interfaces/router-callback";
+import {ServerDomain} from "./server-domain";
 import {HttpMethod} from "../interfaces/http-method";
-import {RouterRequest} from "../interfaces/router-callback";
+import {ServerSyncEngineOptions} from "./interfaces/server-sync-engine-options";
+import {AuthEngine} from "./interfaces/auth-engine";
+import {RouterAdapter} from "./interfaces/router-adapter";
+import {DbMigrationRepository} from "../repositories/db-migration-repository";
+import {RepositoryRepository} from "../repositories/repository-repository";
+import {DomainRepository} from "../repositories/domain-repository";
 
 export class ServerSyncEngine {
-  databaseAdapter: DatabaseAdapter;
-  mergeEngine: MergeEngine;
-  authEngine: AuthEngine;
-  routerAdapter: RouterAdapter;
+  readonly domains: ServerDomain[];
+  readonly metadataDatabase: DatabaseAdapter;
+  readonly routerAdapter: RouterAdapter;
+  readonly authEngine: AuthEngine;
 
-  constructor({ databaseAdapter, mergeEngine, authEngine, routerAdapter }: ServerSyncEngineOptions) {
-    this.databaseAdapter = databaseAdapter;
-    this.mergeEngine = mergeEngine;
-    this.authEngine = authEngine;
+  dbMigrationRepository: DbMigrationRepository;
+  repositoryRepository: RepositoryRepository;
+  domainRepository: DomainRepository;
+
+  constructor({ domains, metadataDatabase, routerAdapter, authEngine }: ServerSyncEngineOptions) {
+    this.domains = domains;
+    this.metadataDatabase = metadataDatabase;
     this.routerAdapter = routerAdapter;
+    this.authEngine = authEngine;
   }
 
   async runSetup() {
-    await this.databaseAdapter.connect();
+    await this.metadataDatabase.connect();
+    this.dbMigrationRepository = await new DbMigrationRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
+    this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup()
+    this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
+
     await this.authEngine.runSetup(this);
-    await this.mergeEngine.runSetup(this);
     this.routerAdapter.registerRoute(HttpMethod.GET, "repository", this.getRepository.bind(this));
+
+    for await (const domain of this.domains) {
+      await domain.runSetup(this);
+    }
+
+    return this;
   }
 
-  async getRepository (request: RouterRequest) {}
+  async getRepository (request: RouterRequest) {
+    const { repository } = request.query;
+
+    const repositoryData = await this.metadataDatabase.getByField("sync-repository", { name: repository });
+
+    if (!repositoryData) {
+      throw new Error("Not found")
+    }
+
+    return repositoryData;
+  }
 }

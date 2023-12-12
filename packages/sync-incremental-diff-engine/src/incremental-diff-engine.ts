@@ -1,7 +1,8 @@
 import {IncrementalDiffEngineOptions} from "./interfaces/incremental-diff-engine-options";
 import {ClientSyncEngine} from "@simpx/sync-core/src";
-import {DiffEngine} from "@simpx/sync-core/src/interfaces/diff-engine";
+import {DiffEngine} from "@simpx/sync-core/src/client/interfaces/diff-engine";
 import {UpsertData} from "@simpx/sync-core/src/interfaces/database-adapter";
+import {ClientDomain} from "@simpx/sync-core/src/client/client-domain";
 
 export class IncrementalDiffEngine implements DiffEngine {
   private readonly remoteSyncEndpoint: string;
@@ -10,10 +11,10 @@ export class IncrementalDiffEngine implements DiffEngine {
     this.remoteSyncEndpoint = remoteSyncEndpoint;
   }
 
-  async runSetup(syncEngine: ClientSyncEngine) {
-    syncEngine.databaseAdapter.registerCreateMiddleware(this.onDatabaseCreate.bind(this));
-    syncEngine.databaseAdapter.registerUpdateMiddleware(this.onDatabaseUpdate.bind(this));
-    syncEngine.databaseAdapter.registerDeleteMiddleware(this.onDatabaseDelete.bind(this));
+  async runSetup(domain: ClientDomain) {
+    domain.databaseAdapter.registerCreateMiddleware(this.onDatabaseCreate.bind(this));
+    domain.databaseAdapter.registerUpdateMiddleware(this.onDatabaseUpdate.bind(this));
+    domain.databaseAdapter.registerDeleteMiddleware(this.onDatabaseDelete.bind(this));
   }
 
   private async onDatabaseCreate(entity: string, data: UpsertData) {
@@ -39,11 +40,11 @@ export class IncrementalDiffEngine implements DiffEngine {
     }
   }
 
-  fetchAll(): Promise<void> {
+  migrateFetchAll(): Promise<void> {
     return Promise.resolve(undefined);
   }
 
-  sendAll(): Promise<void> {
+  migrateSendAll(): Promise<void> {
     return Promise.resolve(undefined);
   }
 

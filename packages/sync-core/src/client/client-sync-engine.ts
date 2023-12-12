@@ -1,24 +1,22 @@
-import {DiffEngine} from "../interfaces/diff-engine";
-import {DatabaseAdapter} from "../interfaces/database-adapter";
-import {ClientSyncEngineOptions} from "../interfaces/client-sync-engine-options";
 import {SyncCredentials} from "./sync-credentials";
 import {MetadataEntity} from "../interfaces/metadata-entity";
+import {ClientDomain} from "./client-domain";
 
 export class ClientSyncEngine {
-  databaseAdapter: DatabaseAdapter;
-  diffEngine: DiffEngine;
   repositoryName: string;
   syncCredentials: SyncCredentials;
+  domains: ClientDomain[];
 
-  constructor({ databaseAdapter, diffEngine, repositoryName }: ClientSyncEngineOptions) {
-    this.databaseAdapter = databaseAdapter;
-    this.diffEngine = diffEngine;
-    this.repositoryName = repositoryName;
+  constructor(domains: ClientDomain[]) {
+    this.domains = domains;
   }
 
   async runSetup(repositoryName: string, syncCredentials?: SyncCredentials) {
     this.repositoryName = repositoryName;
-    await this.databaseAdapter.connect();
+
+    for await (const domain of this.domains) {
+      await domain.runSetup(this);
+    }
 
     if (syncCredentials) {
       await this.authenticate(syncCredentials);
@@ -28,7 +26,6 @@ export class ClientSyncEngine {
 
   async authenticate(syncCredentials: SyncCredentials){
     this.syncCredentials = await syncCredentials.auth();
-    return this;
   }
 
   // TODO refactor?
@@ -37,29 +34,28 @@ export class ClientSyncEngine {
       throw new Error("Should authenticate first, use the authenticate method with a SyncCredentials instance");
     }
 
-    // The modifications engine should only be setup if is in sync state
-    await this.diffEngine.runSetup(this);
+    for await (const domain of this.domains) {
+      const hasRemoteDomain = await this.hasRemoteDomain(this.syncCredentials.repository);
+      if (hasRemoteDomain) {
+        const hasRemoteAlreadyMigrated = await this.remoteAlreadyMigrated();
 
-    const hasRemoteRepository = await this.hasRemoteRepository(this.syncCredentials.repository);
-    if (hasRemoteRepository) {
-      const hasRemoteAlreadyMigrated = await this.hasRemoteAlreadyMigrated();
-
-      if (hasRemoteAlreadyMigrated) {
-        const hasLocalAlreadyMigrated = await this.hasLocalAlreadyMigrated();
-        if (hasLocalAlreadyMigrated) {
-          await this.syncIncremental();
+        if (hasRemoteAlreadyMigrated) {
+          const hasLocalAlreadyMigrated = await this.hasLocalAlreadyMigrated();
+          if (hasLocalAlreadyMigrated) {
+            await this.syncIncremental(domain);
+          } else {
+            await this.fetchAllFromRemote();
+          }
         } else {
-          await this.fetchAllRemoteRepository();
+          await this.sendAllChangesToRemote();
         }
       } else {
-        await this.sendAllChanges();
+        await this.createRemoteDomainAndSendAll();
       }
-    } else {
-      await this.createRemoteRepositoryAndSendAll();
     }
   }
 
-  async syncIncremental() {
+  async syncIncremental(domain: ClientDomain) {
     await this.diffEngine.sync();
   }
 
@@ -73,7 +69,7 @@ export class ClientSyncEngine {
     return metadata.migrationFinished;
   }
 
-  async hasRemoteAlreadyMigrated() {
+  async remoteAlreadyMigrated() {
     const queryString = new URLSearchParams({
       repository: this.syncCredentials.repository
     });
@@ -89,7 +85,7 @@ export class ClientSyncEngine {
     return repositoryMeta.migrationFinished;
   }
 
-  async hasRemoteRepository(repository: string) {
+  async hasRemoteDomain(repository: string) {
     const queryString = new URLSearchParams({
       repository
     });
@@ -101,9 +97,12 @@ export class ClientSyncEngine {
 
   // If the remote repository does not exist, or it exists, but the migration doesn't end
   // Other users can only see the repository if the migration is finished
-  async createRemoteRepositoryAndSendAll() {
+  async createRemoteDomainAndSendAll(domain: ClientDomain) {
     const repositoryMetaRes = await fetch(`${this.syncCredentials.remoteSyncUrl}/repository`, {
-      body: JSON.stringify({}),
+      body: JSON.stringify({
+        repository: this.syncCredentials.repository,
+        domain: domain.prefix,
+      }),
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,7 +114,7 @@ export class ClientSyncEngine {
       throw new Error(`error while trying to create the remote repository: ${await repositoryMetaRes.json()}`)
     }
 
-    await this.sendAllChanges()
+    await this.sendAllChangesToRemote()
   }
 
   async listRepositories() {
@@ -132,11 +131,11 @@ export class ClientSyncEngine {
     return await listRes.json();
   }
 
-  async sendAllChanges() {
-    await this.diffEngine.sendAll();
+  async sendAllChangesToRemote() {
+    await this.diffEngine.migrateSendAll();
   }
 
-  async fetchAllRemoteRepository(){
-    await this.diffEngine.fetchAll();
+  async fetchAllFromRemote(){
+    await this.diffEngine.migrateFetchAll();
   }
 }
