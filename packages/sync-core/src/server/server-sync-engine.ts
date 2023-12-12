@@ -45,7 +45,7 @@ export class ServerSyncEngine {
   async getRepository (request: RouterRequest) {
     const { repository } = request.query;
 
-    const repositoryData = await this.metadataDatabase.getByField("sync-repository", { name: repository });
+    const repositoryData = await this.metadataDatabase.getByField(RepositoryRepository.ENTITY, { name: repository });
 
     if (!repositoryData) {
       throw new Error("Not found")

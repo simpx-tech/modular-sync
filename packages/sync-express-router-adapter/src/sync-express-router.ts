@@ -14,12 +14,13 @@ export class ExpressRouterAdapter implements RouterAdapter {
   }
 
   registerRoute(method: HttpMethod, route: string, callback: RouterCallback) {
-    this.app[method](`${this.path}/${route}`, async (req, res) => {
+    this.app[method](`/${this.path}/${route}`, async (req, res) => {
       try {
         const value = await callback(this.buildRouterRequest(req));
         res.status(200).send(value);
-      } catch (e) {
+      } catch (err) {
         // TODO add custom errors with custom messages and code
+        console.error(err)
         res.status(500).send({ error: "internal-server-error", code: 500 })
       }
     })

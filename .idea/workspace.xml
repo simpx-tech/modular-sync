@@ -104,7 +104,7 @@
       <workItem from="1702349200823" duration="1983000" />
       <workItem from="1702351190206" duration="1002000" />
       <workItem from="1702388064095" duration="5501000" />
-      <workItem from="1702400264908" duration="11491000" />
+      <workItem from="1702400264908" duration="12317000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -138,7 +138,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702352086005</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands">
+      <option name="closed" value="true" />
+      <created>1702413347558</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1702413347558</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,7 +158,8 @@
     <MESSAGE value="feat: rename core to sync-core" />
     <MESSAGE value="feat: add sync-database-merger package, update email-password imports" />
     <MESSAGE value="refactor: rename ModificationsEngine to DiffEngine" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: rename ModificationsEngine to DiffEngine" />
+    <MESSAGE value="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
