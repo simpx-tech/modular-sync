@@ -1,12 +1,12 @@
-import {IncrementalModificationsEngineOptions} from "./interfaces/incremental-modifications-engine-options";
+import {IncrementalDiffEngineOptions} from "./interfaces/incremental-diff-engine-options";
 import {ClientSyncEngine} from "@simpx/sync-core/src";
-import {ModificationsEngine} from "@simpx/sync-core/src/interfaces/modifications-engine";
+import {DiffEngine} from "@simpx/sync-core/src/interfaces/diff-engine";
 import {UpsertData} from "@simpx/sync-core/src/interfaces/database-adapter";
 
-export class IncrementalModificationsEngine implements ModificationsEngine {
+export class IncrementalDiffEngine implements DiffEngine {
   private readonly remoteSyncEndpoint: string;
 
-  constructor({ remoteSyncEndpoint }: IncrementalModificationsEngineOptions) {
+  constructor({ remoteSyncEndpoint }: IncrementalDiffEngineOptions) {
     this.remoteSyncEndpoint = remoteSyncEndpoint;
   }
 
@@ -37,5 +37,17 @@ export class IncrementalModificationsEngine implements ModificationsEngine {
     } catch (err) {
       // ...
     }
+  }
+
+  fetchAll(): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  sendAll(): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  sync(): Promise<void> {
+    return Promise.resolve(undefined);
   }
 };

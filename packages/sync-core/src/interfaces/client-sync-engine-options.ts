@@ -1,8 +1,8 @@
 import {DatabaseAdapter} from "./database-adapter";
-import {ModificationsEngine} from "./modifications-engine";
+import {DiffEngine} from "./diff-engine";
 
 export interface ClientSyncEngineOptions {
   databaseAdapter: DatabaseAdapter;
-  modificationsEngine: ModificationsEngine;
+  diffEngine: DiffEngine;
   repositoryName: string;
 }

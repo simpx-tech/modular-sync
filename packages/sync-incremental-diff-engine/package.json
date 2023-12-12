@@ -1,11 +1,10 @@
 {
-  "name": "@simpx/sync-incremental-modifications-engine",
+  "name": "@simpx/sync-incremental-diff-engine",
   "version": "1.0.0",
   "description": "> TODO: description",
   "author": "viniciusaportela <vinicius.portela.stm@gmail.com>",
   "homepage": "",
   "license": "ISC",
-  "main": "src/sync-incremental-modifications-engine.js",
   "directories": {
     "lib": "src",
     "test": "__tests__"

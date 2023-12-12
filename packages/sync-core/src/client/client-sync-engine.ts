@@ -1,4 +1,4 @@
-import {ModificationsEngine} from "../interfaces/modifications-engine";
+import {DiffEngine} from "../interfaces/diff-engine";
 import {DatabaseAdapter} from "../interfaces/database-adapter";
 import {ClientSyncEngineOptions} from "../interfaces/client-sync-engine-options";
 import {SyncCredentials} from "./sync-credentials";
@@ -6,13 +6,13 @@ import {MetadataEntity} from "../interfaces/metadata-entity";
 
 export class ClientSyncEngine {
   databaseAdapter: DatabaseAdapter;
-  modificationsEngine: ModificationsEngine;
+  diffEngine: DiffEngine;
   repositoryName: string;
   syncCredentials: SyncCredentials;
 
-  constructor({ databaseAdapter, modificationsEngine, repositoryName }: ClientSyncEngineOptions) {
+  constructor({ databaseAdapter, diffEngine, repositoryName }: ClientSyncEngineOptions) {
     this.databaseAdapter = databaseAdapter;
-    this.modificationsEngine = modificationsEngine;
+    this.diffEngine = diffEngine;
     this.repositoryName = repositoryName;
   }
 
@@ -38,7 +38,7 @@ export class ClientSyncEngine {
     }
 
     // The modifications engine should only be setup if is in sync state
-    await this.modificationsEngine.runSetup(this);
+    await this.diffEngine.runSetup(this);
 
     const hasRemoteRepository = await this.hasRemoteRepository(this.syncCredentials.repository);
     if (hasRemoteRepository) {
@@ -60,7 +60,7 @@ export class ClientSyncEngine {
   }
 
   async syncIncremental() {
-    await this.modificationsEngine.sync();
+    await this.diffEngine.sync();
   }
 
   async hasLocalAlreadyMigrated() {
@@ -133,10 +133,10 @@ export class ClientSyncEngine {
   }
 
   async sendAllChanges() {
-    await this.modificationsEngine.sendAll();
+    await this.diffEngine.sendAll();
   }
 
   async fetchAllRemoteRepository(){
-    await this.modificationsEngine.fetchAll();
+    await this.diffEngine.fetchAll();
   }
 }

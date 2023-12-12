@@ -94,7 +94,7 @@
       <workItem from="1702315654843" duration="3840000" />
       <workItem from="1702319505741" duration="6897000" />
       <workItem from="1702349200823" duration="1983000" />
-      <workItem from="1702351190206" duration="570000" />
+      <workItem from="1702351190206" duration="870000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -112,7 +112,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702351087048</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="feat: add sync-database-merger package, update email-password imports">
+      <option name="closed" value="true" />
+      <created>1702351809845</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1702351809845</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -122,6 +130,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="feat: add express-router package, add email-password-auth package" />
     <MESSAGE value="feat: rename core to sync-core" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: rename core to sync-core" />
+    <MESSAGE value="feat: add sync-database-merger package, update email-password imports" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add sync-database-merger package, update email-password imports" />
   </component>
 </project>
