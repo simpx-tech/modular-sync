@@ -4,4 +4,6 @@ export interface UserEntity {
   password: string;
   salt: string;
   syncActivated: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

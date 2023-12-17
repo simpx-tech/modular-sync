@@ -7,10 +7,13 @@ import {AuthEngine} from "@simpx/sync-core/src/server/interfaces/auth-engine";
 import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import {SchemaType} from "@simpx/sync-core/src/interfaces/database-adapter";
+import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 
 export class EmailPasswordAuthEngine implements AuthEngine {
   private syncEngine: ServerSyncEngine;
   private readonly jwtSecret: string;
+
+  static USERS_ENTITY = "sync_users";
 
   constructor({ jwtSecret }: EmailPasswordAuthEngineOptions) {
     this.jwtSecret = jwtSecret;
@@ -18,7 +21,11 @@ export class EmailPasswordAuthEngine implements AuthEngine {
 
   async runSetup(syncEngine: ServerSyncEngine) {
     this.syncEngine = syncEngine;
-    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, "auth", this.authenticateUser.bind(this));
+
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, "auth", (req) => this.authenticateUser({
+      email: req.body?.email,
+      password: req.body?.password,
+    }));
 
     await this.runDbMigrations();
   }
@@ -31,10 +38,11 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     const usersMigration = await this.syncEngine.dbMigrationRepository.getByDomainAndName(MIGRATION_DOMAIN, MIGRATION_NAME);
 
     if (!usersMigration) {
-      await this.syncEngine.metadataDatabase.createEntity("sync_users", {
+      await this.syncEngine.metadataDatabase.createEntity(EmailPasswordAuthEngine.USERS_ENTITY, {
         email: SchemaType.String,
         password: SchemaType.String,
         syncActivated: SchemaType.Boolean,
+        salt: SchemaType.String,
         createdAt: SchemaType.String,
         updatedAt: SchemaType.String,
       })
@@ -47,9 +55,11 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     }
   }
 
-  async authenticateUser(credentials: EmailPasswordCredentials) {
-    const user = await this.syncEngine.metadataDatabase.getByField<UserEntity>("users", {
-      email: credentials.email,
+  async authenticateUser(credentials: EmailPasswordCredentials){
+    const { email, password } = credentials;
+
+    const user = await this.syncEngine.metadataDatabase.getByField<UserEntity>(EmailPasswordAuthEngine.USERS_ENTITY, {
+      email: email,
     });
 
     if (!user) {
@@ -60,7 +70,7 @@ export class EmailPasswordAuthEngine implements AuthEngine {
       throw new Error("Sync is not activated for this user");
     }
 
-    const encryptedPassword = await this.encryptPassword(credentials.password);
+    const { encryptedPassword } = await this.encryptPassword(password, user.salt);
 
     if (encryptedPassword !== user.password) {
       throw new Error("Wrong credentials");
@@ -72,25 +82,26 @@ export class EmailPasswordAuthEngine implements AuthEngine {
   }
 
   async createUser(credentials: any) {
-    const encryptedPassword = await this.encryptPassword(credentials.password);
+    const { encryptedPassword, salt } = await this.encryptPassword(credentials.password);
 
-    await this.syncEngine.metadataDatabase.create("users", {
+    await this.syncEngine.metadataDatabase.create(EmailPasswordAuthEngine.USERS_ENTITY, {
       email: credentials.email,
       password: encryptedPassword,
       syncActivated: true,
+      salt,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
   }
 
-  async activateUser(userId: string | number) {
-    await this.syncEngine.metadataDatabase.update("users", userId, {
+  async activateUser(credentials: { userId: string | number }) {
+    await this.syncEngine.metadataDatabase.update(EmailPasswordAuthEngine.USERS_ENTITY, credentials.userId, {
       syncActivated: true,
     })
   }
 
-  async deactivateUser(userId: string | number) {
-    await this.syncEngine.metadataDatabase.update("users", userId, {
+  async deactivateUser(credentials: { userId: string | number }) {
+    await this.syncEngine.metadataDatabase.update(EmailPasswordAuthEngine.USERS_ENTITY, credentials.userId, {
       syncActivated: false,
     })
   }
@@ -98,7 +109,11 @@ export class EmailPasswordAuthEngine implements AuthEngine {
   private async encryptPassword(password: string, salt?: string) {
     const saltRounds = 10;
     const hashSalt = salt ?? await bcrypt.genSalt(saltRounds);
-    return await bcrypt.hash(password, hashSalt);
+
+    return {
+      encryptedPassword: await bcrypt.hash(password, hashSalt),
+      salt: hashSalt,
+    };
   }
 
   isAuthenticated(token: any) {
@@ -126,5 +141,16 @@ export class EmailPasswordAuthEngine implements AuthEngine {
       id,
       syncActivated,
     }, this.jwtSecret);
+  }
+
+  async decodeToken(token: string) {
+    try {
+      return jwt.decode(token, {
+        json: true,
+      });
+    } catch (err) {
+      console.error(err)
+      return null;
+    }
   }
 }

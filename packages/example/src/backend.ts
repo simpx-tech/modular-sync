@@ -19,7 +19,7 @@ export async function backend() {
     mergeEngine: new DatabaseMerger(),
   })
 
-  await new ServerSyncEngine({
+  const syncEngine = await new ServerSyncEngine({
     domains: [databaseSyncDomain],
     routerAdapter: new ExpressRouterAdapter({ app, basePath: "sync" }),
     authEngine: new EmailPasswordAuthEngine({
@@ -27,6 +27,33 @@ export async function backend() {
     }),
     metadataDatabase: databaseSyncDomain.databaseAdapter,
   }).runSetup();
+
+  // await syncEngine.authEngine.createUser({
+  //   email: "test@gmail.com",
+  //   password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92" // 123456
+  // })
+  //
+  // const { token } = await syncEngine.authEngine.authenticateUser({
+  //   email: "test@gmail.com",
+  //   password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92" // 123456
+  // });
+  // console.log(token);
+  //
+  // await syncEngine.repositoryRepository.create({
+  //   name: "test",
+  //   user: 1,
+  // })
+
+  // await syncEngine.authEngine.deactivateUser({
+  //   userId: 2,
+  // });
+
+  // await syncEngine.authEngine.activateUser({
+  //   userId: 2,
+  // });
+
+  // const res = await syncEngine.authEngine.isAuthenticated("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic3luY0FjdGl2YXRlZCI6MSwiaWF0IjoxNzAyNDc2ODc4fQ.jnG7gjKKnl6C2Qf5ubTMqfamY4_oCOttk5rGOtasGRg");
+  // console.log(res);
 
   app.listen(3000, () => {
     console.log("Listening on port 3000")

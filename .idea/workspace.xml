@@ -14,8 +14,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="tsconfig.json" />
-        <option value="JavaScript File" />
         <option value="TypeScript File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -47,7 +47,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ShowUsagesActions.previewPropertyKey": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/example/src/backend.ts",
+    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/sync-core/src/server/exceptions",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -67,11 +67,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/server/exceptions" />
       <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
       <recent name="$PROJECT_DIR$/packages/sync-express-router" />
       <recent name="$PROJECT_DIR$/packages/sync-email-password-auth" />
       <recent name="$PROJECT_DIR$/packages/example" />
-      <recent name="$PROJECT_DIR$/packages/common" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/packages/sync-core/src/client/interfaces" />
@@ -104,7 +104,17 @@
       <workItem from="1702349200823" duration="1983000" />
       <workItem from="1702351190206" duration="1002000" />
       <workItem from="1702388064095" duration="5501000" />
-      <workItem from="1702400264908" duration="12317000" />
+      <workItem from="1702400264908" duration="12415000" />
+      <workItem from="1702474639825" duration="8766000" />
+      <workItem from="1702497090500" duration="76000" />
+      <workItem from="1702497180197" duration="818000" />
+      <workItem from="1702563843791" duration="3000" />
+      <workItem from="1702563873641" duration="611000" />
+      <workItem from="1702572939545" duration="6038000" />
+      <workItem from="1702647576946" duration="319000" />
+      <workItem from="1702647902383" duration="1944000" />
+      <workItem from="1702666650260" duration="141000" />
+      <workItem from="1702824324488" duration="1421000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -146,7 +156,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702413347558</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="fix: use correct entity in list repositories, paths not being registered on express">
+      <option name="closed" value="true" />
+      <created>1702414083428</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1702414083428</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -159,18 +177,7 @@
     <MESSAGE value="feat: add sync-database-merger package, update email-password imports" />
     <MESSAGE value="refactor: rename ModificationsEngine to DiffEngine" />
     <MESSAGE value="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/packages/sync-core/src/interfaces/database-adapter.ts</url>
-          <line>9</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="fix: use correct entity in list repositories, paths not being registered on express" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: use correct entity in list repositories, paths not being registered on express" />
   </component>
 </project>

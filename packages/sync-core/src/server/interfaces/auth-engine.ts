@@ -8,4 +8,5 @@ export interface AuthEngine {
   createUser(credentials: any): Promise<void>;
   activateUser(credentials: any): Promise<void>;
   deactivateUser(credentials: any): Promise<void>;
+  decodeToken(token: string): Promise<any>;
 }
