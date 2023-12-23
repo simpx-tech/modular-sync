@@ -11,6 +11,7 @@ export interface DatabaseAdapter {
   create(entity: string, data: UpsertData): Promise<void>;
   update(entity: string, id: number | string, data: UpsertData): Promise<void>;
   delete(entity: string, id: number | string): Promise<WasDeleted>;
+  deleteByField(entity: string, mapping: Record<string, any>): Promise<WasDeleted>;
   raw<T = any>(options: any): Promise<T>;
 
   // Should allow calling it twice without causing error

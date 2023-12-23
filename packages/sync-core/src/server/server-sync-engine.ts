@@ -7,9 +7,10 @@ import {AuthEngine} from "./interfaces/auth-engine";
 import {RouterAdapter} from "./interfaces/router-adapter";
 import {DbMigrationRepository} from "../repositories/db-migration-repository";
 import {RepositoryRepository} from "../repositories/repository-repository";
-import {DomainRepository} from "../repositories/domain-repository";
+import {RepositoryDomainsRepository} from "../repositories/repository-domains-repository";
 import {CreateRepository} from "../repositories/interfaces/repository-entity";
-import {convertId} from "../utils/convertId";
+import {NotFoundException} from "./exceptions/not-found-exception";
+import {UnauthorizedException} from "./exceptions/unauthorized-exception";
 
 export class ServerSyncEngine {
   readonly domains: ServerDomain[];
@@ -19,7 +20,7 @@ export class ServerSyncEngine {
 
   dbMigrationRepository: DbMigrationRepository;
   repositoryRepository: RepositoryRepository;
-  domainRepository: DomainRepository;
+  repositoryDomainsRepository: RepositoryDomainsRepository;
 
   constructor({ domains, metadataDatabase, routerAdapter, authEngine }: ServerSyncEngineOptions) {
     this.domains = domains;
@@ -30,9 +31,10 @@ export class ServerSyncEngine {
 
   async runSetup() {
     await this.metadataDatabase.connect();
+
     this.dbMigrationRepository = await new DbMigrationRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
     this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup()
-    this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
+    this.repositoryDomainsRepository = await new RepositoryDomainsRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
 
     await this.authEngine.runSetup(this);
     
@@ -41,12 +43,9 @@ export class ServerSyncEngine {
     this.routerAdapter.registerRoute(HttpMethod.GET, "repository", this.getRepositoryEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.GET, "repositories", this.getRepositoriesEndpoint.bind(this));
 
-    this.routerAdapter.registerRoute(HttpMethod.POST, "domain", this.createDomainEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.PUT, "domain", this.updateDomainEndpoint.bind(this));
-    this.routerAdapter.registerRoute(HttpMethod.DELETE, "domain", this.deleteDomainEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.GET, "domain", this.getDomainByRepositoryEndpoint.bind(this));
-    // TODO allow query parameters
-    this.routerAdapter.registerRoute(HttpMethod.GET, "domains", this.listDomainsEndpoint.bind(this));
+    // TODO allow slug parameters: /domain and /domain/:id
 
     for await (const domain of this.domains) {
       await domain.runSetup(this);
@@ -61,7 +60,7 @@ export class ServerSyncEngine {
     const repositoryData = await this.repositoryRepository.getByName(repository);
 
     if (!repositoryData) {
-      throw new Error("Not found")
+      throw new NotFoundException("Repository not found")
     }
 
     return repositoryData;
@@ -76,13 +75,21 @@ export class ServerSyncEngine {
     const decoded = await this.authEngine.decodeToken(request.token);
 
     if (!decoded?.id) {
-      throw Error("Malformed token");
+      throw new UnauthorizedException("Malformed token");
     }
 
-    await this.repositoryRepository.create({
+    const repository = await this.repositoryRepository.create({
       ...insertData,
       user: decoded.id,
     } as CreateRepository);
+
+    for await (const domain of this.domains) {
+      await this.repositoryDomainsRepository.create({
+        repository: repository.id,
+        name: domain.name,
+        isMigrated: false,
+      })
+    }
 
     return { success: true };
   }
@@ -90,57 +97,19 @@ export class ServerSyncEngine {
   async deleteRepositoryEndpoint(request: RouterRequest) {
     const { repositoryId } = request.query;
 
+    await this.repositoryDomainsRepository.deleteByRepositoryId(repositoryId);
     await this.metadataDatabase.delete(RepositoryRepository.ENTITY, repositoryId);
 
     return { success: true };
-  }
-
-  async createDomainEndpoint(request: RouterRequest) {
-    const data = request.body;
-    const { id } = request.decodedToken;
-    const { repositoryId } = request.query;
-
-    const repository = await this.repositoryRepository.getById(convertId(repositoryId));
-
-    if (!repository) {
-      throw new Error("Repository not found");
-    }
-
-    const domainAlreadyExists = await this.domainRepository.getByNameAndUser(data.name, id);
-
-    if (domainAlreadyExists) {
-      throw new Error("Domain already exists");
-    }
-
-    await this.domainRepository.create({
-      name: data.name,
-      isMigrated: false,
-      repository: convertId(repositoryId),
-      user: id,
-    });
-
-    return { success: true }
   }
 
   async updateDomainEndpoint(request: RouterRequest) {
     const data = request.body;
     const { domainId } = request.query;
 
-    await this.domainRepository.update(domainId, {
+    await this.repositoryDomainsRepository.update(domainId, {
       isMigrated: data.isMigrated,
     });
-
-    return { success: true }
-  }
-
-  async deleteDomainEndpoint(request: RouterRequest) {
-    const { domainId } = request.query;
-
-    const deleteRes = await this.domainRepository.delete(domainId);
-
-    if (!deleteRes.wasDeleted) {
-      throw new Error("Domain not found");
-    }
 
     return { success: true }
   }
@@ -148,12 +117,6 @@ export class ServerSyncEngine {
   async getDomainByRepositoryEndpoint(request: RouterRequest) {
     const { repositoryId } = request.query;
 
-    return await this.domainRepository.getByRepositoryId(repositoryId);
-  }
-
-  async listDomainsEndpoint(request: RouterRequest) {
-    const { id } = request.decodedToken;
-
-    return await this.domainRepository.getAllFromUser(id);
+    return await this.repositoryDomainsRepository.getByRepositoryId(repositoryId);
   }
 }

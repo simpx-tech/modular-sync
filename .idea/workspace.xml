@@ -14,8 +14,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="tsconfig.json" />
-        <option value="TypeScript File" />
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -42,16 +42,19 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Jest.SQLite Adapter Connection.executor": "Run",
+    "Jest.SQLite Adapter.executor": "Run",
     "Node.js.backend.ts.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ShowUsagesActions.previewPropertyKey": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/sync-core/src/server/exceptions",
+    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/sync-sqlite-adapter",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs.jest.jest_package": "/home/vinicius/Github/modular-sync/node_modules/jest",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "editor.preferences.fonts.default",
     "ts.external.directory.path": "/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external",
@@ -67,24 +70,54 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
+      <recent name="$PROJECT_DIR$/packages/sync-core" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/server/exceptions" />
       <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
       <recent name="$PROJECT_DIR$/packages/sync-express-router" />
-      <recent name="$PROJECT_DIR$/packages/sync-email-password-auth" />
-      <recent name="$PROJECT_DIR$/packages/example" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-core/__tests__" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/client/interfaces" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/server/interfaces" />
       <recent name="$PROJECT_DIR$/packages/core/src/interfaces" />
       <recent name="$PROJECT_DIR$/packages/core/src/client" />
-      <recent name="$PROJECT_DIR$/packages/example/src" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Jest.SQLite Adapter">
+    <configuration name="SQLite Adapter Connection" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-adapter-connection.test.ts" />
+      <test-names>
+        <test-name value="SQLite Adapter Connection" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="SQLite Adapter" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-adapter.test.ts" />
+      <test-names>
+        <test-name value="SQLite Adapter" />
+      </test-names>
+      <method v="2" />
+    </configuration>
     <configuration name="backend.ts" type="NodeJSConfigurationType" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Jest.SQLite Adapter" />
+        <item itemvalue="Jest.SQLite Adapter Connection" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -114,7 +147,14 @@
       <workItem from="1702647576946" duration="319000" />
       <workItem from="1702647902383" duration="1944000" />
       <workItem from="1702666650260" duration="141000" />
-      <workItem from="1702824324488" duration="1421000" />
+      <workItem from="1702824324488" duration="4054000" />
+      <workItem from="1702908508228" duration="197000" />
+      <workItem from="1703081246795" duration="5189000" />
+      <workItem from="1703163541567" duration="27000" />
+      <workItem from="1703163579483" duration="4343000" />
+      <workItem from="1703190427509" duration="2000" />
+      <workItem from="1703291069612" duration="2514000" />
+      <workItem from="1703350436798" duration="3535000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -164,11 +204,30 @@
       <option name="project" value="LOCAL" />
       <updated>1702414083428</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat: add exceptions, add domains crud api, fix not saving salt, fix SQLite syntax errors">
+      <option name="closed" value="true" />
+      <created>1702825944529</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1702825944529</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -178,6 +237,7 @@
     <MESSAGE value="refactor: rename ModificationsEngine to DiffEngine" />
     <MESSAGE value="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands" />
     <MESSAGE value="fix: use correct entity in list repositories, paths not being registered on express" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: use correct entity in list repositories, paths not being registered on express" />
+    <MESSAGE value="feat: add exceptions, add domains crud api, fix not saving salt, fix SQLite syntax errors" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add exceptions, add domains crud api, fix not saving salt, fix SQLite syntax errors" />
   </component>
 </project>

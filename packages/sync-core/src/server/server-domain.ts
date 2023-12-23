@@ -6,21 +6,23 @@ import {ServerSyncEngine} from "./server-sync-engine";
 export class ServerDomain {
   readonly databaseAdapter: DatabaseAdapter;
   readonly mergeEngine: MergeEngine;
-  readonly prefix: string;
+  readonly name: string;
+
   syncEngine: ServerSyncEngine;
 
   constructor({
     databaseAdapter,
     mergeEngine,
-    prefix,
+    name,
   }: ServerDomainOptions) {
     this.databaseAdapter = databaseAdapter;
     this.mergeEngine = mergeEngine;
-    this.prefix = prefix;
+    this.name = name;
   }
 
   async runSetup(syncEngine: ServerSyncEngine) {
     this.syncEngine = syncEngine;
+
     await this.databaseAdapter.connect();
     await this.mergeEngine.runSetup(this.syncEngine);
   }

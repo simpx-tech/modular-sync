@@ -1,5 +1,5 @@
 import {RouterAdapter} from "@simpx/sync-core/src/server/interfaces/router-adapter";
-import {Express, Request} from "express";
+import {Express, Request, Response} from "express";
 import {ExpressRouterAdapterOptions} from "./interfaces/express-router-adapter-options";
 import {RouterCallback, RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
@@ -20,14 +20,19 @@ export class ExpressRouterAdapter implements RouterAdapter {
         const value = await callback(this.buildRouterRequest(req));
         res.status(200).send(value);
       } catch (err) {
-        if () {
-
-        }
-        // TODO add custom exceptions with custom messages and code
         console.error(err)
+
+        if (err.isHttpError) {
+          return this.returnHttpError(res, err);
+        }
+
         res.status(500).send({ error: "internal-server-error", code: 500 })
       }
     })
+  }
+
+  returnHttpError(res: Response, err: any) {
+    res.status(err.errorStatus).send({ error: err.errorCode, code: err.errorStatus, message: err.message })
   }
 
   private buildRouterRequest(req: Request): RouterRequest {

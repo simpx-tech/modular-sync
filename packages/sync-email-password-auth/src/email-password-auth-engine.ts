@@ -8,6 +8,8 @@ import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import {SchemaType} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
+import {UnauthorizedException} from "@simpx/sync-core/src/server/exceptions/unauthorized-exception";
+import {ConflictException} from "@simpx/sync-core/src/server/exceptions/conflict-exception";
 
 export class EmailPasswordAuthEngine implements AuthEngine {
   private syncEngine: ServerSyncEngine;
@@ -63,17 +65,17 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     });
 
     if (!user) {
-      throw new Error("Wrong credentials");
+      throw new UnauthorizedException("Wrong credentials");
     }
 
     if (!user.syncActivated) {
-      throw new Error("Sync is not activated for this user");
+      throw new UnauthorizedException("Sync is not activated for this user");
     }
 
     const { encryptedPassword } = await this.encryptPassword(password, user.salt);
 
     if (encryptedPassword !== user.password) {
-      throw new Error("Wrong credentials");
+      throw new UnauthorizedException("Wrong credentials");
     }
 
     const token = this.signJwt(user);

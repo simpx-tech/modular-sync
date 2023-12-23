@@ -42,7 +42,6 @@ export class SqliteAdapter implements DatabaseAdapter {
 
   async getByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T> {
     const formattedMapping = this.formatSelectMapping(mapping);
-    console.log(`SELECT * FROM ${entity} WHERE ${formattedMapping}`);
     return this.connection.prepare(`SELECT * FROM ${entity} WHERE ${formattedMapping}`).get() as T;
   }
 
@@ -70,19 +69,32 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   async create(entity: string, data: UpsertData) {
+    await this.runMiddlewares('create');
     const formattedFields = this.formatInsertFields(data);
     const formattedData = this.formatInsertData(data);
-    this.connection.prepare(`INSERT INTO ${entity}${formattedFields} VALUES (${formattedData})`).run();
+
+    const result = this.connection.prepare(`INSERT INTO ${entity}${formattedFields} VALUES (${formattedData})`).run();
+    return this.getById(entity, result.lastInsertRowid as number);
   }
 
   async update(entity: string, id: number, data: UpsertData) {
+    await this.runMiddlewares('update');
     const formattedData = this.formatUpdateData(data);
-    console.log("update", `UPDATE ${entity} SET ${formattedData} WHERE id = ?`)
+
     this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE id = ?`).run(id);
+
+    return this.getById(entity, id);
   }
 
   async delete(entity: string, id: number) {
+    await this.runMiddlewares('delete');
     const returnValue = this.connection.prepare(`DELETE FROM ${entity} WHERE id = ?`).run(id);
+    return { wasDeleted: returnValue?.changes > 0 };
+  }
+
+  async deleteByField(entity: string, mapping: Record<string, any>) {
+    const formattedMapping = this.formatSelectMapping(mapping);
+    const returnValue = this.connection.prepare(`DELETE FROM ${entity} WHERE ${formattedMapping}`).run();
     return { wasDeleted: returnValue?.changes > 0 };
   }
 
@@ -141,6 +153,18 @@ export class SqliteAdapter implements DatabaseAdapter {
       return bindings[type as keyof typeof bindings];
   }
 
+  private async runMiddlewares(action: 'create' | 'update' | 'delete') {
+    const middlewaresByAction = {
+      "create": this.createMiddlewares,
+      "update": this.updateMiddlewares,
+      "delete": this.deleteMiddlewares,
+    }
+
+    for await (const middleware of middlewaresByAction[action]) {
+      await middleware();
+    }
+  }
+
   private formatInsertFields(data: UpsertData) {
     return `(${Object.keys(data).join(", ")})`
   }
@@ -153,7 +177,7 @@ export class SqliteAdapter implements DatabaseAdapter {
 
   private formatUpdateData(data: UpsertData) {
     return Object.entries(data).reduce<string>((acc, [key, value], index) => {
-      return `${acc}${key} = ${value}${this.applyComma(data, index)}`
+      return `${acc}${key} = ${this.applyQuotes(value)}${this.applyComma(data, index)}`
     }, "")
   }
 

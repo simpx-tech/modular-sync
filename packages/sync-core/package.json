@@ -15,5 +15,9 @@
   ],
   "scripts": {
     "test": "node ./__tests__/core.test.js"
+  },
+  "devDependencies": {
+    "express": "^4.18.2",
+    "supertest": "^6.3.3"
   }
 }
