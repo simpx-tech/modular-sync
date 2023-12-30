@@ -1,6 +1,12 @@
 import {DatabaseAdapter, EntitySchema, UpsertData, WasDeleted} from "../../src/interfaces/database-adapter";
 
 export class MockDatabaseAdapter implements DatabaseAdapter{
+    converter = new class {
+        convert(data: any): any {
+            return data;
+        }
+    }
+
     connect(): Promise<void> {
         return Promise.resolve(undefined);
     }

@@ -1,4 +1,8 @@
+import {DataConverterEngine} from "./data-converter-engine";
+
 export interface DatabaseAdapter {
+  converter: DataConverterEngine;
+
   // Should allow calling it twice without causing error
   connect(): Promise<void>;
   // Should allow calling it twice without causing error
@@ -28,7 +32,9 @@ export interface WasDeleted {
 
 export type UpsertData = Record<string, string | number | boolean>
 
-export type EntitySchema = Record<string, "string" | "integer" | "float" | "boolean" | "date" | { type: string, entity: string }>
+export type EntitySchema = Record<string, FieldType>
+
+export type FieldType = "string" | "integer" | "float" | "boolean" | "date" | { type: string, entity: string };
 
 export class SchemaType {
   static String = "string" as const;

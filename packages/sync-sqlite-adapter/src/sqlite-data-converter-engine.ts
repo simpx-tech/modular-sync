@@ -1,12 +1,23 @@
-import {DataConverterEngine} from "@simpx/sync-core/src/interfaces/data-converter-engine";
+import {DataConverterEngine, DataConverterFlow} from "@simpx/sync-core/src/interfaces/data-converter-engine";
 import {isBooleanStringNumber} from "../helpers/isBooleanStringNumber";
+import {EntitySchema} from "@simpx/sync-core/src/interfaces/database-adapter";
+import {getConverterFnBySchemaType} from "@simpx/sync-core/src/helpers/get-converter-fn-by-schema-type";
 
 export class SQLiteDataConverterEngine implements DataConverterEngine {
   inbound = new InboundConverter();
   outbound = new OutboundConverter();
 }
 
-class InboundConverter {
+class InboundConverter implements DataConverterFlow {
+  convert(obj: Record<string, unknown>, schema: EntitySchema): any {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      return {
+        ...acc,
+        [key]: this[getConverterFnBySchemaType(schema[key] ?? "string")](value)
+      }
+    }, {});
+  }
+
   toString(data: unknown) {
     if (data instanceof Date) {
       return data.toISOString();
@@ -70,7 +81,7 @@ class InboundConverter {
   }
 }
 
-class OutboundConverter {
+class OutboundConverter implements DataConverterFlow {
   toString(field: string) {
     return field;
   }
@@ -93,5 +104,14 @@ class OutboundConverter {
 
   toConnection(field: number) {
     return field;
+  }
+
+  convert(obj: Record<string, unknown>, schema: EntitySchema): any {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      return {
+        ...acc,
+        [key]: this[getConverterFnBySchemaType(schema[key] ?? "string")](value as never)
+      }
+    }, {});
   }
 }

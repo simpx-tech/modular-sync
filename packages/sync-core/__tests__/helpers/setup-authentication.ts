@@ -1,6 +1,6 @@
-import {AuthEngine} from "../../src/server/interfaces/auth-engine";
+import {ServerSyncEngine} from "../../src/server/server-sync-engine";
 
-export async function setupAuthentication({ authEngine }: { authEngine: AuthEngine }) {
-  await authEngine.createUser({ email: "test@gmail.com", password: "123456" });
-  return authEngine.authenticateUser({ email: "test@gmail.com", password: "123456" });
+export async function setupAuthentication(syncEngine: ServerSyncEngine) {
+  await syncEngine.authEngine.createUser({ email: "test@gmail.com", password: "123456" });
+  return syncEngine.authEngine.authenticateUser({ email: "test@gmail.com", password: "123456" });
 }

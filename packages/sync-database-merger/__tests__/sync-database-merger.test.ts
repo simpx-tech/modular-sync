@@ -16,4 +16,5 @@ describe("Sync Database Merger", () => {
   describe("sendAll", () => {});
 
   describe("sync", () => {});
+})
 });

@@ -61,7 +61,7 @@ describe("Server Sync Engine", () => {
 
       await syncEngine.runSetup();
 
-      ({ token } = await setupAuthentication({ authEngine }));
+      ({ token } = await setupAuthentication(syncEngine));
     })
 
     afterEach(async () => {

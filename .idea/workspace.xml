@@ -42,6 +42,8 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Jest.Domain Repository.executor": "Run",
+    "Jest.Domain Repository.getByRepositoryId.should return the domain by repository id.executor": "Debug",
     "Jest.SQLite Adapter Connection.executor": "Run",
     "Jest.SQLite Adapter.executor": "Run",
     "Jest.Server Domain.executor": "Run",
@@ -89,16 +91,30 @@
       <recent name="$PROJECT_DIR$/packages/core/src/interfaces" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.Sqlite Data Converter Engine">
-    <configuration name="Server Domain" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Jest.Domain Repository">
+    <configuration name="Domain Repository" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-core" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-domain.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/repositories/domain-repository.test.ts" />
       <test-names>
-        <test-name value="Server Domain" />
+        <test-name value="Domain Repository" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Domain Repository.getByRepositoryId.should return the domain by repository id" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/repositories/domain-repository.test.ts" />
+      <test-names>
+        <test-name value="Domain Repository" />
+        <test-name value="getByRepositoryId" />
+        <test-name value="should return the domain by repository id" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -129,20 +145,6 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-sync-engine.test.ts" />
-      <test-names>
-        <test-name value="Server Sync Engine" />
-        <test-name value="Setup" />
-        <test-name value="should setup the database tables and run repositories, auth and domain setups" />
-      </test-names>
-      <method v="2" />
-    </configuration>
     <configuration name="Sqlite Data Converter Engine" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
@@ -160,11 +162,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.Domain Repository" />
+        <item itemvalue="Jest.Domain Repository.getByRepositoryId.should return the domain by repository id" />
         <item itemvalue="Jest.Sqlite Data Converter Engine" />
         <item itemvalue="Jest.Server Sync Engine" />
         <item itemvalue="Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database" />
-        <item itemvalue="Jest.Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups" />
-        <item itemvalue="Jest.Server Domain" />
       </list>
     </recent_temporary>
   </component>
@@ -210,7 +212,7 @@
       <workItem from="1703683658090" duration="703000" />
       <workItem from="1703699840785" duration="1020000" />
       <workItem from="1703785662604" duration="291000" />
-      <workItem from="1703947277081" duration="12698000" />
+      <workItem from="1703947277081" duration="16473000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -284,7 +286,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703967616275</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="feat: add SQLiteDataConverter, add tests">
+      <option name="closed" value="true" />
+      <created>1703972220589</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1703972220589</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -312,6 +322,15 @@
     <MESSAGE value="feat: add exceptions, add domains crud api, fix not saving salt, fix SQLite syntax errors" />
     <MESSAGE value="feat: add SQLite adapter tests, add domain repository, add custom errors, run middlewares, return values in write operations" />
     <MESSAGE value="wip: add DataConverter, fix core tests, rename migrations and domain repositories, add runSetup to router" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip: add DataConverter, fix core tests, rename migrations and domain repositories, add runSetup to router" />
+    <MESSAGE value="feat: add SQLiteDataConverter, add tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add SQLiteDataConverter, add tests" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="JavaScriptTestRunnerJest">
+        <watch expression="schema.name" />
+        <watch expression="schema.name" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

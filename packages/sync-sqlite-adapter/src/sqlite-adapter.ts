@@ -2,6 +2,7 @@ import {SqliteAdapterOptions} from "./interfaces/sqlite-adapter-options";
 import BetterSqlite, {Database} from "better-sqlite3";
 import {DatabaseAdapter, EntitySchema, SchemaType, UpsertData} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {SQLiteRawOptions} from "./interfaces/sqlite-raw-options";
+import {SQLiteDataConverterEngine} from "./sqlite-data-converter-engine";
 
 export class SqliteAdapter implements DatabaseAdapter {
   private readonly connectionPath: string;
@@ -10,6 +11,8 @@ export class SqliteAdapter implements DatabaseAdapter {
   private createMiddlewares = [];
   private updateMiddlewares = [];
   private deleteMiddlewares = [];
+
+  converter = new SQLiteDataConverterEngine();
 
   constructor(options: SqliteAdapterOptions) {
     this.connectionPath = options.databasePath
