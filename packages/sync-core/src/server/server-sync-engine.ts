@@ -5,9 +5,9 @@ import {HttpMethod} from "../interfaces/http-method";
 import {ServerSyncEngineOptions} from "./interfaces/server-sync-engine-options";
 import {AuthEngine} from "./interfaces/auth-engine";
 import {RouterAdapter} from "./interfaces/router-adapter";
-import {DbMigrationRepository} from "../repositories/db-migration-repository";
+import {SchemaMigrationRepository} from "../repositories/schema-migration-repository";
 import {RepositoryRepository} from "../repositories/repository-repository";
-import {RepositoryDomainsRepository} from "../repositories/repository-domains-repository";
+import {DomainRepository} from "../repositories/domain-repository";
 import {CreateRepository} from "../repositories/interfaces/repository-entity";
 import {NotFoundException} from "./exceptions/not-found-exception";
 import {UnauthorizedException} from "./exceptions/unauthorized-exception";
@@ -18,9 +18,9 @@ export class ServerSyncEngine {
   readonly routerAdapter: RouterAdapter;
   readonly authEngine: AuthEngine;
 
-  dbMigrationRepository: DbMigrationRepository;
+  schemaMigrationRepository: SchemaMigrationRepository;
   repositoryRepository: RepositoryRepository;
-  repositoryDomainsRepository: RepositoryDomainsRepository;
+  domainRepository: DomainRepository;
 
   constructor({ domains, metadataDatabase, routerAdapter, authEngine }: ServerSyncEngineOptions) {
     this.domains = domains;
@@ -31,13 +31,14 @@ export class ServerSyncEngine {
 
   async runSetup() {
     await this.metadataDatabase.connect();
+    await this.routerAdapter.runSetup();
 
-    this.dbMigrationRepository = await new DbMigrationRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
+    this.schemaMigrationRepository = await new SchemaMigrationRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
     this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup()
-    this.repositoryDomainsRepository = await new RepositoryDomainsRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
+    this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
 
     await this.authEngine.runSetup(this);
-    
+
     this.routerAdapter.registerRoute(HttpMethod.POST, "repository", this.createRepositoryEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.DELETE, "repository", this.deleteRepositoryEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.GET, "repository", this.getRepositoryEndpoint.bind(this));
@@ -84,7 +85,7 @@ export class ServerSyncEngine {
     } as CreateRepository);
 
     for await (const domain of this.domains) {
-      await this.repositoryDomainsRepository.create({
+      await this.domainRepository.create({
         repository: repository.id,
         name: domain.name,
         isMigrated: false,
@@ -97,7 +98,7 @@ export class ServerSyncEngine {
   async deleteRepositoryEndpoint(request: RouterRequest) {
     const { repositoryId } = request.query;
 
-    await this.repositoryDomainsRepository.deleteByRepositoryId(repositoryId);
+    await this.domainRepository.deleteByRepositoryId(repositoryId);
     await this.metadataDatabase.delete(RepositoryRepository.ENTITY, repositoryId);
 
     return { success: true };
@@ -107,7 +108,7 @@ export class ServerSyncEngine {
     const data = request.body;
     const { domainId } = request.query;
 
-    await this.repositoryDomainsRepository.update(domainId, {
+    await this.domainRepository.update(domainId, {
       isMigrated: data.isMigrated,
     });
 
@@ -117,6 +118,6 @@ export class ServerSyncEngine {
   async getDomainByRepositoryEndpoint(request: RouterRequest) {
     const { repositoryId } = request.query;
 
-    return await this.repositoryDomainsRepository.getByRepositoryId(repositoryId);
+    return await this.domainRepository.getByRepositoryId(repositoryId);
   }
 }

@@ -1,17 +1,24 @@
 import {RouterAdapter} from "@simpx/sync-core/src/server/interfaces/router-adapter";
-import {Express, Request, Response} from "express";
+import express, {Express, Request, Response} from "express";
 import {ExpressRouterAdapterOptions} from "./interfaces/express-router-adapter-options";
 import {RouterCallback, RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import jwt from "jsonwebtoken"
+import {AuthEngine} from "@simpx/sync-core/src/server/interfaces/auth-engine";
 
 export class ExpressRouterAdapter implements RouterAdapter {
   private readonly app: Express;
   private readonly path: string;
+  private readonly authEngine: AuthEngine;
 
-  constructor({ app, basePath }: ExpressRouterAdapterOptions) {
+  constructor({ app, basePath, authEngine }: ExpressRouterAdapterOptions) {
     this.app = app;
     this.path = basePath;
+    this.authEngine = authEngine;
+  }
+
+  async runSetup() {
+    this.app.use(express.json());
   }
 
   registerRoute(method: HttpMethod, route: string, callback: RouterCallback) {
@@ -43,16 +50,7 @@ export class ExpressRouterAdapter implements RouterAdapter {
       rawRequest: req,
       headers: req.headers,
       token: this.extractToken(req),
-      decodedToken: this.decodeToken(this.extractToken(req)),
-    }
-  }
-
-  private decodeToken(token: string) {
-    try {
-      return jwt.decode(token, { json: true });
-    } catch (err) {
-      console.error(err);
-      return {};
+      decodedToken: this.authEngine.decodeToken(this.extractToken(req)),
     }
   }
 

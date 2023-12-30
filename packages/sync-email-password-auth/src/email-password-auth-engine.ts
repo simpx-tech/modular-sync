@@ -30,6 +30,8 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     }));
 
     await this.runDbMigrations();
+
+    return this;
   }
 
   // TODO create a Migration class with run and rollback methods
@@ -37,7 +39,7 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     const MIGRATION_DOMAIN = "sync-auth";
     const MIGRATION_NAME = "create-users-table";
 
-    const usersMigration = await this.syncEngine.dbMigrationRepository.getByDomainAndName(MIGRATION_DOMAIN, MIGRATION_NAME);
+    const usersMigration = await this.syncEngine.schemaMigrationRepository.getByDomainAndName(MIGRATION_DOMAIN, MIGRATION_NAME);
 
     if (!usersMigration) {
       await this.syncEngine.metadataDatabase.createEntity(EmailPasswordAuthEngine.USERS_ENTITY, {
@@ -49,7 +51,7 @@ export class EmailPasswordAuthEngine implements AuthEngine {
         updatedAt: SchemaType.String,
       })
 
-      await this.syncEngine.dbMigrationRepository.create({
+      await this.syncEngine.schemaMigrationRepository.create({
         domain: MIGRATION_DOMAIN,
         name: MIGRATION_NAME,
         migratedAt: new Date().getTime(),

@@ -1,4 +1,4 @@
-export interface DomainRepositoryEntity {
+export interface DomainEntity {
   name: string;
   repository: number | string;
   isMigrated: boolean;

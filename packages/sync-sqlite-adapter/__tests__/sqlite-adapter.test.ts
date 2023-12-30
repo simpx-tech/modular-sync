@@ -8,21 +8,21 @@ describe("SQLite Adapter", () => {
   let database: Database = null;
 
   beforeEach(async () => {
-    sqliteAdapter = new SqliteAdapter({ databasePath: "./__tests__/data/test.sqlite" });
+    sqliteAdapter = new SqliteAdapter({ databasePath: "./__tests__/data/__tests__.sqlite" });
     await sqliteAdapter.connect();
 
-    database = new BetterSqlite("./__tests__/data/test.sqlite");
-    database.exec("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
-    database.exec("CREATE TABLE IF NOT EXISTS test2 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, table_id INTEGER, FOREIGN KEY(table_id) REFERENCES test(id))");
+    database = new BetterSqlite("./__tests__/data/__tests__.sqlite");
+    database.exec("CREATE TABLE IF NOT EXISTS __tests__ (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
+    database.exec("CREATE TABLE IF NOT EXISTS test2 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, table_id INTEGER, FOREIGN KEY(table_id) REFERENCES __tests__(id))");
   })
 
   afterEach(async () => {
     await sqliteAdapter.disconnect();
-    fs.unlinkSync("./__tests__/data/test.sqlite");
+    fs.unlinkSync("./__tests__/data/__tests__.sqlite");
   })
 
   it("should get the first item from a table", () => {
-    database.exec("INSERT INTO test (name) VALUES ('test'), ('test2'), ('test3')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('__tests__'), ('test2'), ('test3')");
 
     const promise = sqliteAdapter.getFirst("test");
 
@@ -30,15 +30,15 @@ describe("SQLite Adapter", () => {
   })
 
   it("should get the an item by id", () => {
-    database.exec("INSERT INTO test (name) VALUES ('test'), ('test2'), ('test3')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('__tests__'), ('test2'), ('test3')");
 
     const promise = sqliteAdapter.getById("test", 2);
 
     return expect(promise).resolves.toEqual({ id: 2, name: "test2" });
   })
 
-  it("should list all items from a test", () => {
-    database.exec("INSERT INTO test (name) VALUES ('test'), ('test2'), ('test3')");
+  it("should list all items from a __tests__", () => {
+    database.exec("INSERT INTO __tests__ (name) VALUES ('__tests__'), ('test2'), ('test3')");
 
     const promise = sqliteAdapter.getAll("test");
 
@@ -46,13 +46,13 @@ describe("SQLite Adapter", () => {
   })
 
   it("should get an item by field", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('test')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('__tests__')");
     const promise = sqliteAdapter.getByField("test", { name: "test" });
     return expect(promise).resolves.toEqual({ id: 1, name: "test" });
   })
 
   it("should list items by field", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('oneValue'), ('oneValue'), ('anotherValue')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('oneValue'), ('oneValue'), ('anotherValue')");
     const promise = sqliteAdapter.getAllByField("test", { "name": "oneValue" });
     return expect(promise).resolves.toEqual([{ id: 1, name: "oneValue" }, { id: 2, name: "oneValue" }]);
   })
@@ -63,7 +63,7 @@ describe("SQLite Adapter", () => {
   })
 
   it("should update an item", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('oldName')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('oldName')");
 
     const promise = sqliteAdapter.update("test", 1, { name: "updatedName" });
 
@@ -71,20 +71,20 @@ describe("SQLite Adapter", () => {
   })
 
   it("should delete an item", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('toDelete')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('toDelete')");
 
     await sqliteAdapter.delete("test", 1);
 
-    const dbRes = database.prepare("SELECT * FROM test").all();
+    const dbRes = database.prepare("SELECT * FROM __tests__").all();
 
     return expect(dbRes).toStrictEqual([]);
   })
 
   it("should delete an item by field", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('toDelete')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('toDelete')");
     await sqliteAdapter.deleteByField("test", { "name": "toDelete" });
 
-    const dbRes = database.prepare("SELECT * FROM test").all();
+    const dbRes = database.prepare("SELECT * FROM __tests__").all();
 
     return expect(dbRes).toStrictEqual([]);
   })
@@ -132,7 +132,7 @@ describe("SQLite Adapter", () => {
 
     await expect(promise).rejects.toThrow("error from middleware");
 
-    const dbRes = database.prepare("SELECT * FROM test").all();
+    const dbRes = database.prepare("SELECT * FROM __tests__").all();
     expect(dbRes).toEqual([]);
   })
 
@@ -142,13 +142,13 @@ describe("SQLite Adapter", () => {
     }
     sqliteAdapter.registerUpdateMiddleware(middleware);
 
-    database.exec("INSERT INTO test (name) VALUES ('oldName')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('oldName')");
 
     const promise = sqliteAdapter.update("test", 1, { name: "newName" });
 
     await expect(promise).rejects.toThrow("error from middleware");
 
-    const dbRes = database.prepare("SELECT * FROM test").all();
+    const dbRes = database.prepare("SELECT * FROM __tests__").all();
     expect(dbRes).toEqual([{ id: 1, name: "oldName" }]);
   })
 
@@ -158,13 +158,13 @@ describe("SQLite Adapter", () => {
     }
     sqliteAdapter.registerDeleteMiddleware(middleware);
 
-    database.exec("INSERT INTO test (name) VALUES ('test')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('__tests__')");
 
     const promise = sqliteAdapter.delete("test", 1);
 
     await expect(promise).rejects.toThrow("error from middleware");
 
-    const dbRes = database.prepare("SELECT * FROM test").all();
+    const dbRes = database.prepare("SELECT * FROM __tests__").all();
     expect(dbRes).toEqual([{ id: 1, name: "test" }]);
   })
 
@@ -175,7 +175,7 @@ describe("SQLite Adapter", () => {
     }
 
     sqliteAdapter.registerUpdateMiddleware(middleware);
-    database.exec("INSERT INTO test (name) VALUES ('toUpdate')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('toUpdate')");
 
     await sqliteAdapter.update("test", 1, { name: "updated" });
 
@@ -189,7 +189,7 @@ describe("SQLite Adapter", () => {
     }
 
     sqliteAdapter.registerDeleteMiddleware(middleware);
-    database.exec("INSERT INTO test (name) VALUES ('toUpdate')");
+    database.exec("INSERT INTO __tests__ (name) VALUES ('toUpdate')");
 
     await sqliteAdapter.delete("test", 1);
 

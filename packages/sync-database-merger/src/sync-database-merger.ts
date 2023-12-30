@@ -9,15 +9,15 @@ export class DatabaseMerger implements MergeEngine {
     this.syncEngine = syncEngine;
 
     this.syncEngine.domains.forEach(domain => {
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.prefix}/sync`, this.sync.bind(this));
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.prefix}/bulk-read`, this.sendAll.bind(this));
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.prefix}/bulk-write`, this.receiveAll.bind(this));
+      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.sync.bind(this));
+      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/bulk-read`, this.sendAll.bind(this));
+      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/bulk-write`, this.receiveAll.bind(this));
     })
   }
 
-  private sync() {}
+  async sync() {}
 
-  private receiveAll() {}
+  async receiveAll() {}
 
-  private sendAll() {}
+  async sendAll() {}
 }

@@ -18,19 +18,21 @@ export class MockAuthEngine implements AuthEngine {
     return Promise.resolve(undefined);
   }
 
-  decodeToken(token: string): Promise<any> {
-    return Promise.resolve(undefined);
+  async decodeToken(token: string): Promise<any> {
+    return {
+      id: 1
+    };
   }
 
   isAuthenticated(token: any): Promise<boolean> {
-    return Promise.resolve(false);
+    return Promise.resolve(true);
   }
 
   refreshSession(): Promise<{ token: string; refreshToken?: string } | null> {
-    return Promise.resolve(undefined);
+    return Promise.resolve(null);
   }
 
-  runSetup(syncEngine: ServerSyncEngine): Promise<void> {
-    return Promise.resolve(undefined);
+  runSetup(syncEngine: ServerSyncEngine): Promise<this> {
+    return Promise.resolve(this);
   }
 }

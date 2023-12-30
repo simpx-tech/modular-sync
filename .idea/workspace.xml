@@ -38,65 +38,57 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Jest.SQLite Adapter Connection.executor": "Run",
-    "Jest.SQLite Adapter.executor": "Run",
-    "Node.js.backend.ts.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ShowUsagesActions.previewPropertyKey": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/sync-sqlite-adapter",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "/home/vinicius/Github/modular-sync/node_modules/jest",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "ts.external.directory.path": "/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Jest.SQLite Adapter Connection.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.SQLite Adapter.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Domain.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Sync Engine.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.backend.ts.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ShowUsagesActions.previewPropertyKey&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vinicius/Github/modular-sync/packages/sync-database-merger&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;/home/vinicius/Github/modular-sync/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "GitStage.ChangesTree.GroupingKeys": [
-      "directory",
-      "module",
-      "repository"
+  &quot;keyToStringList&quot;: {
+    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;,
+      &quot;module&quot;,
+      &quot;repository&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
       <recent name="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
       <recent name="$PROJECT_DIR$/packages/sync-core" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/server/exceptions" />
-      <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
       <recent name="$PROJECT_DIR$/packages/sync-express-router" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
       <recent name="$PROJECT_DIR$/packages/sync-core/__tests__" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/client/interfaces" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/server/interfaces" />
       <recent name="$PROJECT_DIR$/packages/core/src/interfaces" />
-      <recent name="$PROJECT_DIR$/packages/core/src/client" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.SQLite Adapter">
-    <configuration name="SQLite Adapter Connection" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-adapter-connection.test.ts" />
-      <test-names>
-        <test-name value="SQLite Adapter Connection" />
-      </test-names>
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Jest.Server Sync Engine">
     <configuration name="SQLite Adapter" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
@@ -109,13 +101,69 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="backend.ts" type="NodeJSConfigurationType" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
+    <configuration name="Server Domain" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-domain.test.ts" />
+      <test-names>
+        <test-name value="Server Domain" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Server Sync Engine" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-sync-engine.test.ts" />
+      <test-names>
+        <test-name value="Server Sync Engine" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-sync-engine.test.ts" />
+      <test-names>
+        <test-name value="Server Sync Engine" />
+        <test-name value="Server Sync Engine Endpoints" />
+        <test-name value="createRepositoryEndpoint" />
+        <test-name value="should create repository on database" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-sync-engine.test.ts" />
+      <test-names>
+        <test-name value="Server Sync Engine" />
+        <test-name value="Setup" />
+        <test-name value="should setup the database tables and run repositories, auth and domain setups" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="backend.ts" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v20.10.0/bin/node" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.Server Sync Engine" />
+        <item itemvalue="Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database" />
+        <item itemvalue="Jest.Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups" />
+        <item itemvalue="Jest.Server Domain" />
         <item itemvalue="Jest.SQLite Adapter" />
-        <item itemvalue="Jest.SQLite Adapter Connection" />
       </list>
     </recent_temporary>
   </component>
@@ -154,7 +202,14 @@
       <workItem from="1703163579483" duration="4343000" />
       <workItem from="1703190427509" duration="2000" />
       <workItem from="1703291069612" duration="2514000" />
-      <workItem from="1703350436798" duration="3535000" />
+      <workItem from="1703350436798" duration="3943000" />
+      <workItem from="1703432810028" duration="1113000" />
+      <workItem from="1703442086372" duration="4247000" />
+      <workItem from="1703535730591" duration="12354000" />
+      <workItem from="1703683658090" duration="703000" />
+      <workItem from="1703699840785" duration="1020000" />
+      <workItem from="1703785662604" duration="291000" />
+      <workItem from="1703947277081" duration="7977000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -212,7 +267,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702825944529</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="feat: add SQLite adapter tests, add domain repository, add custom errors, run middlewares, return values in write operations">
+      <option name="closed" value="true" />
+      <created>1703355813952</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1703355813952</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -238,6 +301,7 @@
     <MESSAGE value="feat: add domains, add migrations, add repositories, fix sqlite-adapter commands" />
     <MESSAGE value="fix: use correct entity in list repositories, paths not being registered on express" />
     <MESSAGE value="feat: add exceptions, add domains crud api, fix not saving salt, fix SQLite syntax errors" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add exceptions, add domains crud api, fix not saving salt, fix SQLite syntax errors" />
+    <MESSAGE value="feat: add SQLite adapter tests, add domain repository, add custom errors, run middlewares, return values in write operations" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add SQLite adapter tests, add domain repository, add custom errors, run middlewares, return values in write operations" />
   </component>
 </project>

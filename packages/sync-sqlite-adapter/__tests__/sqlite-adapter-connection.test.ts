@@ -5,17 +5,17 @@ describe("SQLite Adapter Connection", () => {
   let sqliteAdapter: SqliteAdapter = null;
 
   beforeEach(async () => {
-    sqliteAdapter = new SqliteAdapter({ databasePath: "./__tests__/data/test.sqlite" });
+    sqliteAdapter = new SqliteAdapter({ databasePath: "./__tests__/data/__tests__.sqlite" });
   });
 
   afterEach(async () => {
     await sqliteAdapter.disconnect();
-    fs.unlinkSync("./__tests__/data/test.sqlite");
+    fs.unlinkSync("./__tests__/data/__tests__.sqlite");
   })
 
   it("should connect properly", async () => {
     await sqliteAdapter.connect();
-    const exists = fs.existsSync("./__tests__/data/test.sqlite");
+    const exists = fs.existsSync("./__tests__/data/__tests__.sqlite");
     expect(exists).toBe(true);
   })
 
@@ -29,7 +29,7 @@ describe("SQLite Adapter Connection", () => {
     await sqliteAdapter.connect();
     await sqliteAdapter.disconnect();
 
-    const promise = sqliteAdapter.raw({ sql: "SELECT * FROM test", params: [] });
+    const promise = sqliteAdapter.raw({ sql: "SELECT * FROM __tests__", params: [] });
 
     await expect(promise).rejects.toThrow();
   })

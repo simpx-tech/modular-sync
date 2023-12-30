@@ -20,6 +20,10 @@ export class ServerDomain {
     this.name = name;
   }
 
+  /**
+   * Initializes its connection with the database and runs the helpers of the merge engine
+   * @param syncEngine
+   */
   async runSetup(syncEngine: ServerSyncEngine) {
     this.syncEngine = syncEngine;
 
