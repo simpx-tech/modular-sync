@@ -2,9 +2,11 @@ import {RepositoryOptions} from "./interfaces/repository-options";
 import {DatabaseAdapter, SchemaType, WasDeleted} from "../interfaces/database-adapter";
 import {RepositoryRepository} from "./repository-repository";
 import {CreateDomain, DomainEntity, UpdateDomain} from "./interfaces/domain-entity";
+import {ServerSyncEngine} from "../server/server-sync-engine";
 
 export class DomainRepository {
   private databaseAdapter: DatabaseAdapter;
+  private syncEngine: ServerSyncEngine;
 
   static ENTITY = 'sync_domains';
   static SCHEMA = {
@@ -17,27 +19,54 @@ export class DomainRepository {
     this.databaseAdapter = databaseAdapter;
   }
 
-  async runSetup() {
-    await this.databaseAdapter.createEntity(DomainRepository.ENTITY, DomainRepository.SCHEMA);
+  async runSetup(syncEngine: ServerSyncEngine) {
+    this.syncEngine = syncEngine;
+    await this.databaseAdapter.createEntity(DomainRepository.ENTITY, DomainRepository.SCHEMA, { unique: ["name", "repository"] });
 
     return this;
   }
 
-  async getByRepositoryId(repositoryId: number | string): Promise<DomainEntity> {
-    return this.convertEntityFields(
-      await this.databaseAdapter.getByField<DomainEntity>(DomainRepository.ENTITY, { repository: repositoryId })
-    );
+  async getAllByRepositoryId(repositoryId: number | string): Promise<DomainEntity[]> {
+    const repository = await this.syncEngine.repositoryRepository.getById(repositoryId);
+
+    if (!repository) {
+      return [];
+    }
+
+    const responseArray = await this.databaseAdapter.getAllByField<DomainEntity[]>(DomainRepository.ENTITY, { repository: repositoryId })
+
+    const existentDomains = responseArray.map((domain) => domain.name);
+    const missingDomains = this.syncEngine.domains.filter((domain) => !existentDomains.includes(domain.name)).map((domain) => domain.name);
+    const createdDomains = await Promise.all(missingDomains.map((domain) => this.createIfNotExists({ name: domain, repository: repositoryId, isMigrated: false })));
+
+    return [...responseArray, ...createdDomains].map((data) => this.convertEntityFields(
+      data
+    ));
   };
 
   async create(data: CreateDomain): Promise<any> {
+    const convertedData = this.databaseAdapter.converter.inbound.convert(data as Record<string, any>, DomainRepository.SCHEMA);
+
     return this.convertEntityFields(
-      await this.databaseAdapter.create(DomainRepository.ENTITY, data as Record<string, any>)
+      await this.databaseAdapter.create(DomainRepository.ENTITY, convertedData)
     );
   };
 
-  async update(domainId: number | string, data: UpdateDomain): Promise<any> {
+  async createIfNotExists(data: CreateDomain): Promise<any> {
+    const convertedData = this.databaseAdapter.converter.inbound.convert(data as Record<string, any>, DomainRepository.SCHEMA);
+
     return this.convertEntityFields(
-      await this.databaseAdapter.update(DomainRepository.ENTITY, domainId, data as Record<string, any>)
+      await this.databaseAdapter.createIfNotExists(DomainRepository.ENTITY, ["name", "repository"], convertedData)
+    );
+  }
+
+  async update(domainId: number | string, data: UpdateDomain): Promise<any> {
+    const convertedData = this.databaseAdapter.converter.inbound.convert(data as Record<string, any>, DomainRepository.SCHEMA);
+
+    console.log("convert", data, convertedData, DomainRepository.SCHEMA)
+
+    return this.convertEntityFields(
+      await this.databaseAdapter.update(DomainRepository.ENTITY, domainId, convertedData)
     );
   };
 
@@ -48,6 +77,6 @@ export class DomainRepository {
   }
 
   private convertEntityFields(data: any) {
-    return this.databaseAdapter.converter.outbound.convert(data, DomainRepository.SCHEMA);
+    return this.databaseAdapter.converter.outbound.convert(data ?? {}, DomainRepository.SCHEMA);
   }
 }

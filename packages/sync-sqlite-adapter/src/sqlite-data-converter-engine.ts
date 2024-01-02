@@ -50,7 +50,8 @@ class InboundConverter implements DataConverterFlow {
   }
 
   toBoolean(data: unknown) {
-    return typeof data === "string" ? data === "true" || (data !== "0" && data !== "false") : !!data;
+    const finalBoolean = typeof data === "string" ? data === "true" || (data !== "0" && data !== "false") : !!data;
+    return finalBoolean ? 1 : 0;
   }
 
   toDate(data: unknown) {

@@ -1,6 +1,12 @@
 import {SqliteAdapterOptions} from "./interfaces/sqlite-adapter-options";
 import BetterSqlite, {Database} from "better-sqlite3";
-import {DatabaseAdapter, EntitySchema, SchemaType, UpsertData} from "@simpx/sync-core/src/interfaces/database-adapter";
+import {
+  CreateEntityOptions,
+  DatabaseAdapter,
+  EntitySchema,
+  SchemaType,
+  UpsertData
+} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {SQLiteRawOptions} from "./interfaces/sqlite-raw-options";
 import {SQLiteDataConverterEngine} from "./sqlite-data-converter-engine";
 
@@ -71,6 +77,20 @@ export class SqliteAdapter implements DatabaseAdapter {
     return `${index !== Object.keys(mapping).length - 1 ? ", " : ""}`;
   }
 
+  async createIfNotExists(entity: string, keyFields: Record<string, any>, data: UpsertData) {
+    await this.runMiddlewares('create');
+    const formattedFields = this.formatInsertFields(data);
+    const formattedData = this.formatInsertData(data);
+
+    const result = this.connection.prepare(`INSERT INTO ${entity}${formattedFields} VALUES (${formattedData}) ON CONFLICT(${keyFields.join(",")}) DO NOTHING`).run();
+
+    if (result.changes === 0) {
+      return this.getByField(entity, keyFields.reduce((acc, field) => ({ ...acc, [field]: data[field] }), {}));
+    }
+
+    return this.getById(entity, result.lastInsertRowid as number);
+  }
+
   async create(entity: string, data: UpsertData) {
     await this.runMiddlewares('create');
     const formattedFields = this.formatInsertFields(data);
@@ -84,7 +104,9 @@ export class SqliteAdapter implements DatabaseAdapter {
     await this.runMiddlewares('update');
     const formattedData = this.formatUpdateData(data);
 
-    this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE id = ?`).run(id);
+    console.log(`UPDATE ${entity} SET ${formattedData} WHERE id = ${id}`, typeof id)
+    const res = this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE id = ?`).run(id);
+    console.log(res, id)
 
     return this.getById(entity, id);
   }
@@ -113,9 +135,9 @@ export class SqliteAdapter implements DatabaseAdapter {
     }
   }
 
-  async createEntity(entity: string, schema: EntitySchema) {
+  async createEntity(entity: string, schema: EntitySchema, options: CreateEntityOptions = {}) {
     await this.raw({
-      sql: `CREATE TABLE IF NOT EXISTS ${entity} (${this.formatSchema(schema)});`,
+      sql: `CREATE TABLE IF NOT EXISTS ${entity} (${this.formatSchema(schema)}${this.formatUniques(options?.unique)});`,
       params: [],
     });
   }
@@ -128,6 +150,14 @@ export class SqliteAdapter implements DatabaseAdapter {
     }, INITIAL)
 
     return `${stringifiedSchema} ${this.generateForeignKeys(schema)}`
+  }
+
+  private formatUniques(uniques?: string[]) {
+    if (!uniques) {
+      return ""
+    }
+
+    return `, UNIQUE(${uniques.join(",")})`
   }
 
   private generateForeignKeys(schema: EntitySchema) {

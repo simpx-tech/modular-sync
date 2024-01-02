@@ -12,18 +12,24 @@ export interface DatabaseAdapter {
   getByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T>;
   getAllByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T>;
   getAll<T = any>(entity: string): Promise<T>;
-  create(entity: string, data: UpsertData): Promise<void>;
-  update(entity: string, id: number | string, data: UpsertData): Promise<void>;
+  create<T = any>(entity: string, data: UpsertData): Promise<T>;
+  createIfNotExists<T = any>(entity: string, keyFields: string[], data: UpsertData): Promise<T>;
+  update<T = any>(entity: string, id: number | string, data: UpsertData): Promise<T>;
   delete(entity: string, id: number | string): Promise<WasDeleted>;
   deleteByField(entity: string, mapping: Record<string, any>): Promise<WasDeleted>;
   raw<T = any>(options: any): Promise<T>;
 
   // Should allow calling it twice without causing error
-  createEntity(entity: string, schema: EntitySchema): Promise<void>;
+  createEntity(entity: string, schema: EntitySchema, options?: CreateEntityOptions): Promise<void>;
 
   registerCreateMiddleware(middleware: ((entity: string, data: UpsertData) => void)): void;
   registerUpdateMiddleware(middleware: ((entity: string, id: string | number, data: UpsertData) => void)): void;
   registerDeleteMiddleware(middleware: ((entity: string, id: string | number) => void)): void;
+}
+
+export interface CreateEntityOptions {
+  unique?: string[];
+  // TODO add indexes
 }
 
 export interface WasDeleted {

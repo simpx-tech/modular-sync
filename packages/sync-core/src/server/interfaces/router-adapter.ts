@@ -5,4 +5,9 @@ export interface RouterAdapter {
   runSetup(): Promise<void>;
   // TODO: Add if is private route
   registerRoute(method: HttpMethod, route: string, callback: RouterCallback): void;
+
+  /**
+   * Route prefix for all routes
+   */
+  path: string;
 }

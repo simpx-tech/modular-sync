@@ -1,4 +1,5 @@
 export interface DomainEntity {
+  id: string | number;
   name: string;
   repository: number | string;
   isMigrated: boolean;

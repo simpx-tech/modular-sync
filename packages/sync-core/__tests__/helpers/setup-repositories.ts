@@ -2,12 +2,18 @@ import {ServerSyncEngine} from "../../src/server/server-sync-engine";
 
 export async function setupRepositories(syncEngine: ServerSyncEngine) {
   await syncEngine.repositoryRepository.create({
-    name: "test",
+    name: "test-repository",
     user: 1,
   });
 
   await syncEngine.repositoryRepository.create({
-    name: "test2",
+    name: "test-repository2",
+    user: 1,
+  });
+
+  // The one without domains
+  await syncEngine.repositoryRepository.create({
+    name: "test-repository3",
     user: 1,
   });
 }

@@ -24,21 +24,30 @@ describe("Domain Repository", () => {
     });
   });
 
-  describe("getByRepositoryId", () => {
-    it("should return the domain by repository id", async () => {
-      await syncEngine.domainRepository.create({
-        name: "test",
-        repository: 1,
-        isMigrated: false,
-      });
-
-      const domain = await syncEngine.domainRepository.getByRepositoryId(1);
-      expect(domain).toEqual({
+  describe("getAllByRepositoryId", () => {
+    it("should return all the domains by repository id", async () => {
+      const domains = await syncEngine.domainRepository.getAllByRepositoryId(1);
+      expect(domains).toEqual([{
         id: 1,
-        name: "test",
+        name: "test-domain",
         repository: 1,
         isMigrated: false,
-      });
+      }]);
+    });
+
+    it("should return empty array if the repository was not found", async () => {
+      const domains = await syncEngine.domainRepository.getAllByRepositoryId(3);
+      expect(domains).toEqual([]);
+    })
+
+    it("should allow query with string id", async () => {
+      const domains = await syncEngine.domainRepository.getAllByRepositoryId("1");
+      expect(domains).toEqual([{
+        id: 1,
+        name: "test-domain",
+        repository: 1,
+        isMigrated: false,
+      }]);
     });
   });
 
@@ -56,6 +65,9 @@ describe("Domain Repository", () => {
         repository: 1,
         isMigrated: false,
       });
+
+      const res = await commonDb.getAll("sync_domains");
+      expect(res).toEqual([{ id: 1, name: "test", repository: 1, isMigrated: 0 }]);
     });
   });
 
@@ -99,6 +111,52 @@ describe("Domain Repository", () => {
         wasDeleted: true,
       });
       expect(await commonDb.getAll("sync_domains")).toEqual([]);
+    });
+  })
+
+  describe("createIfNotExists", () => {
+    it("should create the domain if it doesn't exist yet", async () => {
+      const created = await syncEngine.domainRepository.createIfNotExists({
+        name: "test",
+        repository: 1,
+        isMigrated: false,
+      });
+
+      expect(created).toEqual({
+        id: 1,
+        name: "test",
+        repository: 1,
+        isMigrated: false,
+      });
+    });
+
+    it("should duplicate if the domain already exists", async () => {
+      await syncEngine.domainRepository.create({
+        name: "test",
+        repository: 1,
+        isMigrated: false,
+      });
+
+      const created = await syncEngine.domainRepository.createIfNotExists({
+        name: "test",
+        repository: 1,
+        isMigrated: false,
+      });
+
+      expect(created).toEqual({
+        id: 1,
+        name: "test",
+        repository: 1,
+        isMigrated: false,
+      });
+
+      const domains = await commonDb.getAll("sync_domains");
+      expect(domains).toEqual([{
+        id: 1,
+        name: "test",
+        repository: 1,
+        isMigrated: 0,
+      }]);
     });
   })
 });

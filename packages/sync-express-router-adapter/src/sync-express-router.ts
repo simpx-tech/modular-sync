@@ -3,13 +3,13 @@ import express, {Express, Request, Response} from "express";
 import {ExpressRouterAdapterOptions} from "./interfaces/express-router-adapter-options";
 import {RouterCallback, RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
-import jwt from "jsonwebtoken"
 import {AuthEngine} from "@simpx/sync-core/src/server/interfaces/auth-engine";
 
 export class ExpressRouterAdapter implements RouterAdapter {
   private readonly app: Express;
-  private readonly path: string;
   private readonly authEngine: AuthEngine;
+
+  readonly path: string;
 
   constructor({ app, basePath, authEngine }: ExpressRouterAdapterOptions) {
     this.app = app;

@@ -35,7 +35,7 @@ export class ServerSyncEngine {
 
     this.schemaMigrationRepository = await new SchemaMigrationRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
     this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup()
-    this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
+    this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup(this);
 
     await this.authEngine.runSetup(this);
 
@@ -45,7 +45,7 @@ export class ServerSyncEngine {
     this.routerAdapter.registerRoute(HttpMethod.GET, "repositories", this.getRepositoriesEndpoint.bind(this));
 
     this.routerAdapter.registerRoute(HttpMethod.PUT, "domain", this.updateDomainEndpoint.bind(this));
-    this.routerAdapter.registerRoute(HttpMethod.GET, "domain", this.getDomainByRepositoryEndpoint.bind(this));
+    this.routerAdapter.registerRoute(HttpMethod.GET, "domain", this.getDomainsByRepositoryEndpoint.bind(this));
     // TODO allow slug parameters: /domain and /domain/:id
 
     for await (const domain of this.domains) {
@@ -115,9 +115,9 @@ export class ServerSyncEngine {
     return { success: true }
   }
 
-  async getDomainByRepositoryEndpoint(request: RouterRequest) {
+  async getDomainsByRepositoryEndpoint(request: RouterRequest) {
     const { repositoryId } = request.query;
 
-    return await this.domainRepository.getByRepositoryId(repositoryId);
+    return await this.domainRepository.getAllByRepositoryId(repositoryId);
   }
 }

@@ -42,15 +42,25 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Jest.Domain Repository.create.executor": "Run",
+    "Jest.Domain Repository.createIfNotExists.executor": "Run",
     "Jest.Domain Repository.executor": "Run",
+    "Jest.Domain Repository.getAllByRepositoryId.executor": "Run",
+    "Jest.Domain Repository.getAllByRepositoryId.should allow query with string id.executor": "Run",
+    "Jest.Domain Repository.getAllByRepositoryId.should return empty array if the repository was not found.executor": "Run",
     "Jest.Domain Repository.getByRepositoryId.should return the domain by repository id.executor": "Debug",
     "Jest.SQLite Adapter Connection.executor": "Run",
+    "Jest.SQLite Adapter.createEntity.executor": "Run",
+    "Jest.SQLite Adapter.createIfNotExists.executor": "Run",
     "Jest.SQLite Adapter.executor": "Run",
     "Jest.Server Domain.executor": "Run",
     "Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database.executor": "Debug",
     "Jest.Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups.executor": "Run",
     "Jest.Server Sync Engine.executor": "Run",
     "Jest.Sqlite Data Converter Engine.executor": "Run",
+    "Jest.Sync Database Merger.bulk-write.executor": "Run",
+    "Jest.Sync Database Merger.bulk-write.should fail if domain is already migrated (should sync instead).executor": "Run",
+    "Jest.Sync Database Merger.executor": "Run",
     "Node.js.backend.ts.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -91,7 +101,7 @@
       <recent name="$PROJECT_DIR$/packages/core/src/interfaces" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.Domain Repository">
+  <component name="RunManager" selected="Jest.Sync Database Merger">
     <configuration name="Domain Repository" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
@@ -104,56 +114,55 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="Domain Repository.getByRepositoryId.should return the domain by repository id" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="Domain Repository.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-core" />
       <envs />
-      <scope-kind value="TEST" />
+      <scope-kind value="SUITE" />
       <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/repositories/domain-repository.test.ts" />
       <test-names>
         <test-name value="Domain Repository" />
-        <test-name value="getByRepositoryId" />
-        <test-name value="should return the domain by repository id" />
+        <test-name value="create" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="Server Sync Engine" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="Sync Database Merger" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-sync-engine.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
       <test-names>
-        <test-name value="Server Sync Engine" />
+        <test-name value="Sync Database Merger" />
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="Sync Database Merger.bulk-write" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
+      <test-names>
+        <test-name value="Sync Database Merger" />
+        <test-name value="bulk-write" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Sync Database Merger.bulk-write.should fail if domain is already migrated (should sync instead)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/server-sync-engine.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
       <test-names>
-        <test-name value="Server Sync Engine" />
-        <test-name value="Server Sync Engine Endpoints" />
-        <test-name value="createRepositoryEndpoint" />
-        <test-name value="should create repository on database" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="Sqlite Data Converter Engine" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-data-converter-engine.test.ts" />
-      <test-names>
-        <test-name value="Sqlite Data Converter Engine" />
+        <test-name value="Sync Database Merger" />
+        <test-name value="bulk-write" />
+        <test-name value="should fail if domain is already migrated (should sync instead)" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -162,11 +171,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.Sync Database Merger" />
+        <item itemvalue="Jest.Sync Database Merger.bulk-write.should fail if domain is already migrated (should sync instead)" />
         <item itemvalue="Jest.Domain Repository" />
-        <item itemvalue="Jest.Domain Repository.getByRepositoryId.should return the domain by repository id" />
-        <item itemvalue="Jest.Sqlite Data Converter Engine" />
-        <item itemvalue="Jest.Server Sync Engine" />
-        <item itemvalue="Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database" />
+        <item itemvalue="Jest.Domain Repository.create" />
+        <item itemvalue="Jest.Sync Database Merger.bulk-write" />
       </list>
     </recent_temporary>
   </component>
@@ -212,7 +221,8 @@
       <workItem from="1703683658090" duration="703000" />
       <workItem from="1703699840785" duration="1020000" />
       <workItem from="1703785662604" duration="291000" />
-      <workItem from="1703947277081" duration="16473000" />
+      <workItem from="1703947277081" duration="16730000" />
+      <workItem from="1704126524702" duration="18340000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -294,7 +304,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703972220589</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="feat: use database converter, add domain repository tests">
+      <option name="closed" value="true" />
+      <created>1703976495735</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1703976495735</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -323,9 +341,20 @@
     <MESSAGE value="feat: add SQLite adapter tests, add domain repository, add custom errors, run middlewares, return values in write operations" />
     <MESSAGE value="wip: add DataConverter, fix core tests, rename migrations and domain repositories, add runSetup to router" />
     <MESSAGE value="feat: add SQLiteDataConverter, add tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add SQLiteDataConverter, add tests" />
+    <MESSAGE value="feat: use database converter, add domain repository tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: use database converter, add domain repository tests" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/sync-core/src/interfaces/data-converter-engine.ts</url>
+          <line>20</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="JavaScriptTestRunnerJest">
         <watch expression="schema.name" />
