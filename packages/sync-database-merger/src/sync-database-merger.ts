@@ -54,8 +54,6 @@ export class DatabaseMerger implements MergeEngine {
     const domains = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
     const domain = domains.find(domain => domain.name === identity.domain);
 
-    console.log("write", await this.syncEngine.metadataDatabase.raw({ sql: "SELECT * FROM sync_domains", params: [], isQuery: true, fetchAll: true }))
-
     if (!domain) {
       throw new NotFoundException("Domain not found")
     }
@@ -64,11 +62,16 @@ export class DatabaseMerger implements MergeEngine {
       throw new ConflictException("Domain is already migrated");
     }
 
+    // Save all entities on final destination
+
+    // Save all modifications
+
     if (operation.finished) {
       await this.syncEngine.domainRepository.update(domain.id, { isMigrated: true });
     }
 
-    return Promise.resolve(undefined);
+    // DEV
+    return { entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z" } as any;
   }
 
   sync(identity: Identity, operation: SyncOperation): Promise<OperationsReturn> {

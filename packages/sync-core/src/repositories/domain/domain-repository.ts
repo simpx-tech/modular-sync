@@ -1,8 +1,10 @@
-import {RepositoryOptions} from "./interfaces/repository-options";
-import {DatabaseAdapter, SchemaType, WasDeleted} from "../interfaces/database-adapter";
-import {RepositoryRepository} from "./repository-repository";
-import {CreateDomain, DomainEntity, UpdateDomain} from "./interfaces/domain-entity";
-import {ServerSyncEngine} from "../server/server-sync-engine";
+import {RepositoryOptions} from "../interfaces/repository-options";
+import {DatabaseAdapter, SchemaType, WasDeleted} from "../../interfaces/database-adapter";
+import {RepositoryRepository} from "../repository/repository-repository";
+import {CreateDomain, DomainEntity, UpdateDomain} from "../interfaces/domain-entity";
+import {ServerSyncEngine} from "../../server/server-sync-engine";
+import {CreateDomainMigration} from "./domain-migration";
+
 
 export class DomainRepository {
   private databaseAdapter: DatabaseAdapter;
@@ -13,7 +15,7 @@ export class DomainRepository {
     name: SchemaType.String,
     repository: SchemaType.Connection(RepositoryRepository.ENTITY),
     isMigrated: SchemaType.Boolean,
-  };
+  }
 
   constructor({ databaseAdapter }: RepositoryOptions) {
     this.databaseAdapter = databaseAdapter;
@@ -21,8 +23,7 @@ export class DomainRepository {
 
   async runSetup(syncEngine: ServerSyncEngine) {
     this.syncEngine = syncEngine;
-    await this.databaseAdapter.createEntity(DomainRepository.ENTITY, DomainRepository.SCHEMA, { unique: ["name", "repository"] });
-
+    this.syncEngine.migrationRunner.registerMigration(new CreateDomainMigration());
     return this;
   }
 
@@ -62,8 +63,6 @@ export class DomainRepository {
 
   async update(domainId: number | string, data: UpdateDomain): Promise<any> {
     const convertedData = this.databaseAdapter.converter.inbound.convert(data as Record<string, any>, DomainRepository.SCHEMA);
-
-    console.log("convert", data, convertedData, DomainRepository.SCHEMA)
 
     return this.convertEntityFields(
       await this.databaseAdapter.update(DomainRepository.ENTITY, domainId, convertedData)

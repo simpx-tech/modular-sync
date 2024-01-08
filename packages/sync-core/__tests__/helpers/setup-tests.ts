@@ -5,6 +5,7 @@ import {ExpressRouterAdapter} from "@simpx/sync-express-router-adapter/src/sync-
 import {EmailPasswordAuthEngine} from "@simpx/sync-email-password-auth/src/email-password-auth-engine";
 import express from "express";
 import {DatabaseMerger} from "@simpx/sync-database-merger/src/sync-database-merger";
+import {FieldStorageMethod} from "../../src/server/enums/field-storage-method";
 
 export function setupTests() {
   const dbPath = `./__tests__/data/${new Date().getTime()}.db`;
@@ -12,6 +13,7 @@ export function setupTests() {
   const domain = new ServerDomain({
     databaseAdapter: commonDb,
     mergeEngine: new DatabaseMerger(),
+    fieldsStorageMethod: FieldStorageMethod.Unified,
     name: "test-domain",
   });
   const authEngine = new EmailPasswordAuthEngine({ jwtSecret: "abacadabra" })

@@ -10,6 +10,7 @@ import {SchemaType} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {UnauthorizedException} from "@simpx/sync-core/src/server/exceptions/unauthorized-exception";
 import {ConflictException} from "@simpx/sync-core/src/server/exceptions/conflict-exception";
+import {CreateUsersTableMigration} from "./migrations/create-users-table-migration";
 
 export class EmailPasswordAuthEngine implements AuthEngine {
   private syncEngine: ServerSyncEngine;
@@ -34,29 +35,8 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     return this;
   }
 
-  // TODO create a Migration class with run and rollback methods
   async runDbMigrations() {
-    const MIGRATION_DOMAIN = "sync-auth";
-    const MIGRATION_NAME = "create-users-table";
-
-    const usersMigration = await this.syncEngine.schemaMigrationRepository.getByDomainAndName(MIGRATION_DOMAIN, MIGRATION_NAME);
-
-    if (!usersMigration) {
-      await this.syncEngine.metadataDatabase.createEntity(EmailPasswordAuthEngine.USERS_ENTITY, {
-        email: SchemaType.String,
-        password: SchemaType.String,
-        syncActivated: SchemaType.Boolean,
-        salt: SchemaType.String,
-        createdAt: SchemaType.String,
-        updatedAt: SchemaType.String,
-      })
-
-      await this.syncEngine.schemaMigrationRepository.create({
-        domain: MIGRATION_DOMAIN,
-        name: MIGRATION_NAME,
-        migratedAt: new Date().getTime(),
-      })
-    }
+    this.syncEngine.migrationRunner.registerMigration(new CreateUsersTableMigration());
   }
 
   async authenticateUser(credentials: EmailPasswordCredentials){

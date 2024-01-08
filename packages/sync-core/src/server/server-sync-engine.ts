@@ -5,20 +5,20 @@ import {HttpMethod} from "../interfaces/http-method";
 import {ServerSyncEngineOptions} from "./interfaces/server-sync-engine-options";
 import {AuthEngine} from "./interfaces/auth-engine";
 import {RouterAdapter} from "./interfaces/router-adapter";
-import {SchemaMigrationRepository} from "../repositories/schema-migration-repository";
-import {RepositoryRepository} from "../repositories/repository-repository";
-import {DomainRepository} from "../repositories/domain-repository";
+import {RepositoryRepository} from "../repositories/repository/repository-repository";
+import {DomainRepository} from "../repositories/domain/domain-repository";
 import {CreateRepository} from "../repositories/interfaces/repository-entity";
 import {NotFoundException} from "./exceptions/not-found-exception";
 import {UnauthorizedException} from "./exceptions/unauthorized-exception";
+import {MigrationRunner} from "../migration/migration-runner";
 
 export class ServerSyncEngine {
   readonly domains: ServerDomain[];
   readonly metadataDatabase: DatabaseAdapter;
   readonly routerAdapter: RouterAdapter;
   readonly authEngine: AuthEngine;
+  readonly migrationRunner: MigrationRunner;
 
-  schemaMigrationRepository: SchemaMigrationRepository;
   repositoryRepository: RepositoryRepository;
   domainRepository: DomainRepository;
 
@@ -27,14 +27,14 @@ export class ServerSyncEngine {
     this.metadataDatabase = metadataDatabase;
     this.routerAdapter = routerAdapter;
     this.authEngine = authEngine;
+    this.migrationRunner = new MigrationRunner({ dbAdapter: metadataDatabase });
   }
 
   async runSetup() {
     await this.metadataDatabase.connect();
     await this.routerAdapter.runSetup();
 
-    this.schemaMigrationRepository = await new SchemaMigrationRepository({ databaseAdapter: this.metadataDatabase}).runSetup();
-    this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup()
+    this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup(this)
     this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup(this);
 
     await this.authEngine.runSetup(this);
@@ -46,11 +46,14 @@ export class ServerSyncEngine {
 
     this.routerAdapter.registerRoute(HttpMethod.PUT, "domain", this.updateDomainEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.GET, "domain", this.getDomainsByRepositoryEndpoint.bind(this));
-    // TODO allow slug parameters: /domain and /domain/:id
 
     for await (const domain of this.domains) {
+      // TODO allow slug parameters: /domain and /domain/:id
       await domain.runSetup(this);
     }
+
+    await this.migrationRunner.runSetup()
+    await this.migrationRunner.runAllMigrations()
 
     return this;
   }

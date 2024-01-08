@@ -1,14 +1,14 @@
 import {ServerSyncEngine} from "../../src/server/server-sync-engine";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
-import {RepositoryRepository} from "../../src/repositories/repository-repository";
-import {SchemaMigrationRepository} from "../../src/repositories/schema-migration-repository";
-import {DomainRepository} from "../../src/repositories/domain-repository";
+import {RepositoryRepository} from "../../src/repositories/repository/repository-repository";
+import {DomainRepository} from "../../src/repositories/domain/domain-repository";
 import {Express} from "express";
 import supertest from "supertest";
 import {setupTests} from "../helpers/setup-tests";
 import {clearAllFiles} from "../helpers/clear-all-files";
 import {setupAuthentication} from "../helpers/setup-authentication";
 import {AuthEngine} from "../../src/server/interfaces/auth-engine";
+import {MigrationRunner} from "../../src/migration/migration-runner";
 
 describe("Server Sync Engine", () => {
   describe("Server Sync Engine Setup", () => {
@@ -35,14 +35,14 @@ describe("Server Sync Engine", () => {
       syncEngine.domains[0].runSetup = jest.fn().mockResolvedValue(() => this);
 
       jest.spyOn(RepositoryRepository.prototype, "runSetup").mockImplementation(function () { return this });
-      jest.spyOn(SchemaMigrationRepository.prototype, "runSetup").mockImplementation(function () { return this });
       jest.spyOn(DomainRepository.prototype, "runSetup").mockImplementation(function () { return this });
+      jest.spyOn(MigrationRunner.prototype, "runSetup").mockImplementation(function () { return this });
+      jest.spyOn(MigrationRunner.prototype, "runAllMigrations").mockImplementation(function () { return this });
 
       await syncEngine.runSetup();
 
       expect(syncEngine.metadataDatabase.connect).toHaveBeenCalledTimes(1);
       expect(syncEngine.repositoryRepository.runSetup).toHaveBeenCalledTimes(1);
-      expect(syncEngine.schemaMigrationRepository.runSetup).toHaveBeenCalledTimes(1);
       expect(syncEngine.domainRepository.runSetup).toHaveBeenCalledTimes(1);
       expect(syncEngine.authEngine.runSetup).toHaveBeenCalledTimes(1);
       expect(syncEngine.domains[0].runSetup).toHaveBeenCalledTimes(1);

@@ -62,7 +62,7 @@ describe("Sync Database Merger", () => {
       ]);
     })
 
-    it("should fail if domain is already migrated (should sync instead)", async () => {
+    it("should fail if domain is already migrated (user should call sync endpoint instead)", async () => {
       await syncEngine.domainRepository.update(1, { isMigrated: true });
 
       const res = await supertest(app).post("/sync/test-domain/bulk-write").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`);
@@ -70,11 +70,179 @@ describe("Sync Database Merger", () => {
       expect(res.status).toBe(409);
     })
 
-    it.todo("should allow receive all entities from a domain")
+    describe("unified fields", () => {
+      it("should receive and store all entities from a domain", async () => {
+        const res = await supertest(app).post("/sync/test-domain/bulk-write").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
+          entities: {
+            "test_entity": [
+              {
+                fields: {
+                  create: [
+                    {
+                      key: "test",
+                      value: "test"
+                    },
+                    {
+                      key: "test2",
+                      value: "test2"
+                    }
+                  ],
+                  update: [],
+                  delete: [],
+                },
+                wasDeleted: false,
+                updatedAt: "2023-01-01T00:00:00.000Z",
+                submittedAt: "2023-01-01T00:00:00.000Z",
+              },
+              {
+                fields: {
+                  create: [
+                    {
+                      key: "test",
+                      value: "test3"
+                    },
+                    {
+                      key: "test2",
+                      value: "test4"
+                    }
+                  ],
+                  update: [],
+                  delete: [],
+                },
+                wasDeleted: false,
+                updatedAt: "2023-01-02T00:00:00.000Z",
+                submittedAt: "2023-01-02T00:00:00.000Z",
+              }
+            ],
+            "test_entity_2": [
+              {
+                fields: {
+                  create: [
+                    {
+                      key: "test",
+                      value: "test5"
+                    },
+                    {
+                      key: "test2",
+                      value: "test6"
+                    }
+                  ],
+                  update: [],
+                  delete: [],
+                },
+                wasDeleted: false,
+                updatedAt: "2023-01-03T00:00:00.000Z",
+                submittedAt: "2023-01-03T00:00:00.000Z",
+              }
+            ]
+          },
+          finished: true,
+        });
 
-    it.todo("should allow receive the same entities without problem (and not create duplicates)")
+        expect(res.status).toBe(200);
+        expect(res.body).toBe({ entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z" });
 
-    it.todo("should allow receive the same entities and update them if necessary (and not create duplicates)")
+        /* Should create the entities on the database */
+        const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
+        expect(testEntities).toEqual([{
+          id: 1,
+          test: "test",
+          test2: "test2",
+          updatedAt: "2023-01-01T00:00:00.000Z",
+          submittedAt: "2023-01-01T00:00:00.000Z",
+          wasDeleted: false,
+        }, {
+          id: 2,
+          test: "test3",
+          test2: "test4",
+          updatedAt: "2023-01-02T00:00:00.000Z",
+          submittedAt: "2023-01-02T00:00:00.000Z",
+          wasDeleted: false,
+        }])
+
+        const testEntities2 = await commonDb.raw({ sql: "SELECT * FROM test_entity_2", params: [], isQuery: true, fetchAll: true });
+        expect(testEntities2).toEqual([{
+          id: 1,
+          test: "test5",
+          test2: "test6",
+          updatedAt: "2023-01-01T00:00:00.000Z",
+          submittedAt: "2023-01-01T00:00:00.000Z",
+          wasDeleted: false,
+        }])
+
+        const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
+        expect(modifications).toEqual([{
+          id: 1,
+          repository: 1,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create",
+          entityId: 1,
+          submittedAt: "2023-01-01T00:00:00.000Z",
+          updatedAt: "2023-01-01T00:00:00.000Z",
+          wasDeleted: false,
+          fieldOperations: JSON.stringify({
+            create: [{
+              key: "test",
+              value: "test"
+            }, {
+              key: "test2",
+              value: "test2"
+            }],
+            update: [],
+            delete: [],
+          }),
+        }, {
+          id: 2,
+          repository: 1,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create",
+          entityId: 2,
+          submittedAt: "2023-01-02T00:00:00.000Z",
+          updatedAt: "2023-01-02T00:00:00.000Z",
+          wasDeleted: false,
+          fieldOperations: JSON.stringify({
+            create: [{
+              key: "test",
+              value: "test3"
+            }, {
+              key: "test2",
+              value: "test4"
+            }],
+            update: [],
+            delete: [],
+          }),
+        }, {
+          id: 3,
+          repository: 1,
+          domain: 1,
+          entity: "test_entity_2",
+          operation: "create",
+          entityId: 1,
+          submittedAt: "2023-01-03T00:00:00.000Z",
+          updatedAt: "2023-01-03T00:00:00.000Z",
+          wasDeleted: false,
+          fieldOperations: JSON.stringify({
+            create: [{
+              key: "test",
+              value: "test5"
+            }, {
+              key: "test2",
+              value: "test6"
+            }],
+            update: [],
+            delete: [],
+          }),
+        }])
+      })
+
+      it.todo("should allow receive the same entities without problem (and not create duplicates)")
+
+      it.todo("should allow receive the same entities and update them if necessary (and not create duplicates)")
+    })
+
+    describe("separated fields", () => {})
   });
 
   describe("bulk-read", () => {
