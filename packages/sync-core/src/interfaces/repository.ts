@@ -1,5 +1,6 @@
-import {SchemaType, UpsertData, WasDeleted} from "./database-adapter";
+import {EntitySchema, SchemaType, TestFieldType, UpsertData, WasDeleted} from "./database-adapter";
 import {ServerSyncEngine} from "../server/server-sync-engine";
+import {ServerDomain} from "../server/server-domain";
 
 type TypeBySchemaType = {
   [SchemaType.String]: string;
@@ -9,25 +10,26 @@ type TypeBySchemaType = {
   [SchemaType.Date]: Date;
 }
 
-export type MapSchemaToType<TSchema extends Record<string, any>> = {
-  [K in keyof TSchema]: TSchema[K] extends { type: "connection", entity: string } ? string | number : TypeBySchemaType[TSchema[K]]
+export type MapSchemaToType<TSchema extends EntitySchema> = {
+  [K in keyof TSchema]: TSchema[K] extends { type: "connection", entity: string } ? string | number : TSchema[K] extends "string" | "integer" | "float" | "boolean" | "date" ? TypeBySchemaType[TSchema[K]] : never
 }
 
+// TODO TSchema should also include id field
 export interface Repository<
   TSchema extends Record<string, any>,
   TEntity extends Record<string, any> = undefined,
   TCreate extends Record<string, any> = undefined,
   TUpdate extends Record<string, any> = undefined
 > {
-  runSetup(syncEngine: ServerSyncEngine): Promise<void>;
-  getFirst(): Promise<UseAOrB<TEntity, TSchema>>;
+  runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void>;
+  getFirst(): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
   getById(id: number | string): Promise<UseAOrB<TEntity, TSchema>>;
-  getByField(mapping: Record<string, any>): Promise<UseAOrB<TEntity, TSchema>>;
-  getAllByField(mapping: Record<string, any>): Promise<UseAOrB<TEntity, TSchema>>;
-  getAll(): Promise<UseAOrB<TEntity, TSchema>>;
-  create(data: UseAOrB<TCreate, UpsertData>): Promise<UseAOrB<TEntity, TSchema>>;
-  createIfNotExists(keyFields: string[], data: UseAOrB<TCreate, UpsertData>): Promise<UseAOrB<TEntity, TSchema>>;
-  update(id: number | string, data: UseAOrB<TUpdate, UpsertData>): Promise<UseAOrB<TEntity, TSchema>>;
+  getByField(mapping: Record<string, any>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
+  getAllByField(mapping: Record<string, any>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
+  getAll(): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
+  create(data: UseAOrB<TCreate, Partial<MapSchemaToType<TSchema>>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
+  createIfNotExists(keyFields: string[], data: UseAOrB<TCreate, UpsertData>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
+  update(id: number | string, data: UseAOrB<TUpdate, UpsertData>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>>;
   delete(id: number | string): Promise<WasDeleted>;
   deleteByField(mapping: Record<string, any>): Promise<WasDeleted>;
   registerCreateMiddleware(middleware: ((data: UseAOrB<TCreate, UpsertData>) => void)): void;

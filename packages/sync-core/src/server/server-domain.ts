@@ -3,14 +3,14 @@ import {MergeEngine} from "./interfaces/merge-engine";
 import {ServerDomainOptions} from "../interfaces/server-domain-options";
 import {ServerSyncEngine} from "./server-sync-engine";
 import {FieldStorageMethod} from "./enums/field-storage-method";
-import {Migration} from "../interfaces/migration";
+import {RepositoryBase} from "../common/repository-base";
 
 export class ServerDomain {
   readonly databaseAdapter: DatabaseAdapter;
   readonly mergeEngine: MergeEngine;
   readonly name: string;
   readonly fieldsStorageMethod: FieldStorageMethod;
-  readonly migrations: Migration[];
+  readonly repositories: RepositoryBase<any>[];
 
   syncEngine: ServerSyncEngine;
 
@@ -19,13 +19,13 @@ export class ServerDomain {
     mergeEngine,
     name,
     fieldsStorageMethod,
-    migrations = [],
+    repositories = [],
   }: ServerDomainOptions) {
     this.databaseAdapter = databaseAdapter;
     this.mergeEngine = mergeEngine;
     this.name = name;
     this.fieldsStorageMethod = fieldsStorageMethod;
-    this.migrations = migrations;
+    this.repositories = repositories;
   }
 
   /**
@@ -35,7 +35,10 @@ export class ServerDomain {
   async runSetup(syncEngine: ServerSyncEngine) {
     this.syncEngine = syncEngine;
 
-    this.syncEngine.migrationRunner.registerMigration(...this.migrations);
+    for await (const repository of this.repositories) {
+      await repository.runSetup(this, syncEngine);
+    }
+
     await this.databaseAdapter.connect();
     await this.mergeEngine.runSetup(this.syncEngine);
   }

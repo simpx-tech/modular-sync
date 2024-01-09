@@ -134,6 +134,7 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   async createEntity(entity: string, schema: EntitySchema, options: CreateEntityOptions = {}) {
+    // DEV implement metadata
     const schemaWithMetadata = options.noSyncFields ? schema : {
       ...schema,
       createdAt: SchemaType.Date,

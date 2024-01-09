@@ -8,26 +8,44 @@ import {ServerDomain} from "../../src/server/server-domain";
 describe("RepositoryFactory", () => {
   let syncEngine: ServerSyncEngine;
   let commonDb: SqliteAdapter;
-  let domain: ServerDomain
+  let domain: ServerDomain;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     ({ syncEngine, commonDb, domain } = setupTests());
+    await commonDb.connect();
   })
 
   describe("create", () => {
-    it("should create a repository", async () => {
-      const repository = RepositoryFactory.create("test_entity", domain, {
+    it("should create a repository and correctly convert data", async () => {
+      const repository = RepositoryFactory.create("test_entity", {
         test: SchemaType.String,
         test2: SchemaType.Integer,
         test3: SchemaType.Boolean,
+        test4: SchemaType.Date,
       });
 
-      await repository.runSetup(syncEngine);
+      await repository.runSetup(domain, syncEngine);
 
-      const res = await repository.create({});
-      res.test
-      res.test2
-      res.test3
+      // Run migrations automatically created from repositories
+      await syncEngine.migrationRunner.runSetup();
+      await syncEngine.migrationRunner.runAllMigrations();
+
+      const res = await repository.create({
+        test: "test",
+        test2: 1,
+        test3: true,
+        test4: new Date("2021-01-01"),
+      })
+
+      expect(res).toEqual({
+        id: 1,
+        test: "test",
+        test2: 1,
+        test3: true,
+        test4: new Date("2021-01-01"),
+      })
     })
+
+    it.todo("should create a repository with a connection field")
   })
 })

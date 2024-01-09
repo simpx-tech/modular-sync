@@ -54,13 +54,13 @@ class InboundConverter implements DataConverterFlow {
     return finalBoolean ? 1 : 0;
   }
 
-  toDate(data: unknown) {
+  toDate(data: unknown): number {
     if (typeof data === "string" || typeof data === "number") {
-      return new Date(data);
+      return new Date(data).getTime();
     }
 
     if (data instanceof Date) {
-      return data;
+      return data.getTime();
     }
 
     return undefined;
