@@ -7,7 +7,6 @@ import supertest from "supertest";
 import {setupTests} from "../helpers/setup-tests";
 import {clearAllFiles} from "../helpers/clear-all-files";
 import {setupAuthentication} from "../helpers/setup-authentication";
-import {AuthEngine} from "../../src/server/interfaces/auth-engine";
 import {MigrationRunner} from "../../src/migration/migration-runner";
 
 describe("Server Sync Engine", () => {
@@ -52,12 +51,11 @@ describe("Server Sync Engine", () => {
   describe("Server Sync Engine Endpoints", () => {
     let syncEngine: ServerSyncEngine;
     let commonDb: SqliteAdapter;
-    let authEngine: AuthEngine;
     let app: Express;
     let token: string;
 
     beforeEach(async () => {
-      ({ commonDb, syncEngine, app, authEngine } = setupTests());
+      ({ commonDb, syncEngine, app } = setupTests());
 
       await syncEngine.runSetup();
 

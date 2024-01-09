@@ -23,9 +23,9 @@ describe("Sync Database Merger", () => {
     await setupDomains(syncEngine);
   })
 
-  describe("bulk-write", () => {
+  describe("push", () => {
     it("should create the domain if it doesn't exist yet", async () => {
-      const res = await supertest(app).post("/sync/test-domain/bulk-write").query({ repositoryId: "3" }).send({
+      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send({
         entities: {},
         finished: false,
       }).set("Authorization", `Bearer ${token}`);
@@ -44,7 +44,7 @@ describe("Sync Database Merger", () => {
     })
 
     it("should update domain's isMigrated to true on last receiveAll call", async () => {
-      const res = await supertest(app).post("/sync/test-domain/bulk-write").query({ repositoryId: "3" }).send({
+      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send({
         entities: {},
         finished: true,
       }).set("Authorization", `Bearer ${token}`);
@@ -65,14 +65,14 @@ describe("Sync Database Merger", () => {
     it("should fail if domain is already migrated (user should call sync endpoint instead)", async () => {
       await syncEngine.domainRepository.update(1, { isMigrated: true });
 
-      const res = await supertest(app).post("/sync/test-domain/bulk-write").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`);
+      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(409);
     })
 
     describe("unified fields", () => {
       it("should receive and store all entities from a domain", async () => {
-        const res = await supertest(app).post("/sync/test-domain/bulk-write").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
+        const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
           entities: {
             "test_entity": [
               {
@@ -140,12 +140,14 @@ describe("Sync Database Merger", () => {
         });
 
         expect(res.status).toBe(200);
-        expect(res.body).toBe({ entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z" });
+        expect(res.body).toEqual({ entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z" });
 
         /* Should create the entities on the database */
         const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
         expect(testEntities).toEqual([{
           id: 1,
+          repository: 1,
+          domain: 1,
           test: "test",
           test2: "test2",
           updatedAt: "2023-01-01T00:00:00.000Z",
@@ -153,6 +155,8 @@ describe("Sync Database Merger", () => {
           wasDeleted: false,
         }, {
           id: 2,
+          repository: 1,
+          domain: 1,
           test: "test3",
           test2: "test4",
           updatedAt: "2023-01-02T00:00:00.000Z",
@@ -240,12 +244,14 @@ describe("Sync Database Merger", () => {
       it.todo("should allow receive the same entities without problem (and not create duplicates)")
 
       it.todo("should allow receive the same entities and update them if necessary (and not create duplicates)")
+
+      it.todo("should ignore entities that doesn't exists on server and add a warning on log")
     })
 
     describe("separated fields", () => {})
   });
 
-  describe("bulk-read", () => {
+  describe("pull", () => {
     it.todo("should fail if it was not migrated yet")
 
     it.todo("should return all entities from a domain")

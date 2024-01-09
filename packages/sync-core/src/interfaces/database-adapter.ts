@@ -29,6 +29,12 @@ export interface DatabaseAdapter {
 
 export interface CreateEntityOptions {
   unique?: string[];
+
+  /**
+   * Remove all metadata fields from the entity
+   */
+  noSyncFields?: boolean;
+
   // TODO add indexes
 }
 

@@ -104,9 +104,7 @@ export class SqliteAdapter implements DatabaseAdapter {
     await this.runMiddlewares('update');
     const formattedData = this.formatUpdateData(data);
 
-    console.log(`UPDATE ${entity} SET ${formattedData} WHERE id = ${id}`, typeof id)
-    const res = this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE id = ?`).run(id);
-    console.log(res, id)
+    this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE id = ?`).run(id);
 
     return this.getById(entity, id);
   }
@@ -136,6 +134,11 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   async createEntity(entity: string, schema: EntitySchema, options: CreateEntityOptions = {}) {
+    const schemaWithMetadata = options.noSyncFields ? schema : {
+      ...schema,
+      createdAt: SchemaType.Date,
+    }
+
     await this.raw({
       sql: `CREATE TABLE IF NOT EXISTS ${entity} (${this.formatSchema(schema)}${this.formatUniques(options?.unique)});`,
       params: [],

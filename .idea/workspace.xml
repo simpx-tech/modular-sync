@@ -102,14 +102,14 @@
       <recent name="$PROJECT_DIR$/packages/sync-express-router" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/interfaces" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/repository" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/domain" />
-      <recent name="$PROJECT_DIR$/packages/sync-core/src/interfaces" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/migration" />
       <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups">
+  <component name="RunManager" selected="Jest.MigrationRunner">
     <configuration name="MigrationRunner" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
@@ -177,11 +177,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.MigrationRunner" />
+        <item itemvalue="Jest.Sync Database Merger" />
         <item itemvalue="Jest.Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups" />
         <item itemvalue="Jest.Server Sync Engine" />
         <item itemvalue="Jest.Server Domain" />
-        <item itemvalue="Jest.MigrationRunner" />
-        <item itemvalue="Jest.Sync Database Merger" />
       </list>
     </recent_temporary>
   </component>
@@ -238,7 +238,7 @@
       <workItem from="1704720751092" duration="603000" />
       <workItem from="1704733435978" duration="603000" />
       <workItem from="1704734677321" duration="1000" />
-      <workItem from="1704741430660" duration="8274000" />
+      <workItem from="1704741430660" duration="20311000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -336,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704161701093</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="wip: add MigrationRunner">
+      <option name="closed" value="true" />
+      <created>1704754562713</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1704754562713</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -367,7 +375,8 @@
     <MESSAGE value="feat: add SQLiteDataConverter, add tests" />
     <MESSAGE value="feat: use database converter, add domain repository tests" />
     <MESSAGE value="feat: use inbound converter, start DatabaseMerger bulkWrite implementation, fix inbound converter toBoolean" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: use inbound converter, start DatabaseMerger bulkWrite implementation, fix inbound converter toBoolean" />
+    <MESSAGE value="wip: add MigrationRunner" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip: add MigrationRunner" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

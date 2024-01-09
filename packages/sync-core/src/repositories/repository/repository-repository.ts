@@ -2,7 +2,6 @@ import {CreateRepository, RepositoryEntity} from "../interfaces/repository-entit
 import {RepositoryOptions} from "../interfaces/repository-options";
 import {DatabaseAdapter} from "../../interfaces/database-adapter";
 import {ServerSyncEngine} from "../../server/server-sync-engine";
-import {CreateDomainMigration} from "../domain/domain-migration";
 import {CreateRepositoryMigration} from "./repository-migration";
 
 export class RepositoryRepository {

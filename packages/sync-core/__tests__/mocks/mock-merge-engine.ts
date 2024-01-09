@@ -6,11 +6,11 @@ export class MockMergeEngine implements MergeEngine {
     return Promise.resolve(undefined);
   }
 
-  bulkWrite(): Promise<void> {
+  push(): Promise<void> {
     return Promise.resolve(undefined);
   }
 
-  bulkRead(): Promise<void> {
+  pull(): Promise<void> {
     return Promise.resolve(undefined);
   }
 

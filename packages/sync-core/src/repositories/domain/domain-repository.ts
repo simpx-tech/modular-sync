@@ -5,7 +5,6 @@ import {CreateDomain, DomainEntity, UpdateDomain} from "../interfaces/domain-ent
 import {ServerSyncEngine} from "../../server/server-sync-engine";
 import {CreateDomainMigration} from "./domain-migration";
 
-
 export class DomainRepository {
   private databaseAdapter: DatabaseAdapter;
   private syncEngine: ServerSyncEngine;

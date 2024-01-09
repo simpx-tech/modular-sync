@@ -1,5 +1,5 @@
 import {
-  BulkReadOptions, BulkWriteOperation, Identity,
+  PullOptions, PushOperation, Identity,
   MergeEngine,
   OperationsReturn, SyncOperation
 } from "@simpx/sync-core/src/server/interfaces/merge-engine";
@@ -8,6 +8,7 @@ import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {NotFoundException} from "@simpx/sync-core/src/server/exceptions/not-found-exception";
 import {ConflictException} from "@simpx/sync-core/src/server/exceptions/conflict-exception";
+import isEnvironmentTornDown = jest.isEnvironmentTornDown;
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
@@ -17,8 +18,8 @@ export class DatabaseMerger implements MergeEngine {
 
     this.syncEngine.domains.forEach(domain => {
       this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.syncEndpoint.bind(this));
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/bulk-read`, this.bulkReadEndpoint.bind(this));
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/bulk-write`, this.bulkWriteEndpoint.bind(this));
+      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/pull`, this.pullEndpoint.bind(this));
+      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/push`, this.pushEndpoint.bind(this));
     })
   }
 
@@ -32,25 +33,25 @@ export class DatabaseMerger implements MergeEngine {
    * the client
    * @param req
    */
-  async bulkWriteEndpoint(req: RouterRequest) {
+  async pushEndpoint(req: RouterRequest) {
     const { repositoryId } = req.query as { domain: string, repositoryId: string };
     const path = req.path;
     const prefix = this.syncEngine.routerAdapter.path;
 
-    return await this.bulkWrite({ domain: this.getDomainFromPath(prefix, path), repositoryId }, req.body as BulkWriteOperation);
+    return await this.push({ domain: this.getDomainFromPath(prefix, path), repositoryId }, req.body as PushOperation);
   }
 
   private getDomainFromPath(prefix: string, path: string) {
-    return /.*sync\/(.*)\/.*/.exec(path)[1];
+    return new RegExp(`.*${prefix}\\/(.*)\\/.*`, 'g').exec(path)[1];
   }
 
-  async bulkReadEndpoint(req: RouterRequest) {}
+  async pullEndpoint(req: RouterRequest) {}
 
-  bulkRead(identity: Identity, options: BulkReadOptions): Promise<OperationsReturn> {
+  pull(identity: Identity, options: PullOptions): Promise<OperationsReturn> {
     return Promise.resolve(undefined);
   }
 
-  async bulkWrite(identity: Identity, operation: BulkWriteOperation): Promise<OperationsReturn> {
+  async push(identity: Identity, operation: PushOperation): Promise<OperationsReturn> {
     const domains = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
     const domain = domains.find(domain => domain.name === identity.domain);
 
@@ -62,7 +63,35 @@ export class DatabaseMerger implements MergeEngine {
       throw new ConflictException("Domain is already migrated");
     }
 
-    // Save all entities on final destination
+    const serverDomain = this.syncEngine.domains.find(domain => domain.name === identity.domain);
+
+    for await (const [entityName, entityOperation] of Object.entries(operation.entities)) {
+      const promises = entityOperation.map(async (entityOperation) => {
+        const mergedFields = entityOperation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
+
+        // Should get the schema of the domain (?) to properly cast the fields to the correct value
+
+        console.log(entityName, {
+          ...mergedFields,
+          repository: identity.repositoryId,
+          domain: domain.id,
+          submittedAt: entityOperation.submittedAt,
+          updatedAt: entityOperation.updatedAt,
+          wasDeleted: entityOperation.wasDeleted,
+        });
+
+        await serverDomain.databaseAdapter.create(entityName, {
+          ...mergedFields,
+          repository: identity.repositoryId,
+          domain: domain.id,
+          submittedAt: entityOperation.submittedAt,
+          updatedAt: entityOperation.updatedAt,
+          wasDeleted: entityOperation.wasDeleted,
+        });
+      });
+
+      await Promise.all(promises);
+    }
 
     // Save all modifications
 
