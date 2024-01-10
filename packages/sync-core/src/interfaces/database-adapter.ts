@@ -15,6 +15,7 @@ export interface DatabaseAdapter {
   create<T = any>(entity: string, data: UpsertData): Promise<T>;
   createIfNotExists<T = any>(entity: string, keyFields: string[], data: UpsertData): Promise<T>;
   update<T = any>(entity: string, id: number | string, data: UpsertData): Promise<T>;
+  // TODO should do soft delete
   delete(entity: string, id: number | string): Promise<WasDeleted>;
   deleteByField(entity: string, mapping: Record<string, any>): Promise<WasDeleted>;
   raw<T = any>(options: any): Promise<T>;
@@ -46,7 +47,9 @@ export type UpsertData = Record<string, string | number | boolean>
 
 export type EntitySchema = Record<string, FieldType>
 
-export type FieldType = "string" | "integer" | "float" | "boolean" | "date" | { type: string, entity: string };
+export type ConnectionField = { type: string, entity: string }
+
+export type FieldType = "string" | "integer" | "float" | "boolean" | "date" | ConnectionField;
 
 export class SchemaType {
   static String = "string" as const;
@@ -55,7 +58,7 @@ export class SchemaType {
   static Boolean = "boolean" as const;
   static Date = "date" as const;
 
-  static Connection = (entity: string) => ({
+  static Connection = (entity: string): ConnectionField => ({
     type: "connection",
     entity,
   });

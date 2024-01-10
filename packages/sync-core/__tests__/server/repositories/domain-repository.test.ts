@@ -1,5 +1,5 @@
 import {setupTests} from "../../helpers/setup-tests";
-import {DomainRepository} from "../../../src/repositories/domain/domain-repository";
+import {DomainRepository} from "../../../src/repositories/domain-repository";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
 import {ServerSyncEngine} from "../../../src/server/server-sync-engine";
 import {setupRepositories} from "../../helpers/setup-repositories";

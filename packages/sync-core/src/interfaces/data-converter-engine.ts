@@ -18,5 +18,5 @@ export interface DataConverterFlow {
   toBoolean(field: unknown): any;
   toDate(field: unknown): any;
   toConnection(field: unknown): any;
-  convert(obj: Record<string, unknown>, schema: EntitySchema): any;
+  convert(obj: Record<string, any>, schema: EntitySchema): any;
 }

@@ -6,10 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="e361858a-9f37-4c93-86fc-60edd120da1c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sync-core/src/repositories/domain-repository.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-core/src/repositories/domain-repository.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sync-database-merger/__tests__/data/1704141772659.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/sync-database-merger/src/sync-database-merger.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-database-merger/src/sync-database-merger.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-core/__tests__/common/repository-factory.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-core/__tests__/common/repository-factory.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-core/src/common/repository-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-core/src/common/repository-base.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-core/src/interfaces/database-adapter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-core/src/interfaces/database-adapter.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-core/src/interfaces/repository.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-core/src/interfaces/repository.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +56,7 @@
     "Jest.Domain Repository.getAllByRepositoryId.should return empty array if the repository was not found.executor": "Run",
     "Jest.Domain Repository.getByRepositoryId.should return the domain by repository id.executor": "Debug",
     "Jest.MigrationRunner.executor": "Run",
+    "Jest.Repository.executor": "Run",
     "Jest.RepositoryFactory.executor": "Run",
     "Jest.SQLite Adapter Connection.executor": "Run",
     "Jest.SQLite Adapter.createEntity.executor": "Run",
@@ -104,14 +105,14 @@
       <recent name="$PROJECT_DIR$/packages/sync-express-router" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/interfaces" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/repository" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/domain" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/migration" />
-      <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.RepositoryFactory">
+  <component name="RunManager" selected="Jest.Repository">
     <configuration name="MigrationRunner" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
@@ -121,6 +122,18 @@
       <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/migration-runner.test.ts" />
       <test-names>
         <test-name value="MigrationRunner" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Repository" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/common/repository.test.ts" />
+      <test-names>
+        <test-name value="Repository" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -162,28 +175,16 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="Sync Database Merger" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
-      <test-names>
-        <test-name value="Sync Database Merger" />
-      </test-names>
-      <method v="2" />
-    </configuration>
     <configuration name="backend.ts" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v20.10.0/bin/node" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.Repository" />
         <item itemvalue="Jest.RepositoryFactory" />
         <item itemvalue="Jest.Sqlite Data Converter Engine" />
         <item itemvalue="Jest.Sqlite Data Converter Engine.Inbound Data Conversion.Conversion" />
         <item itemvalue="Jest.MigrationRunner" />
-        <item itemvalue="Jest.Sync Database Merger" />
       </list>
     </recent_temporary>
   </component>
@@ -240,7 +241,11 @@
       <workItem from="1704720751092" duration="603000" />
       <workItem from="1704733435978" duration="603000" />
       <workItem from="1704734677321" duration="1000" />
-      <workItem from="1704741430660" duration="26184000" />
+      <workItem from="1704741430660" duration="26511000" />
+      <workItem from="1704809553304" duration="10000" />
+      <workItem from="1704811418541" duration="2958000" />
+      <workItem from="1704826534991" duration="2513000" />
+      <workItem from="1704836826282" duration="6595000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -354,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704766979571</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="wip: add RepositoryBase, fix useAOrB typing, fix date inbound conversion in SQLite">
+      <option name="closed" value="true" />
+      <created>1704772916312</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1704772916312</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -387,20 +400,15 @@
     <MESSAGE value="feat: use inbound converter, start DatabaseMerger bulkWrite implementation, fix inbound converter toBoolean" />
     <MESSAGE value="wip: add MigrationRunner" />
     <MESSAGE value="wip: add RepositoryFactory, add MigrationRunner tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip: add RepositoryFactory, add MigrationRunner tests" />
+    <MESSAGE value="wip: add RepositoryBase, fix useAOrB typing, fix date inbound conversion in SQLite" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip: add RepositoryBase, fix useAOrB typing, fix date inbound conversion in SQLite" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/packages/sync-core/src/interfaces/data-converter-engine.ts</url>
-          <line>20</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/packages/sync-sqlite-adapter/src/sqlite-data-converter-engine.ts</url>
           <line>12</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>

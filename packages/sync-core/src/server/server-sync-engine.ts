@@ -5,8 +5,8 @@ import {HttpMethod} from "../interfaces/http-method";
 import {ServerSyncEngineOptions} from "./interfaces/server-sync-engine-options";
 import {AuthEngine} from "./interfaces/auth-engine";
 import {RouterAdapter} from "./interfaces/router-adapter";
-import {RepositoryRepository} from "../repositories/repository/repository-repository";
-import {DomainRepository} from "../repositories/domain/domain-repository";
+import {REPOSITORY_ENTITY, RepositoryRepository} from "../repositories/repository-repository";
+import {DomainRepository} from "../repositories/domain-repository";
 import {CreateRepository} from "../repositories/interfaces/repository-entity";
 import {NotFoundException} from "./exceptions/not-found-exception";
 import {UnauthorizedException} from "./exceptions/unauthorized-exception";
@@ -34,8 +34,8 @@ export class ServerSyncEngine {
     await this.metadataDatabase.connect();
     await this.routerAdapter.runSetup();
 
-    this.repositoryRepository = await new RepositoryRepository({ databaseAdapter: this.metadataDatabase}).runSetup(this)
-    this.domainRepository = await new DomainRepository({ databaseAdapter: this.metadataDatabase}).runSetup(this);
+    this.repositoryRepository = await new RepositoryRepository().runSetupDirect(this, "internal-sync-domain")
+    this.domainRepository = await new DomainRepository().runSetupDirect(this, "internal-sync-domain");
 
     await this.authEngine.runSetup(this);
 
@@ -102,7 +102,7 @@ export class ServerSyncEngine {
     const { repositoryId } = request.query;
 
     await this.domainRepository.deleteByRepositoryId(repositoryId);
-    await this.metadataDatabase.delete(RepositoryRepository.ENTITY, repositoryId);
+    await this.metadataDatabase.delete(REPOSITORY_ENTITY, repositoryId);
 
     return { success: true };
   }
