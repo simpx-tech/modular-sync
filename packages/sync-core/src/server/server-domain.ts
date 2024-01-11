@@ -6,11 +6,13 @@ import {FieldStorageMethod} from "./enums/field-storage-method";
 import {RepositoryBase} from "../common/repository-base";
 
 export class ServerDomain {
+  readonly mergeEngine?: MergeEngine;
+
   readonly databaseAdapter: DatabaseAdapter;
-  readonly mergeEngine: MergeEngine;
   readonly name: string;
   readonly fieldsStorageMethod: FieldStorageMethod;
   readonly repositories: RepositoryBase<any>[];
+  readonly isVirtual: boolean;
 
   syncEngine: ServerSyncEngine;
 
@@ -20,12 +22,14 @@ export class ServerDomain {
     name,
     fieldsStorageMethod,
     repositories = [],
+    isVirtual,
   }: ServerDomainOptions) {
     this.databaseAdapter = databaseAdapter;
     this.mergeEngine = mergeEngine;
     this.name = name;
     this.fieldsStorageMethod = fieldsStorageMethod;
     this.repositories = repositories;
+    this.isVirtual = isVirtual ?? false;
   }
 
   /**
@@ -36,10 +40,12 @@ export class ServerDomain {
     this.syncEngine = syncEngine;
 
     for await (const repository of this.repositories) {
-      await repository.runSetup(this, syncEngine);
+      await repository.runSetup(this);
     }
 
     await this.databaseAdapter.connect();
-    await this.mergeEngine.runSetup(this.syncEngine);
+    if (this.mergeEngine) {
+      await this.mergeEngine.runSetup(this, this.syncEngine);
+    }
   }
 }

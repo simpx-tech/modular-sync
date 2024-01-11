@@ -95,7 +95,7 @@ describe("Server Sync Engine", () => {
           id: 1,
           name: "test-domain",
           repository: 1,
-          isMigrated: false,
+          isMigrated: 0,
         }]);
       })
     });

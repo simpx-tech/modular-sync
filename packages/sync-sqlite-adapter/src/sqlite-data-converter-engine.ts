@@ -108,6 +108,8 @@ class OutboundConverter implements DataConverterFlow {
   }
 
   convert(obj: Record<string, unknown>, schema: EntitySchema): any {
+    if (!obj) return undefined;
+
     return Object.entries(obj).reduce((acc, [key, value]) => {
       return {
         ...acc,

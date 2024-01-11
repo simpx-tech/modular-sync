@@ -8,7 +8,7 @@
   "scripts": {
     "tsc": "lerna run tsc",
     "publish": "lerna run tsc && lerna publish",
-    "test": "lerna run test --scope example --stream"
+    "test": "lerna run test --stream"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

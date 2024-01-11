@@ -1,5 +1,5 @@
 import {setupTests} from "../../helpers/setup-tests";
-import {DomainRepository} from "../../../src/repositories/domain-repository";
+import {DOMAIN_ENTITY} from "../../../src/repositories/domain-repository";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
 import {ServerSyncEngine} from "../../../src/server/server-sync-engine";
 import {setupRepositories} from "../../helpers/setup-repositories";
@@ -11,7 +11,7 @@ describe("Domain Repository", () => {
 
   beforeEach(async () => {
     ({ commonDb, syncEngine } = setupTests());
-    await syncEngine.runSetup()
+    await syncEngine.runSetup();
     await setupAuthentication(syncEngine);
     await setupRepositories(syncEngine);
   });
@@ -20,7 +20,7 @@ describe("Domain Repository", () => {
     it("should have created the domain table", async () => {
       const tables = await commonDb.raw({ sql: "SELECT name FROM sqlite_master WHERE type='table';", params: [], isQuery: true, fetchAll: true })
 
-      expect(tables.map(t => t.name)).toContain(DomainRepository.ENTITY);
+      expect(tables.map(t => t.name)).toContain(DOMAIN_ENTITY);
     });
   });
 
@@ -36,7 +36,7 @@ describe("Domain Repository", () => {
     });
 
     it("should return empty array if the repository was not found", async () => {
-      const domains = await syncEngine.domainRepository.getAllByRepositoryId(3);
+      const domains = await syncEngine.domainRepository.getAllByRepositoryId(4);
       expect(domains).toEqual([]);
     })
 
@@ -116,7 +116,7 @@ describe("Domain Repository", () => {
 
   describe("createIfNotExists", () => {
     it("should create the domain if it doesn't exist yet", async () => {
-      const created = await syncEngine.domainRepository.createIfNotExists({
+      const created = await syncEngine.domainRepository.createIfNotExists(["name", "repository"], {
         name: "test",
         repository: 1,
         isMigrated: false,
@@ -137,7 +137,7 @@ describe("Domain Repository", () => {
         isMigrated: false,
       });
 
-      const created = await syncEngine.domainRepository.createIfNotExists({
+      const created = await syncEngine.domainRepository.createIfNotExists(["name", "repository"],{
         name: "test",
         repository: 1,
         isMigrated: false,

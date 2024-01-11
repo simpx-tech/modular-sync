@@ -120,9 +120,9 @@ describe("MigrationRunner", () => {
 
       expect(res.length).toStrictEqual(4);
       expect(res[0]?.name).toStrictEqual("sync_schema_migrations");
-      expect(res[1]?.name).toStrictEqual("sync_repositories");
-      expect(res[2]?.name).toStrictEqual("sync_domains");
-      expect(res[3]?.name).toStrictEqual("sync_users");
+      expect(res[1]?.name).toStrictEqual("sync_users");
+      expect(res[2]?.name).toStrictEqual("sync_repositories");
+      expect(res[3]?.name).toStrictEqual("sync_domains");
     })
   });
 })

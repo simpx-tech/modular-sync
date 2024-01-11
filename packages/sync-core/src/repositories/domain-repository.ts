@@ -26,7 +26,7 @@ export class DomainRepository extends RepositoryBase<any, DomainEntity, CreateDo
     const responseArray = await this.db.getAllByField<DomainEntity[]>(DOMAIN_ENTITY, { repository: repositoryId })
 
     const existentDomains = responseArray.map((domain) => domain.name);
-    const missingDomains = this.syncEngine.domains.filter((domain) => !existentDomains.includes(domain.name)).map((domain) => domain.name);
+    const missingDomains = this.syncEngine.domains.filter((domain) => !existentDomains.includes(domain.name) && !domain.isVirtual).map((domain) => domain.name);
     const createdDomains = await Promise.all(missingDomains.map((domain) => this.createIfNotExists(["name", "repository"], { name: domain, repository: repositoryId, isMigrated: false })));
 
     return [...responseArray, ...createdDomains].map((data) => this.db.converter.outbound.convert(data ?? {}, DOMAIN_SCHEMA));

@@ -9,23 +9,20 @@ import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callb
 import {NotFoundException} from "@simpx/sync-core/src/server/exceptions/not-found-exception";
 import {ConflictException} from "@simpx/sync-core/src/server/exceptions/conflict-exception";
 import isEnvironmentTornDown = jest.isEnvironmentTornDown;
+import {ServerDomain} from "@simpx/sync-core/src/server/server-domain";
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
 
-  async runSetup(syncEngine: ServerSyncEngine) {
+  async runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void> {
     this.syncEngine = syncEngine;
 
-    this.syncEngine.domains.forEach(domain => {
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.syncEndpoint.bind(this));
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/pull`, this.pullEndpoint.bind(this));
-      this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/push`, this.pushEndpoint.bind(this));
-    })
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.syncEndpoint.bind(this));
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/pull`, this.pullEndpoint.bind(this));
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/push`, this.pushEndpoint.bind(this));
   }
 
-  async syncEndpoint(req: RouterRequest) {
-
-  }
+  async syncEndpoint(req: RouterRequest) {}
 
   /**
    * This endpoint is used to migrate a domain.
@@ -71,15 +68,6 @@ export class DatabaseMerger implements MergeEngine {
 
         // Should get the schema of the domain (?) to properly cast the fields to the correct value
 
-        console.log(entityName, {
-          ...mergedFields,
-          repository: identity.repositoryId,
-          domain: domain.id,
-          submittedAt: entityOperation.submittedAt,
-          updatedAt: entityOperation.updatedAt,
-          wasDeleted: entityOperation.wasDeleted,
-        });
-
         await serverDomain.databaseAdapter.create(entityName, {
           ...mergedFields,
           repository: identity.repositoryId,
@@ -93,7 +81,7 @@ export class DatabaseMerger implements MergeEngine {
       await Promise.all(promises);
     }
 
-    // Save all modifications
+    // TODO Save all modifications
 
     if (operation.finished) {
       await this.syncEngine.domainRepository.update(domain.id, { isMigrated: true });

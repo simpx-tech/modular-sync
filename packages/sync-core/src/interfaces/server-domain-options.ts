@@ -7,6 +7,10 @@ export interface ServerDomainOptions {
   databaseAdapter: DatabaseAdapter;
   mergeEngine: MergeEngine;
   name: string;
-  fieldsStorageMethod: FieldStorageMethod;
-  repositories?: RepositoryBase<any>[];
+
+  fieldsStorageMethod?: FieldStorageMethod;
+  repositories?: RepositoryBase<any, any, any, any>[];
+
+  /* Doesn't create entity on the database */
+  isVirtual?: boolean;
 }

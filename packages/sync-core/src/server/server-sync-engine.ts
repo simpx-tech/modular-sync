@@ -19,6 +19,7 @@ export class ServerSyncEngine {
   readonly authEngine: AuthEngine;
   readonly migrationRunner: MigrationRunner;
 
+  internalDomain: ServerDomain;
   repositoryRepository: RepositoryRepository;
   domainRepository: DomainRepository;
 
@@ -34,8 +35,18 @@ export class ServerSyncEngine {
     await this.metadataDatabase.connect();
     await this.routerAdapter.runSetup();
 
-    this.repositoryRepository = await new RepositoryRepository().runSetupDirect(this, "internal-sync-domain")
-    this.domainRepository = await new DomainRepository().runSetupDirect(this, "internal-sync-domain");
+    this.repositoryRepository = new RepositoryRepository()
+    this.domainRepository = new DomainRepository()
+
+    this.internalDomain = new ServerDomain({
+      name: "internal-sync-domain",
+      databaseAdapter: this.metadataDatabase,
+      mergeEngine: undefined,
+      fieldsStorageMethod: undefined,
+      repositories: [this.repositoryRepository, this.domainRepository],
+      isVirtual: true,
+    });
+    this.domains.push(this.internalDomain);
 
     await this.authEngine.runSetup(this);
 
@@ -88,6 +99,10 @@ export class ServerSyncEngine {
     } as CreateRepository);
 
     for await (const domain of this.domains) {
+      if (domain.isVirtual) {
+        continue;
+      }
+
       await this.domainRepository.create({
         repository: repository.id,
         name: domain.name,

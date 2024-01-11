@@ -1,12 +1,8 @@
 import {ServerDomain} from "../../src/server/server-domain";
-import {MockMergeEngine} from "../mocks/mock-merge-engine";
-import {MockDatabaseAdapter} from "../mocks/mock-database-adapter";
 import {ServerSyncEngine} from "../../src/server/server-sync-engine";
-import {MockRouterAdapter} from "../mocks/mock-router-adapter";
-import {MockAuthEngine} from "../mocks/mock-auth-engine";
-import {FieldStorageMethod} from "../../src/server/enums/field-storage-method";
 import {DatabaseMerger} from "@simpx/sync-database-merger/src/sync-database-merger";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
+import {setupTests} from "../helpers/setup-tests";
 
 describe("Server Domain", () => {
   let domain: ServerDomain;
@@ -15,25 +11,13 @@ describe("Server Domain", () => {
   let syncEngine: ServerSyncEngine;
 
   beforeEach(() => {
-    mergeEngine = new DatabaseMerger();
+    ({ domain, syncEngine } = setupTests());
+
+    mergeEngine = domain.mergeEngine as DatabaseMerger;
     mergeEngine.runSetup = jest.fn().mockResolvedValue(undefined);
 
-    databaseAdapter = new SqliteAdapter();
+    databaseAdapter = domain.databaseAdapter as SqliteAdapter;
     databaseAdapter.connect = jest.fn().mockResolvedValue(undefined);
-
-    domain = new ServerDomain({
-      mergeEngine,
-      databaseAdapter,
-      fieldsStorageMethod: FieldStorageMethod.Unified,
-      name: "test-domain"
-    });
-
-    syncEngine = new ServerSyncEngine({
-      domains: [domain],
-      authEngine: new MockAuthEngine(),
-      routerAdapter: new MockRouterAdapter(),
-      metadataDatabase: new MockDatabaseAdapter(),
-    })
   })
 
   afterEach(() => {

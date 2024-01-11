@@ -1,21 +1,25 @@
 import {SqliteAdapter} from "../src/sqlite-adapter";
 import fs from "fs";
+import crypto from "crypto";
+import path from "path";
 
 describe("SQLite Adapter Connection", () => {
   let sqliteAdapter: SqliteAdapter = null;
+  let dbPath: string;
 
   beforeEach(async () => {
-    sqliteAdapter = new SqliteAdapter({ databasePath: "./__tests__/data/__tests__.sqlite" });
+    dbPath = `${crypto.randomUUID()}.db`;
+    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(__dirname, "./data", dbPath) });
   });
 
   afterEach(async () => {
     await sqliteAdapter.disconnect();
-    fs.unlinkSync("./__tests__/data/__tests__.sqlite");
+    fs.unlinkSync(path.join(__dirname, "./data", dbPath));
   })
 
   it("should connect properly", async () => {
     await sqliteAdapter.connect();
-    const exists = fs.existsSync("./__tests__/data/__tests__.sqlite");
+    const exists = fs.existsSync(path.join(__dirname, "./data", dbPath));
     expect(exists).toBe(true);
   })
 

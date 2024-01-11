@@ -70,7 +70,7 @@ describe("Sync Database Merger", () => {
       expect(res.status).toBe(409);
     })
 
-    describe("unified fields", () => {
+    describe("Unified fields", () => {
       it("should receive and store all entities from a domain", async () => {
         const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
           entities: {

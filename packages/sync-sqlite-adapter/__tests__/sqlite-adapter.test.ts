@@ -2,16 +2,20 @@ import {SqliteAdapter} from "../src/sqlite-adapter";
 import * as fs from "fs";
 import BetterSqlite, {Database} from "better-sqlite3";
 import {SchemaType} from "@simpx/sync-core/src/interfaces/database-adapter";
+import crypto from "crypto";
+import path from "path";
 
 describe("SQLite Adapter", () => {
   let sqliteAdapter: SqliteAdapter = null;
   let database: Database = null;
+  let dbPath: string;
 
   beforeEach(async () => {
-    sqliteAdapter = new SqliteAdapter({ databasePath: "./__tests__/data/__tests__.sqlite" });
+    dbPath = `${crypto.randomUUID()}.db`;
+    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(__dirname, "./data", dbPath) });
     await sqliteAdapter.connect();
 
-    database = new BetterSqlite("./__tests__/data/__tests__.sqlite");
+    database = new BetterSqlite(path.join(__dirname, "./data", dbPath));
     database.exec("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
     database.exec("CREATE TABLE IF NOT EXISTS test2 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, table_id INTEGER, FOREIGN KEY(table_id) REFERENCES test(id))");
     database.exec("CREATE TABLE IF NOT EXISTS test3 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, name2 TEXT, UNIQUE(name, name2))");
@@ -19,7 +23,7 @@ describe("SQLite Adapter", () => {
 
   afterEach(async () => {
     await sqliteAdapter.disconnect();
-    fs.unlinkSync("./__tests__/data/__tests__.sqlite");
+    fs.unlinkSync(path.join(__dirname, "./data", dbPath));
   })
 
   describe("createIfNotExists", () => {

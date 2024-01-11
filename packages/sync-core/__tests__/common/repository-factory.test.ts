@@ -16,15 +16,16 @@ describe("RepositoryFactory", () => {
   })
 
   describe("create", () => {
-    it("and correctly convert data", async () => {
-      const repository = RepositoryFactory.create("test_entity", {
+    it("should create the repository and correctly convert data", async () => {
+      const repository = RepositoryFactory.create("test_entity_999", {
         test: SchemaType.String,
         test2: SchemaType.Integer,
         test3: SchemaType.Boolean,
         test4: SchemaType.Date,
       });
 
-      await repository.runSetup(domain, syncEngine);
+      domain.repositories.push(repository);
+      await domain.runSetup(syncEngine);
 
       // Run migrations automatically created from repositories
       await syncEngine.migrationRunner.runSetup();
@@ -47,19 +48,20 @@ describe("RepositoryFactory", () => {
     })
 
     it("should create a repository with a connection field", async () => {
-      const repository = RepositoryFactory.create("test_entity", {
+      const repository = RepositoryFactory.create("test_entity999", {
         test: SchemaType.String,
         test2: SchemaType.Integer,
         test3: SchemaType.Boolean,
         test4: SchemaType.Date,
       });
 
-      const repository2 = RepositoryFactory.create("test_entity2", {
-        test5: SchemaType.Connection("test_entity"),
+      const repository2 = RepositoryFactory.create("test_entity998", {
+        test5: SchemaType.Connection("test_entity999"),
       } as const)
 
-      await repository.runSetup(domain, syncEngine);
-      await repository2.runSetup(domain, syncEngine);
+      domain.repositories.push(repository);
+      domain.repositories.push(repository2);
+      await domain.runSetup(syncEngine);
 
       // Run migrations automatically created from repositories
       await syncEngine.migrationRunner.runSetup();
@@ -72,7 +74,7 @@ describe("RepositoryFactory", () => {
         test4: new Date("2021-01-01"),
       })
 
-      const res2 = await  repository2.create({
+      const res2 = await repository2.create({
         test5: 1,
       })
 

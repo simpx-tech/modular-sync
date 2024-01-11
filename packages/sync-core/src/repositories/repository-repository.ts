@@ -12,7 +12,7 @@ export const REPOSITORY_SCHEMA = {
 
 export class RepositoryRepository extends RepositoryBase<any, RepositoryEntity, CreateRepository, {}> {
   constructor() {
-    super(REPOSITORY_ENTITY, REPOSITORY_SCHEMA);
+    super(REPOSITORY_ENTITY, REPOSITORY_SCHEMA, { unique: ["name", "user"] });
   }
 
   async getByName(name: string) {

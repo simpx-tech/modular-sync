@@ -31,10 +31,10 @@ export class RepositoryBase<
   }
 
   async runSetup(domain: ServerDomain) {
-    return this.runSetupDirect(domain.syncEngine, domain.name);
+    return this.runSetupDirectly(domain.syncEngine, domain.name);
   }
 
-  async runSetupDirect(syncEngine: ServerSyncEngine, domainName: string) {
+  async runSetupDirectly(syncEngine: ServerSyncEngine, domainName: string) {
     this.syncEngine = syncEngine;
 
     const entityName = this.entityName;

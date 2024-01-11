@@ -1,7 +1,8 @@
 import {ServerSyncEngine} from "../server-sync-engine";
+import {ServerDomain} from "../server-domain";
 
 export interface MergeEngine {
-  runSetup(syncEngine: ServerSyncEngine): Promise<void>;
+  runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void>;
   sync(identity: Identity, operation: SyncOperation): Promise<OperationsReturn>;
   push(identity: Identity, operation: PushOperation): Promise<OperationsReturn>;
   pull(identity: Identity, options: PullOptions): Promise<OperationsReturn>;
