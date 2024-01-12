@@ -299,6 +299,52 @@ describe("Sqlite Data Converter Engine", () => {
       expect(convertedData).toEqual(5);
     })
 
+    it("should convert in all fields", () => {
+      const schema = {
+        test: "string",
+        test2: "integer",
+        test3: "float",
+        test4: "boolean",
+        test5: "date",
+      } as const
+
+      const data = {
+        test: "test",
+        test2: 5.5,
+        test3: 5.57,
+        test4: true,
+        test5: new Date("2023-01-01T00:00:00.000Z"),
+      }
+
+      const convertedData = converter.inbound.convert(data, schema);
+
+      expect(convertedData).toEqual({
+        test: "test",
+        test2: 5,
+        test3: 5.57,
+        test4: 1,
+        test5: new Date("2023-01-01T00:00:00.000Z").getTime(),
+      })
+
+      const data2 = {
+        test: "test",
+        test2: 5,
+        test3: 5.57,
+        test4: false,
+        test5: new Date("2023-01-02T00:00:00.000Z"),
+      }
+
+      const convertedData2 = converter.inbound.convert(data2, schema);
+
+      expect(convertedData2).toEqual({
+        test: "test",
+        test2: 5,
+        test3: 5.57,
+        test4: 0,
+        test5: new Date("2023-01-02T00:00:00.000Z").getTime(),
+      })
+    })
+
     it("should convert back all fields", () => {
       const data = {
         test: "test",

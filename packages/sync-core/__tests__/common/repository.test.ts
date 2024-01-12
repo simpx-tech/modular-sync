@@ -1,6 +1,9 @@
 import {ServerSyncEngine} from "../../src/server/server-sync-engine";
 import {setupTests} from "../helpers/setup-tests";
 import {RepositoryBase} from "../../src/common/repository-base";
+import {SchemaType} from "../../src/interfaces/database-adapter";
+import {REPOSITORY_ENTITY} from "../../src/repositories/repository/repository-repository-constants";
+import {DOMAIN_ENTITY} from "../../src/repositories/domain/domain-repository-constants";
 
 describe("Repository", () => {
   let syncEngine: ServerSyncEngine;
@@ -11,12 +14,27 @@ describe("Repository", () => {
     await syncEngine.runSetup()
   })
 
+  it("should add metadata to the schema", () => {
+    expect(test3Repository.schema).toEqual({
+      test: SchemaType.String,
+      test2: SchemaType.Integer,
+      test3: SchemaType.Boolean,
+      test4: SchemaType.Date,
+      repository: SchemaType.Connection(REPOSITORY_ENTITY),
+      domain: SchemaType.Connection(DOMAIN_ENTITY),
+      createdAt: SchemaType.Date,
+      submittedAt: SchemaType.Date,
+      updatedAt: SchemaType.Date,
+      wasDeleted: SchemaType.Boolean,
+    })
+  })
+
   describe("create", () => {
     it("should create and convert data types properly", async () => {
       const res = await test3Repository.create({
         test: "test",
         test2: 1,
-        test3: true,
+        test3: false,
         test4: new Date("2021-01-01"),
       })
 
@@ -24,7 +42,7 @@ describe("Repository", () => {
         id: 1,
         test: "test",
         test2: 1,
-        test3: true,
+        test3: false,
         test4: new Date("2021-01-01"),
       })
     });

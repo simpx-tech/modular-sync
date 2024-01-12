@@ -27,7 +27,7 @@ export interface SyncOperation {
   entities: Record<string, EntityOperation[]>;
 
   /**
-   * Search for all modifications from this point to return to the user
+   * Search for all modification from this point to return to the user
    */
   lastSubmittedAt: string;
 }
@@ -48,6 +48,7 @@ export interface EntityOperation {
     delete: (string | number)[];
   }
   wasDeleted: boolean;
+  createdAt: string;
   updatedAt: string;
   submittedAt: string;
 }

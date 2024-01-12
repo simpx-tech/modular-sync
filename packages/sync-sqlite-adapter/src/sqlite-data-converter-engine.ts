@@ -18,7 +18,7 @@ class InboundConverter implements DataConverterFlow {
     }, {});
   }
 
-  toString(data: unknown) {
+  toString(data: unknown): string {
     if (data instanceof Date) {
       return data.toISOString();
     }
@@ -83,7 +83,7 @@ class InboundConverter implements DataConverterFlow {
 }
 
 class OutboundConverter implements DataConverterFlow {
-  toString(field: string) {
+  toString(field: unknown): string {
     return field;
   }
 

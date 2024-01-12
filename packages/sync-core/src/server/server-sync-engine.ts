@@ -5,12 +5,13 @@ import {HttpMethod} from "../interfaces/http-method";
 import {ServerSyncEngineOptions} from "./interfaces/server-sync-engine-options";
 import {AuthEngine} from "./interfaces/auth-engine";
 import {RouterAdapter} from "./interfaces/router-adapter";
-import {REPOSITORY_ENTITY, RepositoryRepository} from "../repositories/repository-repository";
-import {DomainRepository} from "../repositories/domain-repository";
-import {CreateRepository} from "../repositories/interfaces/repository-entity";
+import {RepositoryRepository} from "../repositories/repository/repository-repository";
+import {DomainRepository} from "../repositories/domain/domain-repository";
+import {CreateRepository} from "../repositories/repository/interfaces/repository-entity";
 import {NotFoundException} from "./exceptions/not-found-exception";
 import {UnauthorizedException} from "./exceptions/unauthorized-exception";
 import {MigrationRunner} from "../migration/migration-runner";
+import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
 
 export class ServerSyncEngine {
   readonly domains: ServerDomain[];

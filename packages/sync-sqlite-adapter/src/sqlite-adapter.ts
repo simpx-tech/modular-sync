@@ -2,10 +2,10 @@ import {SqliteAdapterOptions} from "./interfaces/sqlite-adapter-options";
 import BetterSqlite, {Database} from "better-sqlite3";
 import {
   CreateEntityOptions,
-  DatabaseAdapter,
   EntitySchema,
   SchemaType,
-  UpsertData
+  UpsertData,
+  DatabaseAdapter, FieldType
 } from "@simpx/sync-core/src/interfaces/database-adapter";
 import {SQLiteRawOptions} from "./interfaces/sqlite-raw-options";
 import {SQLiteDataConverterEngine} from "./sqlite-data-converter-engine";
@@ -134,12 +134,6 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   async createEntity(entity: string, schema: EntitySchema, options: CreateEntityOptions = {}) {
-    // DEV implement metadata
-    const schemaWithMetadata = options.noSyncFields ? schema : {
-      ...schema,
-      createdAt: SchemaType.Date,
-    }
-
     await this.raw({
       sql: `CREATE TABLE IF NOT EXISTS ${entity} (${this.formatSchema(schema)}${this.formatUniques(options?.unique)});`,
       params: [],
@@ -175,16 +169,19 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   private formatType(type: SchemaType) {
-      if (typeof type === "object") {
+      const isConnectionType = typeof type === "object";
+      if (isConnectionType) {
         return `INTEGER`
       }
 
-      const bindings: Record<string, string> = {
+      const bindings: Record<keyof FieldType, string> = {
         [SchemaType.String]: "TEXT",
         [SchemaType.Float]: "REAL",
         [SchemaType.Integer]: "INTEGER",
-        [SchemaType.Boolean]: "TINYINT",
+        [SchemaType.Boolean]: "TINYINT(1)",
         [SchemaType.Date]: "DATETIME",
+        [SchemaType.Json]: "TEXT",
+        [SchemaType.Id]: "INTEGER",
       } as const;
 
       return bindings[type as keyof typeof bindings];

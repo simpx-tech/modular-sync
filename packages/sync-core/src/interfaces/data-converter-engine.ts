@@ -1,4 +1,4 @@
-import {EntitySchema} from "./database-adapter";
+import {EntitySchema, FieldLiteralType} from "./database-adapter";
 
 export interface DataConverterEngine {
   /**
@@ -11,12 +11,9 @@ export interface DataConverterEngine {
   outbound: DataConverterFlow;
 }
 
-export interface DataConverterFlow {
-  toString(field: unknown): any;
-  toInt(field: unknown): any;
-  toFloat(field: unknown): any;
-  toBoolean(field: unknown): any;
-  toDate(field: unknown): any;
-  toConnection(field: unknown): any;
+export type DataConverterFlow = {
   convert(obj: Record<string, any>, schema: EntitySchema): any;
+  toString(field: unknown): any;
+} & {
+  [K in (Exclude<FieldLiteralType, "string"> | "connection") as `to${Capitalize<K>}`]: (data: unknown) => any;
 }

@@ -66,12 +66,17 @@ export class DatabaseMerger implements MergeEngine {
       const promises = entityOperation.map(async (entityOperation) => {
         const mergedFields = entityOperation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
 
-        // Should get the schema of the domain (?) to properly cast the fields to the correct value
+        const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
 
-        await serverDomain.databaseAdapter.create(entityName, {
+        if (!repository) {
+          throw new Error(`Couldn't find the respective repository for ${entityName}`)
+        }
+
+        await repository.create({
           ...mergedFields,
           repository: identity.repositoryId,
           domain: domain.id,
+          createdAt: entityOperation.createdAt,
           submittedAt: entityOperation.submittedAt,
           updatedAt: entityOperation.updatedAt,
           wasDeleted: entityOperation.wasDeleted,
@@ -81,7 +86,7 @@ export class DatabaseMerger implements MergeEngine {
       await Promise.all(promises);
     }
 
-    // TODO Save all modifications
+    // TODO Save all modification
 
     if (operation.finished) {
       await this.syncEngine.domainRepository.update(domain.id, { isMigrated: true });

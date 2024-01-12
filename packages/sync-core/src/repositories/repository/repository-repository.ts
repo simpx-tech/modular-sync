@@ -1,14 +1,6 @@
-import {SchemaType} from "../interfaces/database-adapter";
-import {RepositoryBase} from "../common/repository-base";
+import {RepositoryBase} from "../../common/repository-base";
 import {CreateRepository, RepositoryEntity} from "./interfaces/repository-entity";
-
-export const REPOSITORY_ENTITY = 'sync_repositories';
-
-export const REPOSITORY_SCHEMA = {
-  name: SchemaType.String,
-  // TODO should standardize the sync_users entity name
-  user: SchemaType.Connection("sync_users"),
-}
+import {REPOSITORY_ENTITY, REPOSITORY_SCHEMA} from "./repository-repository-constants";
 
 export class RepositoryRepository extends RepositoryBase<any, RepositoryEntity, CreateRepository, {}> {
   constructor() {

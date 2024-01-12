@@ -1,7 +1,7 @@
 import {
   CreateEntityOptions,
   DatabaseAdapter,
-  EntitySchema,
+  EntitySchema, SchemaType,
   UpsertData,
   WasDeleted
 } from "../interfaces/database-adapter";
@@ -10,16 +10,19 @@ import {ServerDomain} from "../server/server-domain";
 import {ServerSyncEngine} from "../server/server-sync-engine";
 import {MapSchemaToType} from "../interfaces/repository";
 import {UseAOrB} from "../helpers/interfaces/use-a-or-b";
+import {DOMAIN_ENTITY} from "../repositories/domain/domain-repository-constants";
+import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
 
 export class RepositoryBase<
-  TSchema extends Record<string, any>,
-  TEntity extends Record<string, any> = undefined,
+  TEntity extends { id: string | number } = undefined,
   TCreate extends Record<string, any> = undefined,
-  TUpdate extends Record<string, any> = undefined
+  TUpdate extends Record<string, any> = undefined,
+  TSchema extends EntitySchema = EntitySchema,
 > {
   readonly entityName: string;
-  readonly schema: EntitySchema;
   readonly schemaOptions: CreateEntityOptions;
+
+  schema: EntitySchema;
   syncEngine: ServerSyncEngine;
 
   db: DatabaseAdapter;
@@ -31,14 +34,28 @@ export class RepositoryBase<
   }
 
   async runSetup(domain: ServerDomain) {
-    return this.runSetupDirectly(domain.syncEngine, domain.name);
+    return this.runSetupDirectly(domain.syncEngine, domain.name, domain.isVirtual);
   }
 
-  async runSetupDirectly(syncEngine: ServerSyncEngine, domainName: string) {
+  async runSetupDirectly(syncEngine: ServerSyncEngine, domainName: string, isVirtual: boolean = false) {
     this.syncEngine = syncEngine;
 
     const entityName = this.entityName;
+
+    this.schema = {
+      ...this.schema,
+      ...(!isVirtual && {
+        repository: SchemaType.Connection(REPOSITORY_ENTITY),
+        domain: SchemaType.Connection(DOMAIN_ENTITY),
+        createdAt: SchemaType.Date,
+        submittedAt: SchemaType.Date,
+        updatedAt: SchemaType.Date,
+        wasDeleted: SchemaType.Boolean,
+      })
+    }
+
     const schema = this.schema;
+
     const schemaOptions = this.schemaOptions;
 
     this.db = this.syncEngine.domains.find(d => d.name === domainName)?.databaseAdapter;

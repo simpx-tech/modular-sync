@@ -116,7 +116,16 @@ describe("SQLite Adapter", () => {
 
   describe("createEntity", () => {
     it("should allow create entity", async () => {
-      const promise = sqliteAdapter.createEntity("newTable", { name: SchemaType.String });
+      const promise = sqliteAdapter.createEntity("newTable", {
+        test: SchemaType.String,
+        test2: SchemaType.Integer,
+        test3: SchemaType.Float,
+        test4: SchemaType.Boolean,
+        test5: SchemaType.Date,
+        test6: SchemaType.Id,
+        test7: SchemaType.Connection("test"),
+        test8: SchemaType.Json,
+      })
       await expect(promise).resolves.toBeUndefined();
 
       const dbRes: any = database.prepare("SELECT * FROM sqlite_master WHERE type='table' AND name='newTable'").all();
@@ -130,7 +139,7 @@ describe("SQLite Adapter", () => {
       await expect(promise).resolves.toBeUndefined();
     })
 
-    it("should create unique fields properly", async () => {
+    it("should create unique fields constraint properly", async () => {
       await sqliteAdapter.createEntity("newTable", { name: SchemaType.String }, { unique: ["name"] });
 
       await sqliteAdapter.create("newTable", { name: "test" });
@@ -139,15 +148,14 @@ describe("SQLite Adapter", () => {
       await expect(promise).rejects.toThrow();
     })
 
-    it("should create compound unique fields properly", async () => {
+    it("should create compound unique fields constraint properly", async () => {
       await sqliteAdapter.createEntity("newTable", { name: SchemaType.String, name2: SchemaType.String }, { unique: ["name", "name2"] });
 
       await sqliteAdapter.create("newTable", { name: "test", name2: "test2" });
-
       await sqliteAdapter.create("newTable", { name: "test", name2: "test3" }); // Should not throw
       await sqliteAdapter.create("newTable", { name: "test3", name2: "test2" }); // Should not throw
 
-      const promise = sqliteAdapter.create("newTable", { name: "test", name2: "test2" });
+      const promise = sqliteAdapter.create("newTable", { name: "test", name2: "test2" }); // Should throw
 
       await expect(promise).rejects.toThrow();
     })

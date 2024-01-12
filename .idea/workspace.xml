@@ -40,68 +40,72 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Jest.All Tests (1).executor": "Run",
-    "Jest.All Tests.executor": "Run",
-    "Jest.Domain Repository.create.executor": "Run",
-    "Jest.Domain Repository.createIfNotExists.executor": "Run",
-    "Jest.Domain Repository.executor": "Run",
-    "Jest.Domain Repository.getAllByRepositoryId.executor": "Run",
-    "Jest.Domain Repository.getAllByRepositoryId.should allow query with string id.executor": "Run",
-    "Jest.Domain Repository.getAllByRepositoryId.should return empty array if the repository was not found.executor": "Run",
-    "Jest.Domain Repository.getByRepositoryId.should return the domain by repository id.executor": "Debug",
-    "Jest.MigrationRunner.ServerSyncEngine integration.executor": "Run",
-    "Jest.MigrationRunner.executor": "Run",
-    "Jest.Repository.create.executor": "Debug",
-    "Jest.Repository.executor": "Run",
-    "Jest.RepositoryFactory.executor": "Run",
-    "Jest.SQLite Adapter Connection.executor": "Run",
-    "Jest.SQLite Adapter.createEntity.executor": "Run",
-    "Jest.SQLite Adapter.createIfNotExists.executor": "Run",
-    "Jest.SQLite Adapter.executor": "Run",
-    "Jest.Server Domain.executor": "Run",
-    "Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database.executor": "Debug",
-    "Jest.Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups.executor": "Run",
-    "Jest.Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups.executor": "Run",
-    "Jest.Server Sync Engine.executor": "Run",
-    "Jest.Sqlite Data Converter Engine.Inbound Data Conversion.Conversion.executor": "Debug",
-    "Jest.Sqlite Data Converter Engine.executor": "Run",
-    "Jest.Sync Core Test.executor": "Run",
-    "Jest.Sync Database Merger.bulk-write.executor": "Run",
-    "Jest.Sync Database Merger.bulk-write.should fail if domain is already migrated (should sync instead).executor": "Run",
-    "Jest.Sync Database Merger.executor": "Run",
-    "Jest.Sync Database Merger.push.Unified fields.executor": "Debug",
-    "Jest.Tests in __tests__/.executor": "Debug",
-    "Jest.jest.config.js.executor": "Run",
-    "Node.js.backend.ts.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "ShowUsagesActions.previewPropertyKey": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/vinicius/Github/modular-sync/packages/sync-core/__tests__",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs.jest.jest_package": "/home/vinicius/Github/modular-sync/node_modules/jest",
-    "nodejs_package_manager_path": "npm",
-    "npm.modular-sync > test.executor": "Run",
-    "npm.sync-core > test.executor": "Run",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "ts.external.directory.path": "/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Jest.All Tests (1).executor&quot;: &quot;Run&quot;,
+    &quot;Jest.All Tests.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.create.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.createIfNotExists.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.getAllByRepositoryId.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.getAllByRepositoryId.should allow query with string id.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.getAllByRepositoryId.should return empty array if the repository was not found.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Domain Repository.getByRepositoryId.should return the domain by repository id.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.MigrationRunner.ServerSyncEngine integration.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.MigrationRunner.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Repository.create.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.Repository.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Repository.should add metadata to the schema.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.RepositoryFactory.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.SQLite Adapter Connection.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.SQLite Adapter.createEntity.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.SQLite Adapter.createIfNotExists.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.SQLite Adapter.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Domain.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Sync Engine.Server Sync Engine Endpoints.createRepositoryEndpoint.should create repository on database.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Sync Engine.Setup.should setup the database tables and run repositories, auth and domain setups.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Server Sync Engine.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sqlite Data Converter Engine.Inbound Data Conversion.Conversion.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.Sqlite Data Converter Engine.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sync Core Test.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sync Database Merger.bulk-write.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sync Database Merger.bulk-write.should fail if domain is already migrated (should sync instead).executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sync Database Merger.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sync Database Merger.push.Unified fields.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Sync Database Merger.push.executor&quot;: &quot;Debug&quot;,
+    &quot;Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead).executor&quot;: &quot;Run&quot;,
+    &quot;Jest.Tests in __tests__/.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.jest.config.js.executor&quot;: &quot;Run&quot;,
+    &quot;Jest.sync-database-merger.test.ts.executor&quot;: &quot;Debug&quot;,
+    &quot;Node.js.backend.ts.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;ShowUsagesActions.previewPropertyKey&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/vinicius/Github/modular-sync/packages/sync-core/src/repositories/constants/repository-repository-constants.ts&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs.jest.jest_package&quot;: &quot;/home/vinicius/Github/modular-sync/node_modules/jest&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.modular-sync &gt; test.executor&quot;: &quot;Run&quot;,
+    &quot;npm.sync-core &gt; test.executor&quot;: &quot;Run&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "GitStage.ChangesTree.GroupingKeys": [
-      "directory",
-      "module",
-      "repository"
+  &quot;keyToStringList&quot;: {
+    &quot;GitStage.ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;,
+      &quot;module&quot;,
+      &quot;repository&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/packages/sync-database-merger" />
@@ -111,11 +115,15 @@
       <recent name="$PROJECT_DIR$/packages/sync-express-router" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories" />
-      <recent name="$PROJECT_DIR$/packages/sync-core/src/interfaces" />
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/domain/interfaces" />
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/repository/interfaces" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/repository" />
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/modifications" />
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/domain" />
-      <recent name="$PROJECT_DIR$/packages/sync-core/src/migration" />
+    </key>
+    <key name="es6.move.members.recent.items">
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/constants/repository-repository-constants.ts" />
+      <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/constants/domain-repository-constants.ts" />
     </key>
   </component>
   <component name="RunManager" selected="Jest.Sync Database Merger.push.Unified fields">
@@ -127,41 +135,28 @@
       <scope-kind value="ALL" />
       <method v="2" />
     </configuration>
-    <configuration name="MigrationRunner.ServerSyncEngine integration" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="Repository.should add metadata to the schema" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-core" />
       <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/server/migration-runner.test.ts" />
-      <test-names>
-        <test-name value="MigrationRunner" />
-        <test-name value="ServerSyncEngine integration" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="RepositoryFactory" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/common/repository-factory.test.ts" />
-      <test-names>
-        <test-name value="RepositoryFactory" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="Repository.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
-      <envs />
-      <scope-kind value="SUITE" />
+      <scope-kind value="TEST" />
       <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/common/repository.test.ts" />
       <test-names>
         <test-name value="Repository" />
-        <test-name value="create" />
+        <test-name value="should add metadata to the schema" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Sqlite Data Converter Engine" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-data-converter-engine.test.ts" />
+      <test-names>
+        <test-name value="Sqlite Data Converter Engine" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -189,36 +184,49 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="backend.ts" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v20.10.0/bin/node" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
+    <configuration name="Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
+      <test-names>
+        <test-name value="Sync Database Merger" />
+        <test-name value="push" />
+        <test-name value="should fail if domain is already migrated (user should call sync endpoint instead)" />
+      </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="sync-core &gt; test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/packages/sync-core/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="test" />
-      </scripts>
+    <configuration name="sync-database-merger.test.ts" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
       <envs />
+      <scope-kind value="TEST_FILE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
+      <method v="2" />
+    </configuration>
+    <configuration name="backend.ts" type="NodeJSConfigurationType" path-to-node="$USER_HOME$/.nvm/versions/node/v20.10.0/bin/node" nameIsGenerated="true" node-parameters="--require ts-node/register" path-to-js-file="packages/example/src/backend.ts" working-dir="$PROJECT_DIR$">
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.Sync Core Test" />
-      <item itemvalue="Jest.RepositoryFactory" />
+      <item itemvalue="Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" />
+      <item itemvalue="Jest.Repository.should add metadata to the schema" />
+      <item itemvalue="Jest.Sqlite Data Converter Engine" />
       <item itemvalue="Jest.Sync Database Merger.push.Unified fields" />
-      <item itemvalue="Jest.MigrationRunner.ServerSyncEngine integration" />
-      <item itemvalue="Jest.Repository.create" />
+      <item itemvalue="Jest.sync-database-merger.test.ts" />
       <item itemvalue="Node.js.backend.ts" />
-      <item itemvalue="npm.sync-core &gt; test" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Jest.Sync Database Merger.push.Unified fields" />
-        <item itemvalue="Jest.RepositoryFactory" />
-        <item itemvalue="Jest.Repository.create" />
-        <item itemvalue="Jest.MigrationRunner.ServerSyncEngine integration" />
-        <item itemvalue="npm.sync-core &gt; test" />
+        <item itemvalue="Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" />
+        <item itemvalue="Jest.Repository.should add metadata to the schema" />
+        <item itemvalue="Jest.Sqlite Data Converter Engine" />
+        <item itemvalue="Jest.sync-database-merger.test.ts" />
       </list>
     </recent_temporary>
   </component>
@@ -284,6 +292,12 @@
       <workItem from="1704913052798" duration="9158000" />
       <workItem from="1704934869348" duration="25000" />
       <workItem from="1704934900236" duration="1621000" />
+      <workItem from="1704987339680" duration="22000" />
+      <workItem from="1704991320720" duration="2000" />
+      <workItem from="1705000644463" duration="4299000" />
+      <workItem from="1705066886631" duration="12000" />
+      <workItem from="1705066980829" duration="11790000" />
+      <workItem from="1705081067489" duration="657000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -451,15 +465,10 @@
     <option name="LAST_COMMIT_MESSAGE" value="feat: RepositoryRepository and DomainRepository extend from RepositoryBase" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/packages/sync-database-merger/src/sync-database-merger.ts</url>
-          <line>51</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="JavaScriptTestRunnerJest">
+        <watch expression="input.test" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

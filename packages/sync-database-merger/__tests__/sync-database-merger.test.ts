@@ -91,6 +91,7 @@ describe("Sync Database Merger", () => {
                   delete: [],
                 },
                 wasDeleted: false,
+                createdAt: "2023-01-01T00:00:00.000Z",
                 updatedAt: "2023-01-01T00:00:00.000Z",
                 submittedAt: "2023-01-01T00:00:00.000Z",
               },
@@ -110,6 +111,7 @@ describe("Sync Database Merger", () => {
                   delete: [],
                 },
                 wasDeleted: false,
+                createdAt: "2023-01-02T00:00:00.000Z",
                 updatedAt: "2023-01-02T00:00:00.000Z",
                 submittedAt: "2023-01-02T00:00:00.000Z",
               }
@@ -131,6 +133,7 @@ describe("Sync Database Merger", () => {
                   delete: [],
                 },
                 wasDeleted: false,
+                createdAt: "2023-01-03T00:00:00.000Z",
                 updatedAt: "2023-01-03T00:00:00.000Z",
                 submittedAt: "2023-01-03T00:00:00.000Z",
               }
@@ -150,18 +153,20 @@ describe("Sync Database Merger", () => {
           domain: 1,
           test: "test",
           test2: "test2",
-          updatedAt: "2023-01-01T00:00:00.000Z",
-          submittedAt: "2023-01-01T00:00:00.000Z",
-          wasDeleted: false,
+          createdAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          updatedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          submittedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          wasDeleted: 0,
         }, {
           id: 2,
           repository: 1,
           domain: 1,
           test: "test3",
           test2: "test4",
-          updatedAt: "2023-01-02T00:00:00.000Z",
-          submittedAt: "2023-01-02T00:00:00.000Z",
-          wasDeleted: false,
+          createdAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          updatedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          submittedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          wasDeleted: 0,
         }])
 
         const testEntities2 = await commonDb.raw({ sql: "SELECT * FROM test_entity_2", params: [], isQuery: true, fetchAll: true });
@@ -169,9 +174,12 @@ describe("Sync Database Merger", () => {
           id: 1,
           test: "test5",
           test2: "test6",
-          updatedAt: "2023-01-01T00:00:00.000Z",
-          submittedAt: "2023-01-01T00:00:00.000Z",
-          wasDeleted: false,
+          repository: 1,
+          domain: 1,
+          createdAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          updatedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          submittedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          wasDeleted: 0,
         }])
 
         const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
@@ -184,7 +192,7 @@ describe("Sync Database Merger", () => {
           entityId: 1,
           submittedAt: "2023-01-01T00:00:00.000Z",
           updatedAt: "2023-01-01T00:00:00.000Z",
-          wasDeleted: false,
+          wasDeleted: 0,
           fieldOperations: JSON.stringify({
             create: [{
               key: "test",
@@ -205,7 +213,7 @@ describe("Sync Database Merger", () => {
           entityId: 2,
           submittedAt: "2023-01-02T00:00:00.000Z",
           updatedAt: "2023-01-02T00:00:00.000Z",
-          wasDeleted: false,
+          wasDeleted: 0,
           fieldOperations: JSON.stringify({
             create: [{
               key: "test",
@@ -226,7 +234,7 @@ describe("Sync Database Merger", () => {
           entityId: 1,
           submittedAt: "2023-01-03T00:00:00.000Z",
           updatedAt: "2023-01-03T00:00:00.000Z",
-          wasDeleted: false,
+          wasDeleted: 0,
           fieldOperations: JSON.stringify({
             create: [{
               key: "test",

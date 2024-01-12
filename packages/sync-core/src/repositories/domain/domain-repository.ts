@@ -1,17 +1,9 @@
-import {SchemaType, WasDeleted} from "../interfaces/database-adapter";
-import {REPOSITORY_ENTITY} from "./repository-repository";
-import {RepositoryBase} from "../common/repository-base";
+import {WasDeleted} from "../../interfaces/database-adapter";
+import {RepositoryBase} from "../../common/repository-base";
 import {CreateDomain, DomainEntity, UpdateDomain} from "./interfaces/domain-entity";
+import {DOMAIN_ENTITY, DOMAIN_SCHEMA} from "./domain-repository-constants";
 
-export const DOMAIN_ENTITY = 'sync_domains';
-
-export const DOMAIN_SCHEMA = {
-  name: SchemaType.String,
-  repository: SchemaType.Connection(REPOSITORY_ENTITY),
-  isMigrated: SchemaType.Boolean,
-}
-
-export class DomainRepository extends RepositoryBase<any, DomainEntity, CreateDomain, UpdateDomain> {
+export class DomainRepository extends RepositoryBase<DomainEntity, CreateDomain, UpdateDomain> {
   constructor() {
     super(DOMAIN_ENTITY, DOMAIN_SCHEMA, { unique: ["name", "repository"] });
   }
