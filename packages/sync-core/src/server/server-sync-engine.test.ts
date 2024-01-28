@@ -1,13 +1,13 @@
-import {ServerSyncEngine} from "../../src/server/server-sync-engine";
+import {ServerSyncEngine} from "./server-sync-engine";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
-import {RepositoryRepository} from "../../src/repositories/repository/repository-repository";
-import {DomainRepository} from "../../src/repositories/domain/domain-repository";
+import {RepositoryRepository} from "../repositories/repository/repository-repository";
+import {DomainRepository} from "../repositories/domain/domain-repository";
 import {Express} from "express";
 import supertest from "supertest";
-import {setupTests} from "../helpers/setup-tests";
-import {clearAllFiles} from "../helpers/clear-all-files";
-import {setupAuthentication} from "../helpers/setup-authentication";
-import {MigrationRunner} from "../../src/migration/migration-runner";
+import {setupTests} from "../../__tests__/helpers/setup-tests";
+import {clearAllFiles} from "../../__tests__/helpers/clear-all-files";
+import {setupAuthentication} from "../../__tests__/helpers/setup-authentication";
+import {MigrationRunner} from "../migration/migration-runner";
 
 describe("Server Sync Engine", () => {
   describe("Server Sync Engine Setup", () => {

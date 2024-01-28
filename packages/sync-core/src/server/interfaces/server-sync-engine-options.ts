@@ -8,4 +8,10 @@ export interface ServerSyncEngineOptions {
   metadataDatabase: DatabaseAdapter;
   routerAdapter: RouterAdapter;
   authEngine: AuthEngine;
+
+  /**
+   * Whether try to use mixed objects like in MongoDB when using separated fields storage
+   * Only works if the database adapter supports it
+   */
+  tryNestedObjectsForFieldSeparatedStorage?: boolean;
 }

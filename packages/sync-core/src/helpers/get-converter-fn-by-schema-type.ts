@@ -3,20 +3,24 @@ import {FieldType, SchemaType} from "../interfaces/database-adapter";
 export function getConverterFnBySchemaType(schemaType: FieldType) {
   switch (schemaType) {
     case SchemaType.String:
-      return "toString";
+      return "asString";
     case SchemaType.Integer:
-      return "toInt";
+      return "asInt";
     case SchemaType.Float:
-      return "toFloat";
+      return "asFloat";
     case SchemaType.Boolean:
-      return "toBoolean";
+      return "asBoolean";
     case SchemaType.Date:
-      return "toDate";
+      return "asDate";
+    case SchemaType.Json:
+      return "asJson";
+    case SchemaType.Id:
+      return "asId";
   }
 
   if (schemaType?.type === "connection") {
-    return "toConnection"
+    return "asConnection"
   }
 
-  return "toString"
+  return "asString"
 }

@@ -1,9 +1,11 @@
-import {SqliteAdapter} from "../src/sqlite-adapter";
+import {SqliteAdapter} from "./sqlite-adapter";
 import * as fs from "fs";
 import BetterSqlite, {Database} from "better-sqlite3";
 import {SchemaType} from "@simpx/sync-core/src/interfaces/database-adapter";
 import crypto from "crypto";
 import path from "path";
+import {__createTmpDirIfNotExists} from "@simpx/sync-core/__tests__/helpers/setup-tests";
+import * as os from "os";
 
 describe("SQLite Adapter", () => {
   let sqliteAdapter: SqliteAdapter = null;
@@ -12,13 +14,17 @@ describe("SQLite Adapter", () => {
 
   beforeEach(async () => {
     dbPath = `${crypto.randomUUID()}.db`;
-    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(__dirname, "./data", dbPath) });
+
+    __createTmpDirIfNotExists();
+
+    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(os.tmpdir(), "modular-sync-tmp", dbPath) });
     await sqliteAdapter.connect();
 
     database = new BetterSqlite(path.join(__dirname, "./data", dbPath));
     database.exec("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
     database.exec("CREATE TABLE IF NOT EXISTS test2 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, table_id INTEGER, FOREIGN KEY(table_id) REFERENCES test(id))");
     database.exec("CREATE TABLE IF NOT EXISTS test3 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, name2 TEXT, UNIQUE(name, name2))");
+    database.exec("CREATE TABLE IF NOT EXISTS test4 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, name2 TEXT)");
   })
 
   afterEach(async () => {
@@ -88,6 +94,24 @@ describe("SQLite Adapter", () => {
     const promise = sqliteAdapter.update("test", 1, { name: "updatedName" });
 
     return expect(promise).resolves.toEqual({ id: 1, name: "updatedName" });
+  })
+
+  it("should upsert, update if the data already exists", async () => {
+    database.exec("INSERT INTO test4 (name, name2) VALUES ('name', 'name2')");
+
+    const promise = sqliteAdapter.upsert("test4", { name: "name" }, { name: "updatedName" });
+
+    await expect(promise).resolves.toEqual({ id: 1, name: "updatedName", name2: "name2" });
+    const dbRes = database.prepare("SELECT * FROM test4").all();
+    expect(dbRes).toHaveLength(1);
+  })
+
+  it("should upsert, create if data doesn't exists", async () => {
+    const promise = sqliteAdapter.upsert("test4", { name: "name" }, { name: "updatedName", name2: "name2" });
+
+    await expect(promise).resolves.toEqual({ id: 1, name: "updatedName", name2: "name2" });
+    const dbRes = database.prepare("SELECT * FROM test4").all();
+    expect(dbRes).toHaveLength(1);
   })
 
   it("should delete an item", async () => {

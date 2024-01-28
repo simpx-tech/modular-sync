@@ -1,9 +1,9 @@
-import {ServerSyncEngine} from "../../src/server/server-sync-engine";
-import {setupTests} from "../helpers/setup-tests";
-import {RepositoryBase} from "../../src/common/repository-base";
-import {SchemaType} from "../../src/interfaces/database-adapter";
-import {REPOSITORY_ENTITY} from "../../src/repositories/repository/repository-repository-constants";
-import {DOMAIN_ENTITY} from "../../src/repositories/domain/domain-repository-constants";
+import {ServerSyncEngine} from "../server/server-sync-engine";
+import {setupTests} from "../../__tests__/helpers/setup-tests";
+import {RepositoryBase} from "./repository-base";
+import {SchemaType} from "../interfaces/database-adapter";
+import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
+import {DOMAIN_ENTITY} from "../repositories/domain/domain-repository-constants";
 
 describe("Repository", () => {
   let syncEngine: ServerSyncEngine;

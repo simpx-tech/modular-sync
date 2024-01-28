@@ -1,8 +1,8 @@
-import {MigrationRunner} from "../../src/migration/migration-runner";
-import {setupTests} from "../helpers/setup-tests";
+import {MigrationRunner} from "./migration-runner";
+import {setupTests} from "../../__tests__/helpers/setup-tests";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
-import {ServerSyncEngine} from "../../src/server/server-sync-engine";
-import {Migration} from "../../src/interfaces/migration";
+import {ServerSyncEngine} from "../server/server-sync-engine";
+import {Migration} from "../interfaces/migration";
 
 describe("MigrationRunner", () => {
   let migrationRunner: MigrationRunner;

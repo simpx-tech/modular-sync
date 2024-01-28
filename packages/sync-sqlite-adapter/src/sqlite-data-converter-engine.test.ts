@@ -1,4 +1,4 @@
-import {SQLiteDataConverterEngine} from "../src/sqlite-data-converter-engine";
+import {SQLiteDataConverterEngine} from "./sqlite-data-converter-engine";
 
 describe("Sqlite Data Converter Engine", () => {
   let converter: SQLiteDataConverterEngine = null;

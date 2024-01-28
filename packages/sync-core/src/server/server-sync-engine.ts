@@ -20,16 +20,23 @@ export class ServerSyncEngine {
   readonly authEngine: AuthEngine;
   readonly migrationRunner: MigrationRunner;
 
+  /**
+   * Whether try to use mixed objects like in MongoDB when using separated fields storage
+   * Only works if the database adapter supports it
+   */
+  readonly tryNestedObjectsForFieldSeparatedStorage: boolean;
+
   internalDomain: ServerDomain;
   repositoryRepository: RepositoryRepository;
   domainRepository: DomainRepository;
 
-  constructor({ domains, metadataDatabase, routerAdapter, authEngine }: ServerSyncEngineOptions) {
+  constructor({ domains, metadataDatabase, routerAdapter, authEngine, tryNestedObjectsForFieldSeparatedStorage }: ServerSyncEngineOptions) {
     this.domains = domains;
     this.metadataDatabase = metadataDatabase;
     this.routerAdapter = routerAdapter;
     this.authEngine = authEngine;
     this.migrationRunner = new MigrationRunner({ dbAdapter: metadataDatabase });
+    this.tryNestedObjectsForFieldSeparatedStorage = tryNestedObjectsForFieldSeparatedStorage ?? false;
   }
 
   async runSetup() {

@@ -1,9 +1,9 @@
-import {setupTests} from "../../helpers/setup-tests";
+import {setupTests} from "../../../__tests__/helpers/setup-tests";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
-import {ServerSyncEngine} from "../../../src/server/server-sync-engine";
-import {setupRepositories} from "../../helpers/setup-repositories";
-import {setupAuthentication} from "../../helpers/setup-authentication";
-import {DOMAIN_ENTITY} from "../../../src/repositories/domain/domain-repository-constants";
+import {ServerSyncEngine} from "../../server/server-sync-engine";
+import {setupRepositories} from "../../../__tests__/helpers/setup-repositories";
+import {setupAuthentication} from "../../../__tests__/helpers/setup-authentication";
+import {DOMAIN_ENTITY} from "./domain-repository-constants";
 
 describe("Domain Repository", () => {
   let commonDb: SqliteAdapter;

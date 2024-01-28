@@ -1,7 +1,8 @@
-import {SqliteAdapter} from "../src/sqlite-adapter";
+import {SqliteAdapter} from "./sqlite-adapter";
 import fs from "fs";
 import crypto from "crypto";
 import path from "path";
+import {__createTmpDirIfNotExists} from "@simpx/sync-core/__tests__/helpers/setup-tests";
 
 describe("SQLite Adapter Connection", () => {
   let sqliteAdapter: SqliteAdapter = null;
@@ -9,7 +10,8 @@ describe("SQLite Adapter Connection", () => {
 
   beforeEach(async () => {
     dbPath = `${crypto.randomUUID()}.db`;
-    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(__dirname, "./data", dbPath) });
+    __createTmpDirIfNotExists();
+    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(__dirname, "modular-sync-tmp", dbPath) });
   });
 
   afterEach(async () => {

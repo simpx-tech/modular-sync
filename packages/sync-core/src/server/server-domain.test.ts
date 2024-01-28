@@ -1,8 +1,8 @@
-import {ServerDomain} from "../../src/server/server-domain";
-import {ServerSyncEngine} from "../../src/server/server-sync-engine";
+import {ServerDomain} from "./server-domain";
+import {ServerSyncEngine} from "./server-sync-engine";
 import {DatabaseMerger} from "@simpx/sync-database-merger/src/sync-database-merger";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
-import {setupTests} from "../helpers/setup-tests";
+import {setupTests} from "../../__tests__/helpers/setup-tests";
 
 describe("Server Domain", () => {
   let domain: ServerDomain;

@@ -8,12 +8,24 @@ import {DatabaseMerger} from "@simpx/sync-database-merger/src/sync-database-merg
 import {FieldStorageMethod} from "../../src/server/enums/field-storage-method";
 import {SchemaType} from "../../src/interfaces/database-adapter";
 import {RepositoryFactory} from "../../src/common/repository-factory";
+import * as fs from "fs";
 import * as crypto from "crypto";
 import * as path from "path";
+import * as os from "os";
+
+export function __createTmpDirIfNotExists() {
+  if (fs.existsSync(path.join(os.tmpdir(), "modular-sync-tmp"))) {
+    return;
+  }
+
+  fs.mkdirSync(path.join(os.tmpdir(), "modular-sync-tmp"));
+}
 
 export function setupTests() {
+  __createTmpDirIfNotExists();
+
   const dbPath = `${crypto.randomUUID()}.db`;
-  const commonDb = new SqliteAdapter({ databasePath: path.join(__dirname, "../data", dbPath) });
+  const commonDb = new SqliteAdapter({ databasePath: path.join(os.tmpdir(), "modular-sync-tmp", dbPath) });
 
   const test1Repository = RepositoryFactory.create("test_entity", {
     test: SchemaType.String,

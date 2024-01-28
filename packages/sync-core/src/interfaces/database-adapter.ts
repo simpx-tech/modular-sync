@@ -9,12 +9,14 @@ export interface DatabaseAdapter<TId = number | string> {
   disconnect(): Promise<void>;
   getFirst<T = any>(entity: string): Promise<T>;
   getById<T = any>(entity: string, id: TId): Promise<T>;
-  getByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T>;
-  getAllByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T>;
+  getByField<T = any>(entity: string, search: Record<string, any>): Promise<T>;
+  getAllByField<T = any>(entity: string, search: Record<string, any>): Promise<T>;
   getAll<T = any>(entity: string): Promise<T>;
   create<T = any>(entity: string, data: UpsertData): Promise<T>;
   createIfNotExists<T = any>(entity: string, keyFields: string[], data: UpsertData): Promise<T>;
   update<T = any>(entity: string, id: TId, data: UpsertData): Promise<T>;
+  upsert<T = any>(entity: string, search: Record<string, any>, data: UpsertData): Promise<T>;
+
   // TODO should do soft delete
   delete(entity: string, id: TId): Promise<WasDeleted>;
   deleteByField(entity: string, mapping: Record<string, any>): Promise<WasDeleted>;

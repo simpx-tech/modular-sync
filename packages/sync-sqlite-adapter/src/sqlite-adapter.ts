@@ -140,6 +140,16 @@ export class SqliteAdapter implements DatabaseAdapter {
     });
   }
 
+  async upsert<T = any>(entity: string, search: Record<string, any>, data: UpsertData): Promise<T> {
+    const found = await this.getByField(entity, search);
+
+    if (found) {
+      return this.update(entity, found.id, data);
+    } else {
+      return this.create(entity, data);
+    }
+  }
+
   private formatSchema(schema: EntitySchema) {
     const INITIAL = "id INTEGER PRIMARY KEY AUTOINCREMENT";
 

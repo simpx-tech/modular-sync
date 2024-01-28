@@ -113,6 +113,12 @@ export class RepositoryBase<
     return this.db.converter.outbound.convert(await this.db.update(this.entityName, id, input), this.schema);
   }
 
+  async upsert(search: Partial<Record<keyof UseAOrB<TSchema, TSchema>, any>>, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
+    const input = this.db.converter.inbound.convert(data, this.schema);
+    const searchInput = this.db.converter.inbound.convert(search, this.schema);
+    return this.db.converter.outbound.convert(await this.db.upsert(this.entityName, searchInput, input), this.schema);
+  }
+
   async delete(id: number | string): Promise<WasDeleted> {
     return this.db.delete(this.entityName, id)
   }

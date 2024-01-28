@@ -1,9 +1,9 @@
-import {RepositoryFactory} from "../../src/common/repository-factory";
-import {SchemaType} from "../../src/interfaces/database-adapter";
-import {setupTests} from "../helpers/setup-tests";
+import {RepositoryFactory} from "./repository-factory";
+import {SchemaType} from "../interfaces/database-adapter";
+import {setupTests} from "../../__tests__/helpers/setup-tests";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
-import {ServerSyncEngine} from "../../src/server/server-sync-engine";
-import {ServerDomain} from "../../src/server/server-domain";
+import {ServerSyncEngine} from "../server/server-sync-engine";
+import {ServerDomain} from "../server/server-domain";
 
 describe("RepositoryFactory", () => {
   let syncEngine: ServerSyncEngine;
