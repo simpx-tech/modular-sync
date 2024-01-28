@@ -5,8 +5,9 @@ export enum FieldStorageMethod {
   Unified = "unified",
 
   /**
-   * Create one row per field. Recommended for dynamic fields,
-   * like text files
+   * Create one register per field.
+   * Recommended for dynamic fields,
+   * like text files (each line is a field)
    */
-  Individual = "individual",
+  Separated = "separated",
 }

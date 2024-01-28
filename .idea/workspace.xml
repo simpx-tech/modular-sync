@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="e361858a-9f37-4c93-86fc-60edd120da1c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-core/src/interfaces/data-converter-engine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-core/src/interfaces/data-converter-engine.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-data-converter-engine.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-data-converter-engine.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/packages/sync-sqlite-adapter/src/sqlite-data-converter-engine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/sync-sqlite-adapter/src/sqlite-data-converter-engine.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,10 +216,10 @@
     <list>
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.Sync Core Test" />
-      <item itemvalue="Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" />
       <item itemvalue="Jest.Repository.should add metadata to the schema" />
       <item itemvalue="Jest.Sqlite Data Converter Engine" />
       <item itemvalue="Jest.Sync Database Merger.push.Unified fields" />
+      <item itemvalue="Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" />
       <item itemvalue="Jest.sync-database-merger.test.ts" />
       <item itemvalue="Node.js.backend.ts" />
     </list>
@@ -297,7 +300,10 @@
       <workItem from="1705000644463" duration="4299000" />
       <workItem from="1705066886631" duration="12000" />
       <workItem from="1705066980829" duration="11790000" />
-      <workItem from="1705081067489" duration="657000" />
+      <workItem from="1705081067489" duration="1364000" />
+      <workItem from="1705091131612" duration="1646000" />
+      <workItem from="1705325631465" duration="6000" />
+      <workItem from="1706475021388" duration="4738000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -427,7 +433,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704853622239</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="wip: get repository instead of db adapter, add id and json field types, add metadata fields">
+      <option name="closed" value="true" />
+      <created>1705088349889</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1705088349889</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -462,7 +476,8 @@
     <MESSAGE value="wip: add RepositoryFactory, add MigrationRunner tests" />
     <MESSAGE value="wip: add RepositoryBase, fix useAOrB typing, fix date inbound conversion in SQLite" />
     <MESSAGE value="feat: RepositoryRepository and DomainRepository extend from RepositoryBase" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: RepositoryRepository and DomainRepository extend from RepositoryBase" />
+    <MESSAGE value="wip: get repository instead of db adapter, add id and json field types, add metadata fields" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip: get repository instead of db adapter, add id and json field types, add metadata fields" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

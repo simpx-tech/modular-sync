@@ -48,7 +48,12 @@ export class DatabaseMerger implements MergeEngine {
     return Promise.resolve(undefined);
   }
 
-  async push(identity: Identity, operation: PushOperation): Promise<OperationsReturn> {
+  /**
+   * Receives all entities from the client
+   * @param identity namespace for repository and domain ids
+   * @param push
+   */
+  async push(identity: Identity, push: PushOperation): Promise<OperationsReturn> {
     const domains = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
     const domain = domains.find(domain => domain.name === identity.domain);
 
@@ -62,9 +67,11 @@ export class DatabaseMerger implements MergeEngine {
 
     const serverDomain = this.syncEngine.domains.find(domain => domain.name === identity.domain);
 
-    for await (const [entityName, entityOperation] of Object.entries(operation.entities)) {
-      const promises = entityOperation.map(async (entityOperation) => {
-        const mergedFields = entityOperation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
+    // TODO check if is create, update or delete
+    // TODO consider unified and separated fields
+    for await (const [entityName, entityOperations] of Object.entries(push.entities)) {
+      const promises = entityOperations.map(async (operation) => {
+        const mergedFields = operation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
 
         const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
 
@@ -72,15 +79,18 @@ export class DatabaseMerger implements MergeEngine {
           throw new Error(`Couldn't find the respective repository for ${entityName}`)
         }
 
-        await repository.create({
+        // TODO create upsert
+        await repository.upsert({}, {
           ...mergedFields,
           repository: identity.repositoryId,
           domain: domain.id,
-          createdAt: entityOperation.createdAt,
-          submittedAt: entityOperation.submittedAt,
-          updatedAt: entityOperation.updatedAt,
-          wasDeleted: entityOperation.wasDeleted,
+          createdAt: operation.createdAt,
+          submittedAt: operation.submittedAt,
+          updatedAt: operation.updatedAt,
+          wasDeleted: operation.wasDeleted,
         });
+
+        await repository.upsert({}, {})
       });
 
       await Promise.all(promises);
@@ -88,7 +98,8 @@ export class DatabaseMerger implements MergeEngine {
 
     // TODO Save all modification
 
-    if (operation.finished) {
+
+    if (push.finished) {
       await this.syncEngine.domainRepository.update(domain.id, { isMigrated: true });
     }
 

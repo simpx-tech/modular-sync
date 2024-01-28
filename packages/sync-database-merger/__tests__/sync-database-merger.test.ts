@@ -6,6 +6,7 @@ import {Express} from "express";
 import {setupRepositories} from "@simpx/sync-core/__tests__/helpers/setup-repositories";
 import {DatabaseAdapter} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {setupDomains} from "@simpx/sync-core/__tests__/helpers/setup-domains";
+import {v4} from "uuid";
 
 describe("Sync Database Merger", () => {
   let token: string;
@@ -90,6 +91,7 @@ describe("Sync Database Merger", () => {
                   update: [],
                   delete: [],
                 },
+                uuid: v4(),
                 wasDeleted: false,
                 createdAt: "2023-01-01T00:00:00.000Z",
                 updatedAt: "2023-01-01T00:00:00.000Z",
@@ -110,6 +112,7 @@ describe("Sync Database Merger", () => {
                   update: [],
                   delete: [],
                 },
+                uuid: v4(),
                 wasDeleted: false,
                 createdAt: "2023-01-02T00:00:00.000Z",
                 updatedAt: "2023-01-02T00:00:00.000Z",
@@ -132,6 +135,7 @@ describe("Sync Database Merger", () => {
                   update: [],
                   delete: [],
                 },
+                uuid: v4(),
                 wasDeleted: false,
                 createdAt: "2023-01-03T00:00:00.000Z",
                 updatedAt: "2023-01-03T00:00:00.000Z",
@@ -189,6 +193,7 @@ describe("Sync Database Merger", () => {
           domain: 1,
           entity: "test_entity",
           operation: "create",
+          uuid: expect.any(String),
           entityId: 1,
           submittedAt: "2023-01-01T00:00:00.000Z",
           updatedAt: "2023-01-01T00:00:00.000Z",
@@ -211,6 +216,7 @@ describe("Sync Database Merger", () => {
           entity: "test_entity",
           operation: "create",
           entityId: 2,
+          uuid: expect.any(String),
           submittedAt: "2023-01-02T00:00:00.000Z",
           updatedAt: "2023-01-02T00:00:00.000Z",
           wasDeleted: 0,
@@ -232,6 +238,7 @@ describe("Sync Database Merger", () => {
           entity: "test_entity_2",
           operation: "create",
           entityId: 1,
+          uuid: expect.any(String),
           submittedAt: "2023-01-03T00:00:00.000Z",
           updatedAt: "2023-01-03T00:00:00.000Z",
           wasDeleted: 0,

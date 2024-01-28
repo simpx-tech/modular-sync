@@ -4,7 +4,7 @@ export interface CreateRepository {
 }
 
 export interface RepositoryEntity {
-  id: number | string;
+  id?: number | string;
   name: string;
   user: number | string;
 }

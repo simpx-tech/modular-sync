@@ -11,6 +11,6 @@ export interface ServerDomainOptions {
   fieldsStorageMethod?: FieldStorageMethod;
   repositories?: RepositoryBase<any, any, any, any>[];
 
-  /* Doesn't create entity on the database */
+  /* Doesn't create domain entity on the database */
   isVirtual?: boolean;
 }

@@ -10,6 +10,7 @@ export const MODIFICATION_SCHEMA = {
   entity: SchemaType.String,
   operation: SchemaType.String,
   entityId: SchemaType.Id,
+  uuid: SchemaType.String,
   submittedAt: SchemaType.Date,
   updatedAt: SchemaType.Date,
   wasDeleted: SchemaType.Boolean,

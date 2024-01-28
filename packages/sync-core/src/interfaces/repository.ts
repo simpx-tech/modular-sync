@@ -9,5 +9,5 @@ type TypeBySchemaType = {
 }
 
 export type MapSchemaToType<TSchema extends EntitySchema> = {
-  [K in keyof TSchema]: TSchema[K] extends ConnectionField ? string | number : TSchema[K] extends "string" | "integer" | "float" | "boolean" | "date" ? TypeBySchemaType[TSchema[K]] : number
+  [K in keyof TSchema]: TSchema[K] extends ConnectionField ? string | number : TSchema[K] extends "string" | "integer" | "float" | "boolean" | "date" ? TypeBySchemaType[TSchema[K]] : any
 }

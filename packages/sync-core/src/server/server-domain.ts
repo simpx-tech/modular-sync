@@ -12,6 +12,10 @@ export class ServerDomain {
   readonly name: string;
   readonly fieldsStorageMethod: FieldStorageMethod;
   readonly repositories: RepositoryBase<any>[];
+
+  /**
+   * Doesn't create domain entity on the database
+   */
   readonly isVirtual: boolean;
 
   syncEngine: ServerSyncEngine;

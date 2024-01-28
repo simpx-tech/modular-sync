@@ -18,7 +18,7 @@ class InboundConverter implements DataConverterFlow {
     }, {});
   }
 
-  toString(data: unknown): string {
+  asString(data: unknown): string {
     if (data instanceof Date) {
       return data.toISOString();
     }
@@ -26,11 +26,11 @@ class InboundConverter implements DataConverterFlow {
     return data.toString();
   }
 
-  toInt(data: unknown) {
+  asInteger(data: unknown) {
     return this.toNumber(data, true);
   }
 
-  toFloat(data: unknown) {
+  asFloat(data: unknown) {
     return this.toNumber(data);
   }
 
@@ -49,12 +49,12 @@ class InboundConverter implements DataConverterFlow {
     return 0;
   }
 
-  toBoolean(data: unknown) {
+  asBoolean(data: unknown) {
     const finalBoolean = typeof data === "string" ? data === "true" || (data !== "0" && data !== "false") : !!data;
     return finalBoolean ? 1 : 0;
   }
 
-  toDate(data: unknown): number {
+  asDate(data: unknown): number {
     if (typeof data === "string" || typeof data === "number") {
       return new Date(data).getTime();
     }
@@ -66,7 +66,7 @@ class InboundConverter implements DataConverterFlow {
     return undefined;
   }
 
-  toConnection(data: unknown) {
+  asConnection(data: unknown) {
     if (typeof data === "number") {
       return Math.trunc(data);
     }
@@ -80,30 +80,50 @@ class InboundConverter implements DataConverterFlow {
 
     return undefined;
   }
+
+  asJson(data: unknown) {
+    return JSON.stringify(data);
+  }
+
+  asId(data: unknown) {
+    if (typeof data === "string" || typeof data === "number") {
+      return this.toNumber(data, true)
+    }
+
+    throw new Error(`Can't convert ${data} to id`);
+  }
 }
 
 class OutboundConverter implements DataConverterFlow {
-  toString(field: unknown): string {
+  asString(field: string): string {
     return field;
   }
 
-  toInt(field: number) {
+  asInteger(field: number) {
     return Math.trunc(field);
   }
 
-  toFloat(field: number) {
+  asFloat(field: number) {
     return field;
   }
 
-  toBoolean(field: number) {
+  asBoolean(field: number) {
     return !!field;
   }
 
-  toDate(field: number) {
+  asDate(field: number) {
     return new Date(field);
   }
 
-  toConnection(field: number) {
+  asConnection(field: number) {
+    return field;
+  }
+
+  asJson(field: string) {
+    return JSON.parse(field);
+  }
+
+  asId(field: number) {
     return field;
   }
 
