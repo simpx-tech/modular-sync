@@ -129,7 +129,7 @@
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/constants/domain-repository-constants.ts" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.All Tests (1)">
+  <component name="RunManager" selected="Jest.Sync Database Merger">
     <configuration name="All Tests (1)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
@@ -146,28 +146,42 @@
       <scope-kind value="ALL" />
       <method v="2" />
     </configuration>
-    <configuration name="Repository.should add metadata to the schema" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="Repository" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/src/common/repository-base.test.ts" />
+      <test-names>
+        <test-name value="Repository" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Repository.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/src/common/repository-base.test.ts" />
+      <test-names>
+        <test-name value="Repository" />
+        <test-name value="create" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-core" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-core/__tests__/common/repository.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/src/server/server-sync-engine.test.ts" />
       <test-names>
-        <test-name value="Repository" />
-        <test-name value="should add metadata to the schema" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="SQLite Adapter" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-sqlite-adapter" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-sqlite-adapter/__tests__/sqlite-adapter.test.ts" />
-      <test-names>
-        <test-name value="SQLite Adapter" />
+        <test-name value="Server Sync Engine" />
+        <test-name value="Server Sync Engine Setup" />
+        <test-name value="should helpers the database tables and run repositories, auth and domain setups" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -181,31 +195,15 @@
       <test-directory value="$PROJECT_DIR$/packages/sync-core/__tests__" />
       <method v="2" />
     </configuration>
-    <configuration name="Sync Database Merger.push.Unified fields" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="Sync Database Merger" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/sync-database-merger.test.ts" />
       <test-names>
         <test-name value="Sync Database Merger" />
-        <test-name value="push" />
-        <test-name value="Unified fields" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/__tests__/sync-database-merger.test.ts" />
-      <test-names>
-        <test-name value="Sync Database Merger" />
-        <test-name value="push" />
-        <test-name value="should fail if domain is already migrated (user should call sync endpoint instead)" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -216,19 +214,19 @@
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.Sync Core Test" />
       <item itemvalue="Jest.All Tests (1)" />
-      <item itemvalue="Jest.SQLite Adapter" />
-      <item itemvalue="Jest.Repository.should add metadata to the schema" />
-      <item itemvalue="Jest.Sync Database Merger.push.Unified fields" />
-      <item itemvalue="Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" />
+      <item itemvalue="Jest.Repository" />
+      <item itemvalue="Jest.Repository.create" />
+      <item itemvalue="Jest.Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups" />
+      <item itemvalue="Jest.Sync Database Merger" />
       <item itemvalue="Node.js.backend.ts" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.Sync Database Merger" />
+        <item itemvalue="Jest.Server Sync Engine.Server Sync Engine Setup.should helpers the database tables and run repositories, auth and domain setups" />
+        <item itemvalue="Jest.Repository" />
+        <item itemvalue="Jest.Repository.create" />
         <item itemvalue="Jest.All Tests (1)" />
-        <item itemvalue="Jest.SQLite Adapter" />
-        <item itemvalue="Jest.Sync Database Merger.push.Unified fields" />
-        <item itemvalue="Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead)" />
-        <item itemvalue="Jest.Repository.should add metadata to the schema" />
       </list>
     </recent_temporary>
   </component>
@@ -302,7 +300,7 @@
       <workItem from="1705081067489" duration="1364000" />
       <workItem from="1705091131612" duration="1646000" />
       <workItem from="1705325631465" duration="6000" />
-      <workItem from="1706475021388" duration="8468000" />
+      <workItem from="1706475021388" duration="14801000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -448,7 +446,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706479877221</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="feat: move test to be aside of files">
+      <option name="closed" value="true" />
+      <created>1706483561731</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1706483561731</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -485,13 +491,7 @@
     <MESSAGE value="feat: RepositoryRepository and DomainRepository extend from RepositoryBase" />
     <MESSAGE value="wip: get repository instead of db adapter, add id and json field types, add metadata fields" />
     <MESSAGE value="feat: change {toType} to {asType}, change &quot;individual&quot; to &quot;separated&quot;, rename &quot;operation&quot; to &quot;push&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: change {toType} to {asType}, change &quot;individual&quot; to &quot;separated&quot;, rename &quot;operation&quot; to &quot;push&quot;" />
-  </component>
-  <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="JavaScriptTestRunnerJest">
-        <watch expression="input.test" />
-      </configuration>
-    </watches-manager>
+    <MESSAGE value="feat: move test to be aside of files" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: move test to be aside of files" />
   </component>
 </project>

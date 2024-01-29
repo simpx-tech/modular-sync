@@ -1,5 +1,5 @@
 import {
-  CreateEntityOptions,
+  DefineEntityOptions,
   DatabaseAdapter,
   EntitySchema, SchemaType,
   UpsertData,
@@ -20,31 +20,33 @@ export class RepositoryBase<
   TSchema extends EntitySchema = EntitySchema,
 > {
   readonly entityName: string;
-  readonly schemaOptions: CreateEntityOptions;
+  readonly schemaOptions: DefineEntityOptions;
 
   schema: EntitySchema;
   syncEngine: ServerSyncEngine;
 
   db: DatabaseAdapter;
 
-  constructor(entityName: string, schema: TSchema, schemaOptions: CreateEntityOptions = {}) {
+  constructor(entityName: string, schema: TSchema, schemaOptions: DefineEntityOptions = {}) {
     this.entityName = entityName;
     this.schema = schema;
     this.schemaOptions = schemaOptions;
   }
 
+  // TODO delete this (or better, move runSetupDirectly logic to here),
+  //  should pass parameters directly as runSetupDirectly, allow better tests and more flexibility
   async runSetup(domain: ServerDomain) {
-    return this.runSetupDirectly(domain.syncEngine, domain.name, domain.isVirtual);
+    return this.runSetupDirectly(domain.syncEngine, domain.name, domain.isVirtual || this.schemaOptions.isToIgnoreSyncFields);
   }
 
-  async runSetupDirectly(syncEngine: ServerSyncEngine, domainName: string, isVirtual: boolean = false) {
+  async runSetupDirectly(syncEngine: ServerSyncEngine, domainName: string, isToIgnoreSyncFields: boolean = false) {
     this.syncEngine = syncEngine;
 
     const entityName = this.entityName;
 
     this.schema = {
       ...this.schema,
-      ...(!isVirtual && {
+      ...(!isToIgnoreSyncFields && {
         repository: SchemaType.Connection(REPOSITORY_ENTITY),
         domain: SchemaType.Connection(DOMAIN_ENTITY),
         createdAt: SchemaType.Date,
@@ -67,7 +69,7 @@ export class RepositoryBase<
       customName = `create-${domainName}-${entityName}`;
 
       async runOnce(db) {
-        await db.createEntity(entityName, schema, schemaOptions);
+        await db.defineEntity(entityName, schema, schemaOptions);
       }
     });
 

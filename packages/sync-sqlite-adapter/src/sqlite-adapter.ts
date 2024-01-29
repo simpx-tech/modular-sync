@@ -1,7 +1,7 @@
 import {SqliteAdapterOptions} from "./interfaces/sqlite-adapter-options";
 import BetterSqlite, {Database} from "better-sqlite3";
 import {
-  CreateEntityOptions,
+  DefineEntityOptions,
   EntitySchema,
   SchemaType,
   UpsertData,
@@ -133,7 +133,7 @@ export class SqliteAdapter implements DatabaseAdapter {
     }
   }
 
-  async createEntity(entity: string, schema: EntitySchema, options: CreateEntityOptions = {}) {
+  async defineEntity(entity: string, schema: EntitySchema, options: DefineEntityOptions = {}) {
     await this.raw({
       sql: `CREATE TABLE IF NOT EXISTS ${entity} (${this.formatSchema(schema)}${this.formatUniques(options?.unique)});`,
       params: [],

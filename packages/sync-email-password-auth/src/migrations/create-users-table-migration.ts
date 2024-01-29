@@ -4,7 +4,7 @@ import {EmailPasswordAuthEngine} from "../email-password-auth-engine";
 
 export class CreateUsersTableMigration implements Migration {
   async runOnce(databaseAdapter: DatabaseAdapter) {
-    await databaseAdapter.createEntity(EmailPasswordAuthEngine.USERS_ENTITY, {
+    await databaseAdapter.defineEntity(EmailPasswordAuthEngine.USERS_ENTITY, {
       email: SchemaType.String,
       password: SchemaType.String,
       syncActivated: SchemaType.Boolean,

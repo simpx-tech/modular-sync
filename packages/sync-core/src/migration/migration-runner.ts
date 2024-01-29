@@ -12,7 +12,7 @@ export class MigrationRunner {
   }
 
   async runSetup() {
-    await this.dbAdapter.createEntity(MigrationRunner.MIGRATION_ENTITY, {
+    await this.dbAdapter.defineEntity(MigrationRunner.MIGRATION_ENTITY, {
       domain: SchemaType.String,
       name: SchemaType.String,
       migratedAt: SchemaType.Date,

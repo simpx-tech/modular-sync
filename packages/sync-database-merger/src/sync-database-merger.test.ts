@@ -44,7 +44,7 @@ describe("Sync Database Merger", () => {
       ]);
     })
 
-    it("should update domain's isMigrated to true on last receiveAll call", async () => {
+    it("should update domain's isMigrated to true on last push call", async () => {
       const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send({
         entities: {},
         finished: true,
@@ -72,47 +72,60 @@ describe("Sync Database Merger", () => {
     })
 
     describe("Unified fields", () => {
+      // TODO first focus on the static fields (schema fields), then test the dynamic fields
+      // TODO consider what is the type of the operation (create, update, delete)
+      // TODO on create, first create entity and check if has other updates
+      // TODO on update, simply update fields (see below)
+      // TODO on delete, simply delete the entity (consider, when receiving update and delete updates at the same request)
+      // TODO on client, if delete entity, simply ignore all modifications, send a simple delete request, the server will delete the entity but
+      // TODO store all modifications to the entity before the deletion
+      // TODO if operation="delete" can remove the wasDeleted from the request
+      // TODO maybe add a deletedAt field, since can receive modification after deletion updates from other outdated clients
+
+      // TODO on client side, has to consider when create and update then submit to the server, the server will receive a create and a update request (?)
+      // TODO maybe merge the create and update into one operation (upsert?), or maybe, the create can receive updates by default, but the   update operation always consider
+      // TODO that the object was already created
       it("should receive and store all entities from a domain", async () => {
         const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
           entities: {
             "test_entity": [
               {
-                fields: {
-                  create: [
-                    {
-                      key: "test",
-                      value: "test"
-                    },
-                    {
-                      key: "test2",
-                      value: "test2"
-                    }
-                  ],
+                fields: [
+                  {
+                    __uuid: v4(),
+                    test: "test",
+                    test2: "test2",
+                  }
+                ],
+                dynamicFields: {
+                  create: [{
+                    __uuid: v4(),
+                    key: "test3",
+                    value: "test3",
+                  }],
                   update: [],
-                  delete: [],
+                  delete: []
                 },
-                uuid: v4(),
+                operation: "create",
                 wasDeleted: false,
                 createdAt: "2023-01-01T00:00:00.000Z",
                 updatedAt: "2023-01-01T00:00:00.000Z",
                 submittedAt: "2023-01-01T00:00:00.000Z",
               },
               {
-                fields: {
-                  create: [
-                    {
-                      key: "test",
-                      value: "test3"
-                    },
-                    {
-                      key: "test2",
-                      value: "test4"
-                    }
-                  ],
+                fields: [
+                  {
+                    __uuid: v4(),
+                    test: "test3",
+                    test2: "test4",
+                  }
+                ],
+                dynamicFields: {
+                  create: [],
                   update: [],
-                  delete: [],
+                  delete: []
                 },
-                uuid: v4(),
+                operation: "create",
                 wasDeleted: false,
                 createdAt: "2023-01-02T00:00:00.000Z",
                 updatedAt: "2023-01-02T00:00:00.000Z",
@@ -121,21 +134,19 @@ describe("Sync Database Merger", () => {
             ],
             "test_entity_2": [
               {
-                fields: {
-                  create: [
-                    {
-                      key: "test",
-                      value: "test5"
-                    },
-                    {
-                      key: "test2",
-                      value: "test6"
-                    }
-                  ],
+                fields: [
+                  {
+                    __uuid: v4(),
+                    test: "test5",
+                    test2: "test6",
+                  }
+                ],
+                dynamicFields: {
+                  create: [],
                   update: [],
-                  delete: [],
+                  delete: []
                 },
-                uuid: v4(),
+                operation: "create",
                 wasDeleted: false,
                 createdAt: "2023-01-03T00:00:00.000Z",
                 updatedAt: "2023-01-03T00:00:00.000Z",
@@ -147,7 +158,7 @@ describe("Sync Database Merger", () => {
         });
 
         expect(res.status).toBe(200);
-        expect(res.body).toEqual({ entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z" });
+        expect(res.body).toEqual({ entities: {}, lastUpdatedAt: "2023-01-03T00:00:00.000Z" });
 
         /* Should create the entities on the database */
         const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
@@ -186,6 +197,7 @@ describe("Sync Database Merger", () => {
           wasDeleted: 0,
         }])
 
+        /* Should save the modification */
         const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
         expect(modifications).toEqual([{
           id: 1,

@@ -5,7 +5,6 @@ import {DomainRepository} from "../repositories/domain/domain-repository";
 import {Express} from "express";
 import supertest from "supertest";
 import {setupTests} from "../../__tests__/helpers/setup-tests";
-import {clearAllFiles} from "../../__tests__/helpers/clear-all-files";
 import {setupAuthentication} from "../../__tests__/helpers/setup-authentication";
 import {MigrationRunner} from "../migration/migration-runner";
 
@@ -22,10 +21,6 @@ describe("Server Sync Engine", () => {
       jest.clearAllMocks();
       jest.restoreAllMocks();
       await commonDb.disconnect();
-    })
-
-    afterAll(async () => {
-      await clearAllFiles();
     })
 
     it("should helpers the database tables and run repositories, auth and domain setups", async () => {

@@ -5,7 +5,7 @@ export function getConverterFnBySchemaType(schemaType: FieldType) {
     case SchemaType.String:
       return "asString";
     case SchemaType.Integer:
-      return "asInt";
+      return "asInteger";
     case SchemaType.Float:
       return "asFloat";
     case SchemaType.Boolean:

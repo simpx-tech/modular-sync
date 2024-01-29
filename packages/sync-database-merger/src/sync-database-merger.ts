@@ -54,6 +54,7 @@ export class DatabaseMerger implements MergeEngine {
    * @param push
    */
   async push(identity: Identity, push: PushOperation): Promise<OperationsReturn> {
+    // TODO use __uuid and operation fields
     const domains = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
     const domain = domains.find(domain => domain.name === identity.domain);
 

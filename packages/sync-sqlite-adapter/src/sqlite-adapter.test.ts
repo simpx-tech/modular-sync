@@ -138,9 +138,9 @@ describe("SQLite Adapter", () => {
     return expect(promise).resolves.toEqual({ result: 2 });
   })
 
-  describe("createEntity", () => {
-    it("should allow create entity", async () => {
-      const promise = sqliteAdapter.createEntity("newTable", {
+  describe("defineEntity", () => {
+    it("should allow define entity", async () => {
+      const promise = sqliteAdapter.defineEntity("newTable", {
         test: SchemaType.String,
         test2: SchemaType.Integer,
         test3: SchemaType.Float,
@@ -157,14 +157,14 @@ describe("SQLite Adapter", () => {
     })
 
     it("should allow create entity twice without problem", async () => {
-      await sqliteAdapter.createEntity("newTable", { name: SchemaType.String });
-      const promise = sqliteAdapter.createEntity("newTable", { name: SchemaType.String });
+      await sqliteAdapter.defineEntity("newTable", { name: SchemaType.String });
+      const promise = sqliteAdapter.defineEntity("newTable", { name: SchemaType.String });
 
       await expect(promise).resolves.toBeUndefined();
     })
 
     it("should create unique fields constraint properly", async () => {
-      await sqliteAdapter.createEntity("newTable", { name: SchemaType.String }, { unique: ["name"] });
+      await sqliteAdapter.defineEntity("newTable", { name: SchemaType.String }, { unique: ["name"] });
 
       await sqliteAdapter.create("newTable", { name: "test" });
       const promise = sqliteAdapter.create("newTable", { name: "test" });
@@ -173,7 +173,7 @@ describe("SQLite Adapter", () => {
     })
 
     it("should create compound unique fields constraint properly", async () => {
-      await sqliteAdapter.createEntity("newTable", { name: SchemaType.String, name2: SchemaType.String }, { unique: ["name", "name2"] });
+      await sqliteAdapter.defineEntity("newTable", { name: SchemaType.String, name2: SchemaType.String }, { unique: ["name", "name2"] });
 
       await sqliteAdapter.create("newTable", { name: "test", name2: "test2" });
       await sqliteAdapter.create("newTable", { name: "test", name2: "test3" }); // Should not throw

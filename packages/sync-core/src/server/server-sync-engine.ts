@@ -40,7 +40,6 @@ export class ServerSyncEngine {
   }
 
   async runSetup() {
-    await this.metadataDatabase.connect();
     await this.routerAdapter.runSetup();
 
     this.repositoryRepository = new RepositoryRepository()
@@ -50,7 +49,7 @@ export class ServerSyncEngine {
       name: "internal-sync-domain",
       databaseAdapter: this.metadataDatabase,
       mergeEngine: undefined,
-      fieldsStorageMethod: undefined,
+      dynamicFieldsStrategy: undefined,
       repositories: [this.repositoryRepository, this.domainRepository],
       isVirtual: true,
     });

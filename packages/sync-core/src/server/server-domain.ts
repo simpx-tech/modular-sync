@@ -2,7 +2,7 @@ import {DatabaseAdapter} from "../interfaces/database-adapter";
 import {MergeEngine} from "./interfaces/merge-engine";
 import {ServerDomainOptions} from "../interfaces/server-domain-options";
 import {ServerSyncEngine} from "./server-sync-engine";
-import {FieldStorageMethod} from "./enums/field-storage-method";
+import {DynamicFieldsStrategy} from "./enums/dynamic-fields-strategy";
 import {RepositoryBase} from "../common/repository-base";
 
 export class ServerDomain {
@@ -10,7 +10,7 @@ export class ServerDomain {
 
   readonly databaseAdapter: DatabaseAdapter;
   readonly name: string;
-  readonly fieldsStorageMethod: FieldStorageMethod;
+  readonly dynamicFieldsStrategy: DynamicFieldsStrategy;
   readonly repositories: RepositoryBase<any>[];
 
   /**
@@ -24,14 +24,14 @@ export class ServerDomain {
     databaseAdapter,
     mergeEngine,
     name,
-    fieldsStorageMethod,
+    dynamicFieldsStrategy,
     repositories = [],
     isVirtual,
   }: ServerDomainOptions) {
     this.databaseAdapter = databaseAdapter;
     this.mergeEngine = mergeEngine;
     this.name = name;
-    this.fieldsStorageMethod = fieldsStorageMethod;
+    this.dynamicFieldsStrategy = dynamicFieldsStrategy;
     this.repositories = repositories;
     this.isVirtual = isVirtual ?? false;
   }
@@ -43,6 +43,7 @@ export class ServerDomain {
   async runSetup(syncEngine: ServerSyncEngine) {
     this.syncEngine = syncEngine;
 
+    // TODO should create the Dynamic Fields Adapter here
     for await (const repository of this.repositories) {
       await repository.runSetup(this);
     }

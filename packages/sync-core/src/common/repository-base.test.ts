@@ -7,15 +7,16 @@ import {DOMAIN_ENTITY} from "../repositories/domain/domain-repository-constants"
 
 describe("Repository", () => {
   let syncEngine: ServerSyncEngine;
-  let test3Repository: RepositoryBase<any>;
+  let repositoryWithUnique: RepositoryBase<any>;
+  let repositoryWithUniqueNoMetadata: RepositoryBase<any>;
 
   beforeEach(async () => {
-    ({ syncEngine, test3Repository } = setupTests());
+    ({ syncEngine, repositoryWithUnique, repositoryWithUniqueNoMetadata } = setupTests());
     await syncEngine.runSetup()
   })
 
   it("should add metadata to the schema", () => {
-    expect(test3Repository.schema).toEqual({
+    expect(repositoryWithUnique.schema).toEqual({
       test: SchemaType.String,
       test2: SchemaType.Integer,
       test3: SchemaType.Boolean,
@@ -31,7 +32,7 @@ describe("Repository", () => {
 
   describe("create", () => {
     it("should create and convert data types properly", async () => {
-      const res = await test3Repository.create({
+      const res = await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: false,
@@ -50,21 +51,21 @@ describe("Repository", () => {
 
   describe("getFirst", () => {
     it("should get first and convert data types properly", async () => {
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test2",
         test2: 2,
         test3: false,
         test4: new Date("2021-01-02"),
       })
 
-      const res = await test3Repository.getFirst();
+      const res = await repositoryWithUniqueNoMetadata.getFirst();
 
       expect(res).toEqual({
         id: 1,
@@ -78,21 +79,21 @@ describe("Repository", () => {
 
   describe("getById", () => {
     it("should get by id", async () => {
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test2",
         test2: 2,
         test3: false,
         test4: new Date("2021-01-02"),
       })
 
-      const res = await test3Repository.getById(2);
+      const res = await repositoryWithUniqueNoMetadata.getById(2);
 
       expect(res).toEqual({
         id: 2,
@@ -120,13 +121,13 @@ describe("Repository", () => {
         test4: new Date("2021-01-02"),
       }
 
-      await test3Repository.create(first)
-      await test3Repository.create(second)
+      await repositoryWithUniqueNoMetadata.create(first)
+      await repositoryWithUniqueNoMetadata.create(second)
 
-      const res = await test3Repository.getByField({ test: "test2" });
-      const res2 = await test3Repository.getByField({ test2: 1 });
-      const res3 = await test3Repository.getByField({ test3: false });
-      const res4 = await test3Repository.getByField({ test4: new Date("2021-01-01") });
+      const res = await repositoryWithUniqueNoMetadata.getByField({ test: "test2" });
+      const res2 = await repositoryWithUniqueNoMetadata.getByField({ test2: 1 });
+      const res3 = await repositoryWithUniqueNoMetadata.getByField({ test3: false });
+      const res4 = await repositoryWithUniqueNoMetadata.getByField({ test4: new Date("2021-01-01") });
 
       const firstWithId = { ...first, id: 1 };
       const secondWithId = { ...second, id: 2 };
@@ -140,21 +141,21 @@ describe("Repository", () => {
 
   describe("getAllByField", () => {
     it("should get all by field", async () => {
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test2",
         test2: 1,
         test3: false,
         test4: new Date("2021-01-02"),
       })
 
-      const res = await test3Repository.getAllByField({ test2: 1 });
+      const res = await repositoryWithUniqueNoMetadata.getAllByField({ test2: 1 });
 
       expect(res).toEqual([{
         id: 1,
@@ -174,21 +175,21 @@ describe("Repository", () => {
 
   describe("getAll", () => {
     it("should get all from entity", async () => {
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test2",
         test2: 2,
         test3: false,
         test4: new Date("2021-01-02"),
       })
 
-      const res = await test3Repository.getAll();
+      const res = await repositoryWithUniqueNoMetadata.getAll();
 
       expect(res).toEqual([{
         id: 1,
@@ -208,21 +209,21 @@ describe("Repository", () => {
 
   describe("createIfNotExists", () => {
     it("should create it if it not exists and not duplicate", async () => {
-      await test3Repository.createIfNotExists(["test"], {
+      await repositoryWithUniqueNoMetadata.createIfNotExists(["test"], {
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      await test3Repository.createIfNotExists(["test"], {
+      await repositoryWithUniqueNoMetadata.createIfNotExists(["test"], {
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      const res = await test3Repository.getAll();
+      const res = await repositoryWithUniqueNoMetadata.getAll();
 
       expect(res).toEqual([{
         id: 1,
@@ -236,14 +237,14 @@ describe("Repository", () => {
 
   describe("update", () => {
     it("should update", async () => {
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      const updated = await test3Repository.update(1, {
+      const updated = await repositoryWithUniqueNoMetadata.update(1, {
         test: "test",
         test2: 1,
         test3: true,
@@ -258,7 +259,7 @@ describe("Repository", () => {
         test4: new Date("2021-01-01"),
       });
 
-      const all = await test3Repository.getAll();
+      const all = await repositoryWithUniqueNoMetadata.getAll();
 
       expect(all).toEqual([{
         id: 1,
@@ -270,47 +271,110 @@ describe("Repository", () => {
     });
   })
 
-  describe("delete", () => {
-    it("should delete", async () => {
-      await test3Repository.create({
+  describe("upsert", () => {
+    it("should upsert, update if the entity exists", async () => {
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      const wasDeleted = await test3Repository.delete(1)
+      const updated = await repositoryWithUniqueNoMetadata.upsert({ test: "test" }, {
+        test: "testUpdated",
+        test2: 2,
+        test3: false,
+        test4: new Date("2021-01-02"),
+      })
+
+      expect(updated).toEqual({
+        id: 1,
+        test: "testUpdated",
+        test2: 2,
+        test3: false,
+        test4: new Date("2021-01-02"),
+      });
+
+      const all = await repositoryWithUniqueNoMetadata.getAll();
+
+      expect(all).toEqual([{
+        id: 1,
+        test: "testUpdated",
+        test2: 2,
+        test3: false,
+        test4: new Date("2021-01-02"),
+      }])
+    });
+
+    it("should upsert, create if the entity doesn't exists", async () => {
+      const updated = await repositoryWithUniqueNoMetadata.upsert({ test: "test" }, {
+        test: "testUpdated",
+        test2: 2,
+        test3: false,
+        test4: new Date("2021-01-02"),
+      })
+
+      expect(updated).toEqual({
+        id: 1,
+        test: "testUpdated",
+        test2: 2,
+        test3: false,
+        test4: new Date("2021-01-02"),
+      });
+
+      const all = await repositoryWithUniqueNoMetadata.getAll();
+
+      expect(all).toEqual([{
+        id: 1,
+        test: "testUpdated",
+        test2: 2,
+        test3: false,
+        test4: new Date("2021-01-02"),
+      }])
+    });
+  })
+
+  describe("delete", () => {
+    it("should delete", async () => {
+      await repositoryWithUniqueNoMetadata.create({
+        test: "test",
+        test2: 1,
+        test3: true,
+        test4: new Date("2021-01-01"),
+      })
+
+      const wasDeleted = await repositoryWithUniqueNoMetadata.delete(1)
       expect(wasDeleted).toEqual({
         wasDeleted: true,
       });
 
-      const all = await test3Repository.getAll();
+      const all = await repositoryWithUniqueNoMetadata.getAll();
       expect(all).toEqual([])
     });
   })
 
   describe("deleteByField", () => {
     it("should delete based on provided keys", async () => {
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test",
         test2: 1,
         test3: true,
         test4: new Date("2021-01-01"),
       })
 
-      await test3Repository.create({
+      await repositoryWithUniqueNoMetadata.create({
         test: "test2",
         test2: 2,
         test3: false,
         test4: new Date("2021-01-02"),
       })
 
-      const wasDeleted = await test3Repository.deleteByField({ test: "test2" })
+      const wasDeleted = await repositoryWithUniqueNoMetadata.deleteByField({ test: "test2" })
       expect(wasDeleted).toEqual({
         wasDeleted: true,
       });
 
-      const all = await test3Repository.getAll();
+      const all = await repositoryWithUniqueNoMetadata.getAll();
       expect(all).toEqual([{
         id: 1,
         test: "test",

@@ -1,6 +1,6 @@
 import {DatabaseAdapter} from "./database-adapter";
 import {MergeEngine} from "../server/interfaces/merge-engine";
-import {FieldStorageMethod} from "../server/enums/field-storage-method";
+import {DynamicFieldsStrategy} from "../server/enums/dynamic-fields-strategy";
 import {RepositoryBase} from "../common/repository-base";
 
 export interface ServerDomainOptions {
@@ -8,7 +8,7 @@ export interface ServerDomainOptions {
   mergeEngine: MergeEngine;
   name: string;
 
-  fieldsStorageMethod?: FieldStorageMethod;
+  dynamicFieldsStrategy?: DynamicFieldsStrategy;
   repositories?: RepositoryBase<any, any, any, any>[];
 
   /* Doesn't create domain entity on the database */

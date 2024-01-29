@@ -23,20 +23,20 @@ export interface DatabaseAdapter<TId = number | string> {
   raw<T = any>(options: any): Promise<T>;
 
   // Should allow calling it twice without causing error
-  createEntity(entity: string, schema: EntitySchema, options?: CreateEntityOptions): Promise<void>;
+  defineEntity(entity: string, schema: EntitySchema, options?: DefineEntityOptions): Promise<void>;
 
   registerCreateMiddleware(middleware: ((entity: string, data: UpsertData) => void)): void;
   registerUpdateMiddleware(middleware: ((entity: string, id: TId, data: UpsertData) => void)): void;
   registerDeleteMiddleware(middleware: ((entity: string, id: TId) => void)): void;
 }
 
-export interface CreateEntityOptions {
+export interface DefineEntityOptions {
   unique?: string[];
 
   /**
    * Remove all metadata fields from the entity
    */
-  noSyncFields?: boolean;
+  isToIgnoreSyncFields?: boolean;
 
   // TODO add indexes
 }

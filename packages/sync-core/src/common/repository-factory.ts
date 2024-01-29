@@ -1,5 +1,5 @@
 import {
-  CreateEntityOptions, DatabaseAdapter,
+  DefineEntityOptions, DatabaseAdapter,
   EntitySchema,
 } from "../interfaces/database-adapter";
 import {RepositoryBase} from "./repository-base";
@@ -10,7 +10,7 @@ export class RepositoryFactory {
     TCreate extends Record<string, any> = undefined,
     TUpdate extends Record<string, any> = undefined,
     TSchema extends EntitySchema = undefined,
-  >(entityName: string, schema: TSchema, schemaOptions?: CreateEntityOptions) {
+  >(entityName: string, schema: TSchema, schemaOptions?: DefineEntityOptions) {
     return new RepositoryBase<TEntity, TCreate, TUpdate, TSchema>(entityName, schema, schemaOptions);
   }
 }
