@@ -47,6 +47,7 @@ export class RepositoryBase<
     this.schema = {
       ...this.schema,
       ...(!isToIgnoreSyncFields && {
+        __creationUUID: SchemaType.String,
         repository: SchemaType.Connection(REPOSITORY_ENTITY),
         domain: SchemaType.Connection(DOMAIN_ENTITY),
         createdAt: SchemaType.Date,

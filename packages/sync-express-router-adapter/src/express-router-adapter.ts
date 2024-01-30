@@ -1,9 +1,13 @@
-import {RouterAdapter} from "@simpx/sync-core/src/server/interfaces/router-adapter";
+import {RegisterRouteOptions, RouterAdapter} from "@simpx/sync-core/src/server/interfaces/router-adapter";
 import express, {Express, Request, Response} from "express";
 import {ExpressRouterAdapterOptions} from "./interfaces/express-router-adapter-options";
 import {RouterCallback, RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import {AuthEngine} from "@simpx/sync-core/src/server/interfaces/auth-engine";
+import {UnauthorizedException} from "@simpx/sync-core/src/server/exceptions/unauthorized-exception";
+import {ForbiddenException} from "@simpx/sync-core/src/server/exceptions/forbidden-exception";
+import {UnprocessableEntityException} from "@simpx/sync-core/src/server/exceptions/unprocessable-entity-exception";
+import Joi from "joi";
 
 export class ExpressRouterAdapter implements RouterAdapter {
   private readonly app: Express;
@@ -21,10 +25,32 @@ export class ExpressRouterAdapter implements RouterAdapter {
     this.app.use(express.json());
   }
 
-  registerRoute(method: HttpMethod, route: string, callback: RouterCallback) {
+  registerRoute(method: HttpMethod, route: string, callback: RouterCallback, options: RegisterRouteOptions = {}) {
     this.app[method](`/${this.path}/${route}`, async (req, res) => {
       try {
-        const value = await callback(this.buildRouterRequest(req));
+        if (options.isPrivate) {
+          const token = this.extractToken(req);
+          if (!token) {
+            throw new UnauthorizedException("No token provided");
+          }
+
+          if(!await this.authEngine.isAuthenticated(token)) {
+            throw new ForbiddenException("Invalid token or user has no sync activated");
+          };
+        }
+
+        const routerRequest: RouterRequest = this.buildRouterRequest(req);
+
+        if (options.joiSchema) {
+          const { error, value } = options.joiSchema.validate(routerRequest.body);
+          if (error) {
+            throw new UnprocessableEntityException(error.message);
+          }
+
+          routerRequest.body = value;
+        }
+
+        const value = await callback(routerRequest);
         res.status(200).send(value);
       } catch (err) {
         console.error(err)
@@ -39,7 +65,7 @@ export class ExpressRouterAdapter implements RouterAdapter {
   }
 
   returnHttpError(res: Response, err: any) {
-    res.status(err.errorStatus).send({ error: err.errorCode, code: err.errorStatus, message: err.message })
+    res.status(err.errorStatus).send({ error: err.errorCode, code: err.errorStatus, message: err.errorCode === 500 ? "Internal Server Error" : err.message })
   }
 
   private buildRouterRequest(req: Request): RouterRequest {

@@ -3,9 +3,9 @@ import {ServerDomain} from "../server-domain";
 
 export interface MergeEngine {
   runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void>;
-  sync(identity: Identity, operation: SyncOperation): Promise<OperationsReturn>;
-  push(identity: Identity, operation: PushOperation): Promise<OperationsReturn>;
-  pull(identity: Identity, options: PullOptions): Promise<OperationsReturn>;
+  sync(identity: Identity, operation: any): Promise<{}>;
+  push(identity: Identity, operation: PushOperation): Promise<PushSuccessReturn>;
+  pull(identity: Identity, options: PullOptions): Promise<{}>;
 }
 
 export interface Identity {
@@ -14,7 +14,10 @@ export interface Identity {
 }
 
 export interface PushOperation {
-  entities: Record<string, EntityOperation[]>;
+  // TODO should convert dates in the router adapter
+  modifications: EntityModification[];
+  submittedAt: Date;
+  lastChangedAt: Date;
 
   /**
    * Whether the client has finished sending all entities or not. When `true`
@@ -23,13 +26,22 @@ export interface PushOperation {
   finished: boolean;
 }
 
-export interface SyncOperation {
-  entities: Record<string, EntityOperation[]>;
+export interface EntityModification {
+  entity: string,
+  changedAt: string,
+  type: EntityModificationType,
+  creationUUID: string,
+  uuid: string,
+  data: Record<string, any>
+}
 
-  /**
-   * Search for all modification from this point to return to the user
-   */
-  lastSubmittedAt: string;
+export enum EntityModificationType {
+  CreateEntity = "create-entity",
+  UpdateEntity = "update-entity",
+  DeleteEntity = "delete-entity",
+  CreateDynamicField = "create-dynamic-field",
+  UpdateDynamicField = "update-dynamic-field",
+  DeleteDynamicField = "delete-dynamic-field"
 }
 
 export interface PullOptions {
@@ -38,36 +50,9 @@ export interface PullOptions {
   pageSize: number;
 }
 
-export interface EntityOperation {
-  fields: {
-    create: UpsertFieldOperation[];
-    update: UpsertFieldOperation[];
-    /**
-     * List of ids of fields to delete
-     */
-    delete: (string | number)[];
-  }
-  wasDeleted: boolean;
-  createdAt: string;
-  updatedAt: string;
-  submittedAt: string;
-}
+export type OperationType = "create" | "update" | "delete";
 
-export interface UpsertFieldOperation {
-  key: string;
-  value: any;
-}
-
-export interface OperationsReturn {
-  entities: Record<string, EntityOperation[]>;
-  /**
-   * Used in bulk-read to know if there are more pages to read
-   */
-  finished: boolean;
-  page: number;
-  nextIndex: number;
-  /**
-   * The lasted entity update time that was sent on "entities" field
-   */
+export interface PushSuccessReturn {
   lastSubmittedAt: string;
+  status: "success"
 }

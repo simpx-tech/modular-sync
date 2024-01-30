@@ -12,6 +12,7 @@ import {NotFoundException} from "./exceptions/not-found-exception";
 import {UnauthorizedException} from "./exceptions/unauthorized-exception";
 import {MigrationRunner} from "../migration/migration-runner";
 import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
+import {CREATE_REPOSITORY_SCHEMA} from "./constants/router-joi-schemas";
 
 export class ServerSyncEngine {
   readonly domains: ServerDomain[];
@@ -57,7 +58,7 @@ export class ServerSyncEngine {
 
     await this.authEngine.runSetup(this);
 
-    this.routerAdapter.registerRoute(HttpMethod.POST, "repository", this.createRepositoryEndpoint.bind(this));
+    this.routerAdapter.registerRoute(HttpMethod.POST, "repository", this.createRepositoryEndpoint.bind(this), { isPrivate: true, joiSchema: CREATE_REPOSITORY_SCHEMA });
     this.routerAdapter.registerRoute(HttpMethod.DELETE, "repository", this.deleteRepositoryEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.GET, "repository", this.getRepositoryEndpoint.bind(this));
     this.routerAdapter.registerRoute(HttpMethod.GET, "repositories", this.getRepositoriesEndpoint.bind(this));

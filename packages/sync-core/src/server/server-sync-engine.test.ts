@@ -67,6 +67,10 @@ describe("Server Sync Engine", () => {
         supertest(app).post("/sync/repository").send({ name: "test-repository" }).expect(401);
       })
 
+      it('should fail if name is not provided', () => {
+        supertest(app).post("/sync/repository").set("Authorization", `Bearer ${token}`).send({}).expect(422);
+      });
+
       it ("should create repository on database", async () => {
         const res = await supertest(app).post("/sync/repository").set("Authorization", `Bearer ${token}`).send({ name: "test-repository" });
 

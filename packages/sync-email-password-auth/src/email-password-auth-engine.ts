@@ -100,8 +100,15 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     };
   }
 
+  /**
+   * Verifies if the token is valid and the user has sync activated
+   * @param token
+   */
   isAuthenticated(token: any) {
     try {
+      if (!token) return Promise.resolve(false);
+      jwt.verify(token, this.jwtSecret);
+
       const decoded = jwt.decode(token, { json: true });
 
       if (!decoded.syncActivated) {
@@ -114,6 +121,7 @@ export class EmailPasswordAuthEngine implements AuthEngine {
     }
   }
 
+  // TODO: implement
   refreshSession() {
     return Promise.resolve(null);
   }
@@ -133,7 +141,7 @@ export class EmailPasswordAuthEngine implements AuthEngine {
         json: true,
       });
     } catch (err) {
-      console.error(err)
+      console.error(err);
       return null;
     }
   }

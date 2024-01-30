@@ -1,18 +1,21 @@
 import {
   PullOptions, PushOperation, Identity,
-  MergeEngine,
-  OperationsReturn, SyncOperation
+  MergeEngine, PushSuccessReturn,
 } from "@simpx/sync-core/src/server/interfaces/merge-engine";
 import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
 import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callback";
 import {NotFoundException} from "@simpx/sync-core/src/server/exceptions/not-found-exception";
 import {ConflictException} from "@simpx/sync-core/src/server/exceptions/conflict-exception";
-import isEnvironmentTornDown = jest.isEnvironmentTornDown;
 import {ServerDomain} from "@simpx/sync-core/src/server/server-domain";
+import {CreateStrategy} from "./push-strategies/create-strategy";
+import {InternalServerErrorException} from "@simpx/sync-core/src/server/exceptions/internal-errror-exception";
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
+  private createStrategy = new CreateStrategy();
+  // private updateStrategy = new UpdateStrategy();
+  // private deleteStrategy = new DeleteStrategy();
 
   async runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void> {
     this.syncEngine = syncEngine;
@@ -20,6 +23,10 @@ export class DatabaseMerger implements MergeEngine {
     this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.syncEndpoint.bind(this));
     this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/pull`, this.pullEndpoint.bind(this));
     this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/push`, this.pushEndpoint.bind(this));
+
+    await this.createStrategy.runSetup(syncEngine);
+    // await this.updateStrategy.runSetup(syncEngine);
+    // await this.deleteStrategy.runSetup(syncEngine);
   }
 
   async syncEndpoint(req: RouterRequest) {}
@@ -44,7 +51,7 @@ export class DatabaseMerger implements MergeEngine {
 
   async pullEndpoint(req: RouterRequest) {}
 
-  pull(identity: Identity, options: PullOptions): Promise<OperationsReturn> {
+  pull(identity: Identity, options: PullOptions): Promise<{}> {
     return Promise.resolve(undefined);
   }
 
@@ -53,7 +60,7 @@ export class DatabaseMerger implements MergeEngine {
    * @param identity namespace for repository and domain ids
    * @param push
    */
-  async push(identity: Identity, push: PushOperation): Promise<OperationsReturn> {
+  async push(identity: Identity, push: PushOperation): Promise<PushSuccessReturn> {
     // TODO use __uuid and operation fields
     const domains = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
     const domain = domains.find(domain => domain.name === identity.domain);
@@ -68,47 +75,77 @@ export class DatabaseMerger implements MergeEngine {
 
     const serverDomain = this.syncEngine.domains.find(domain => domain.name === identity.domain);
 
+    if (!serverDomain) {
+      throw new InternalServerErrorException("Server domain not found");
+    }
+
     // TODO check if is create, update or delete
     // TODO consider unified and separated fields
-    for await (const [entityName, entityOperations] of Object.entries(push.entities)) {
-      const promises = entityOperations.map(async (operation) => {
-        const mergedFields = operation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
 
-        const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
-
-        if (!repository) {
-          throw new Error(`Couldn't find the respective repository for ${entityName}`)
-        }
-
-        // TODO create upsert
-        await repository.upsert({}, {
-          ...mergedFields,
-          repository: identity.repositoryId,
-          domain: domain.id,
-          createdAt: operation.createdAt,
-          submittedAt: operation.submittedAt,
-          updatedAt: operation.updatedAt,
-          wasDeleted: operation.wasDeleted,
-        });
-
-        await repository.upsert({}, {})
-      });
-
-      await Promise.all(promises);
-    }
+    // for await (const [entityName, entities] of Object.entries(push.entities)) {
+    //   const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
+    //
+    //   if (!repository) {
+    //     throw new Error(`Couldn't find the respective repository for ${entityName}`)
+    //   }
+    //
+    //   await this.processEntityOperations(entityName, entities, identity, serverDomain, domain);
+    //
+    //   // const promises = entityOperations.map(async (operation) => {
+    //   //   const mergedFields = operation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
+    //   //
+    //   //   const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
+    //   //
+    //   //   if (!repository) {
+    //   //     throw new Error(`Couldn't find the respective repository for ${entityName}`)
+    //   //   }
+    //   //
+    //   //   // TODO create upsert
+    //   //   await repository.upsert({}, {
+    //   //     ...mergedFields,
+    //   //     repository: identity.repositoryId,
+    //   //     domain: domain.id,
+    //   //     createdAt: operation.createdAt,
+    //   //     submittedAt: operation.submittedAt,
+    //   //     updatedAt: operation.updatedAt,
+    //   //     wasDeleted: operation.wasDeleted,
+    //   //   });
+    //   //
+    //   //   await repository.upsert({}, {})
+    //   // });
+    //   //
+    //   // await Promise.all(promises);
+    // }
 
     // TODO Save all modification
 
-
     if (push.finished) {
-      await this.syncEngine.domainRepository.update(domain.id, { isMigrated: true });
+      await this.syncEngine.domainRepository.update(domain.id, {isMigrated: true});
     }
 
     // DEV
-    return { entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z" } as any;
+    return {entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z"} as any;
   }
 
-  sync(identity: Identity, operation: SyncOperation): Promise<OperationsReturn> {
+  // private async processEntityOperations(identity: MergeOperationIdentity, entities: EntityOperation[], repository: RepositoryBase) {
+  //   const promises = entities.map(async (operation) => {
+  //     switch (operation.operation) {
+  //       case "create":
+  //         // TODO should pass filtered otherOperations
+  //         return await this.createStrategy.handle(identity, repository, operation, this.filterOperationsByEntity(entities));
+  //         // TODO develop
+  //       case "update":
+  //         return await this.updateStrategy.handle(identity, repository, operation);
+  //       // TODO develop
+  //       case "delete":
+  //         return await this.deleteStrategy.handle(identity, repository, operation);
+  //     }
+  //   });
+  //
+  //   return Promise.all(promises);
+  // }
+
+  sync(identity: Identity, operation: {}): Promise<{}> {
     return Promise.resolve(undefined);
   }
 }

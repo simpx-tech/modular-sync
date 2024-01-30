@@ -86,79 +86,54 @@ describe("Sync Database Merger", () => {
       // TODO maybe merge the create and update into one operation (upsert?), or maybe, the create can receive updates by default, but the   update operation always consider
       // TODO that the object was already created
       it("should receive and store all entities from a domain", async () => {
+        const uuid1 = v4();
+        const uuid2 = v4();
+        const uuid3 = v4();
+
         const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
-          entities: {
-            "test_entity": [
-              {
-                fields: [
-                  {
-                    __uuid: v4(),
-                    test: "test",
-                    test2: "test2",
-                  }
-                ],
-                dynamicFields: {
-                  create: [{
-                    __uuid: v4(),
-                    key: "test3",
-                    value: "test3",
-                  }],
-                  update: [],
-                  delete: []
-                },
-                operation: "create",
-                wasDeleted: false,
-                createdAt: "2023-01-01T00:00:00.000Z",
-                updatedAt: "2023-01-01T00:00:00.000Z",
-                submittedAt: "2023-01-01T00:00:00.000Z",
-              },
-              {
-                fields: [
-                  {
-                    __uuid: v4(),
-                    test: "test3",
-                    test2: "test4",
-                  }
-                ],
-                dynamicFields: {
-                  create: [],
-                  update: [],
-                  delete: []
-                },
-                operation: "create",
-                wasDeleted: false,
-                createdAt: "2023-01-02T00:00:00.000Z",
-                updatedAt: "2023-01-02T00:00:00.000Z",
-                submittedAt: "2023-01-02T00:00:00.000Z",
+          modifications: [
+            {
+              entity: "test_entity",
+              changedAt: "2023-01-01T00:00:00.000Z",
+              type: "create-entity",
+              creationUUID: uuid1,
+              uuid: uuid1,
+              data: {
+                name: "name",
+                name2: "name2"
               }
-            ],
-            "test_entity_2": [
-              {
-                fields: [
-                  {
-                    __uuid: v4(),
-                    test: "test5",
-                    test2: "test6",
-                  }
-                ],
-                dynamicFields: {
-                  create: [],
-                  update: [],
-                  delete: []
-                },
-                operation: "create",
-                wasDeleted: false,
-                createdAt: "2023-01-03T00:00:00.000Z",
-                updatedAt: "2023-01-03T00:00:00.000Z",
-                submittedAt: "2023-01-03T00:00:00.000Z",
+            },
+            {
+              entity: "test_entity",
+              changedAt: "2023-01-01T00:00:00.000Z",
+              type: "create-entity",
+              creationUUID: uuid2,
+              uuid: uuid2,
+              data: {
+                name: "name",
+                name2: "name2"
               }
-            ]
-          },
+            },
+            {
+              entity: "test_entity",
+              changedAt: "2023-01-01T00:00:00.000Z",
+              type: "create-entity",
+              creationUUID: uuid3,
+              uuid: uuid3,
+              data: {
+                name: "name",
+                name2: "name2"
+              }
+            }
+          ],
+          submittedAt: new Date().toISOString(),
+          lastChangedAt: "2023-01-03T00:00:00.000Z",
           finished: true,
         });
 
         expect(res.status).toBe(200);
-        expect(res.body).toEqual({ entities: {}, lastUpdatedAt: "2023-01-03T00:00:00.000Z" });
+
+        expect(res.body).toEqual({ status: "success", lastSubmittedAt: "2023-01-03T00:00:00.000Z" });
 
         /* Should create the entities on the database */
         const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
@@ -167,6 +142,7 @@ describe("Sync Database Merger", () => {
           repository: 1,
           domain: 1,
           test: "test",
+          creationUUID: uuid1,
           test2: "test2",
           createdAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
           updatedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
@@ -176,6 +152,7 @@ describe("Sync Database Merger", () => {
           id: 2,
           repository: 1,
           domain: 1,
+          creationUUID: uuid2,
           test: "test3",
           test2: "test4",
           createdAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
@@ -189,6 +166,7 @@ describe("Sync Database Merger", () => {
           id: 1,
           test: "test5",
           test2: "test6",
+          creationUUID: uuid3,
           repository: 1,
           domain: 1,
           createdAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
@@ -198,72 +176,51 @@ describe("Sync Database Merger", () => {
         }])
 
         /* Should save the modification */
+        // TODO Remember to set uuid and creationUUID as index
         const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
         expect(modifications).toEqual([{
           id: 1,
           repository: 1,
           domain: 1,
           entity: "test_entity",
-          operation: "create",
-          uuid: expect.any(String),
-          entityId: 1,
+          operation: "create-entity",
+          uuid: uuid1,
+          creationUUID: uuid1,
           submittedAt: "2023-01-01T00:00:00.000Z",
           updatedAt: "2023-01-01T00:00:00.000Z",
-          wasDeleted: 0,
-          fieldOperations: JSON.stringify({
-            create: [{
-              key: "test",
-              value: "test"
-            }, {
-              key: "test2",
-              value: "test2"
-            }],
-            update: [],
-            delete: [],
+          data: JSON.stringify({
+            test: "test",
+            test2: "test2",
           }),
         }, {
           id: 2,
           repository: 1,
           domain: 1,
           entity: "test_entity",
-          operation: "create",
-          entityId: 2,
-          uuid: expect.any(String),
+          operation: "create-entity",
+          uuid: uuid2,
+          creationUUID: uuid2,
           submittedAt: "2023-01-02T00:00:00.000Z",
           updatedAt: "2023-01-02T00:00:00.000Z",
           wasDeleted: 0,
-          fieldOperations: JSON.stringify({
-            create: [{
-              key: "test",
-              value: "test3"
-            }, {
-              key: "test2",
-              value: "test4"
-            }],
-            update: [],
-            delete: [],
+          data: JSON.stringify({
+            test: "test3",
+            test2: "test4",
           }),
         }, {
           id: 3,
           repository: 1,
           domain: 1,
           entity: "test_entity_2",
-          operation: "create",
-          entityId: 1,
-          uuid: expect.any(String),
+          operation: "create-entity",
+          uuid: uuid3,
+          creationUUID: uuid3,
           submittedAt: "2023-01-03T00:00:00.000Z",
           updatedAt: "2023-01-03T00:00:00.000Z",
           wasDeleted: 0,
-          fieldOperations: JSON.stringify({
-            create: [{
-              key: "test",
-              value: "test5"
-            }, {
-              key: "test2",
-              value: "test6"
-            }],
-            update: [],
-            delete: [],
+          data: JSON.stringify({
+            test: "test5",
+            test2: "test6",
           }),
         }])
       })
