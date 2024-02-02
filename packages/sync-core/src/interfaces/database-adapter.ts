@@ -31,6 +31,8 @@ export interface DatabaseAdapter<TId = number | string> {
 }
 
 export interface DefineEntityOptions {
+  // TODO make the unique to only accept the fields that are defined in the schema
+  // TODO allow setup many unique fields
   unique?: string[];
 
   /**
@@ -51,7 +53,7 @@ export type EntitySchema = Record<string, FieldType>
 
 export type ConnectionField = { type: string, entity: string }
 
-export type FieldLiteralType = "string" | "integer" | "float" | "boolean" | "date" | "json" | "id"
+export type FieldLiteralType = "string" | "integer" | "float" | "boolean" | "date" | "json" | "id" | "stringified"
 
 export type FieldType = FieldLiteralType | ConnectionField;
 
@@ -68,6 +70,7 @@ export class SchemaType {
   static Boolean = "boolean" as const;
   static Date = "date" as const;
   static Json = "json" as const;
+  static Stringified = "stringified" as const;
 
   /**
    * Connects to an entity, similar to `Id` but it will be used to create a connection between

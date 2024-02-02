@@ -2,7 +2,7 @@ import {RepositoryBase} from "../../common/repository-base";
 import {CreateRepository, RepositoryEntity} from "./interfaces/repository-entity";
 import {REPOSITORY_ENTITY, REPOSITORY_SCHEMA} from "./repository-repository-constants";
 
-export class RepositoryRepository extends RepositoryBase<any, RepositoryEntity, CreateRepository, {}> {
+export class RepositoryRepository extends RepositoryBase<RepositoryEntity, CreateRepository, {}> {
   constructor() {
     super(REPOSITORY_ENTITY, REPOSITORY_SCHEMA, { unique: ["name", "user"] });
   }

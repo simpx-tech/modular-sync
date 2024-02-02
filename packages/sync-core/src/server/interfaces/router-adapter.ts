@@ -16,7 +16,12 @@ export interface RouterAdapter {
 export interface RegisterRouteOptions {
   isPrivate?: boolean;
   /**
-   * Apply Joi validation and transforms
+   * Apply Joi validation and transforms for the body
    */
-  joiSchema?: Joi.ObjectSchema;
+  bodyJoiSchema?: Joi.ObjectSchema;
+
+  /**
+   * Apply Joi validation and transforms for the query
+   */
+  queryJoiSchema?: Joi.ObjectSchema;
 }

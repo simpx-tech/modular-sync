@@ -3,6 +3,7 @@ import {DatabaseAdapter} from "../interfaces/database-adapter";
 import {DiffEngine} from "./interfaces/diff-engine";
 import {ClientSyncEngine} from "./client-sync-engine";
 
+// TODO separate client from server (core-common + core-client/core-server)
 export class ClientDomain {
   databaseAdapter: DatabaseAdapter;
   diffEngine: DiffEngine;

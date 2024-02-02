@@ -8,25 +8,33 @@ import {RouterRequest} from "@simpx/sync-core/src/server/interfaces/router-callb
 import {NotFoundException} from "@simpx/sync-core/src/server/exceptions/not-found-exception";
 import {ConflictException} from "@simpx/sync-core/src/server/exceptions/conflict-exception";
 import {ServerDomain} from "@simpx/sync-core/src/server/server-domain";
-import {CreateStrategy} from "./push-strategies/create-strategy";
+import {CreateEntityStrategy} from "./push-strategies/create-entity-strategy";
 import {InternalServerErrorException} from "@simpx/sync-core/src/server/exceptions/internal-errror-exception";
+import {ModificationRepository} from "./repositories/modification/modification-repository";
+import {DynamicFieldRepository} from "./repositories/dynamic-fields/dynamic-field-repository";
+import {UnprocessableEntityException} from "@simpx/sync-core/src/server/exceptions/unprocessable-entity-exception";
+import {IdIdentity} from "./interfaces/id-identity";
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
-  private createStrategy = new CreateStrategy();
-  // private updateStrategy = new UpdateStrategy();
-  // private deleteStrategy = new DeleteStrategy();
+
+  modificationRepository = new ModificationRepository();
+  dynamicFieldRepository = new DynamicFieldRepository();
+
+  createEntityStrategy = new CreateEntityStrategy();
 
   async runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void> {
     this.syncEngine = syncEngine;
 
+    // TODO add Joi validations
     this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.syncEndpoint.bind(this));
     this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/pull`, this.pullEndpoint.bind(this));
     this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/push`, this.pushEndpoint.bind(this));
 
-    await this.createStrategy.runSetup(syncEngine);
-    // await this.updateStrategy.runSetup(syncEngine);
-    // await this.deleteStrategy.runSetup(syncEngine);
+    await this.modificationRepository.runSetup(domain);
+    await this.dynamicFieldRepository.runSetup(domain);
+
+    await this.createEntityStrategy.runSetup(this);
   }
 
   async syncEndpoint(req: RouterRequest) {}
@@ -61,89 +69,58 @@ export class DatabaseMerger implements MergeEngine {
    * @param push
    */
   async push(identity: Identity, push: PushOperation): Promise<PushSuccessReturn> {
-    // TODO use __uuid and operation fields
-    const domains = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
-    const domain = domains.find(domain => domain.name === identity.domain);
+    const domainFromRepo = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
+    const dbDomain = domainFromRepo.find(domain => domain.name === identity.domain);
 
-    if (!domain) {
-      throw new NotFoundException("Domain not found")
+    if (!dbDomain) {
+      throw new NotFoundException("Domain entity not found")
     }
 
-    if (domain.isMigrated) {
+    if (dbDomain.isMigrated) {
       throw new ConflictException("Domain is already migrated");
     }
 
     const serverDomain = this.syncEngine.domains.find(domain => domain.name === identity.domain);
 
     if (!serverDomain) {
-      throw new InternalServerErrorException("Server domain not found");
+      throw new NotFoundException("Domain not registered on the server");
     }
 
-    // TODO check if is create, update or delete
-    // TODO consider unified and separated fields
-
-    // for await (const [entityName, entities] of Object.entries(push.entities)) {
-    //   const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
-    //
-    //   if (!repository) {
-    //     throw new Error(`Couldn't find the respective repository for ${entityName}`)
-    //   }
-    //
-    //   await this.processEntityOperations(entityName, entities, identity, serverDomain, domain);
-    //
-    //   // const promises = entityOperations.map(async (operation) => {
-    //   //   const mergedFields = operation.fields.create.reduce((acc, field) => ({...acc, [field.key]: field.value}), {});
-    //   //
-    //   //   const repository = serverDomain.repositories.find(repository => repository.entityName === entityName);
-    //   //
-    //   //   if (!repository) {
-    //   //     throw new Error(`Couldn't find the respective repository for ${entityName}`)
-    //   //   }
-    //   //
-    //   //   // TODO create upsert
-    //   //   await repository.upsert({}, {
-    //   //     ...mergedFields,
-    //   //     repository: identity.repositoryId,
-    //   //     domain: domain.id,
-    //   //     createdAt: operation.createdAt,
-    //   //     submittedAt: operation.submittedAt,
-    //   //     updatedAt: operation.updatedAt,
-    //   //     wasDeleted: operation.wasDeleted,
-    //   //   });
-    //   //
-    //   //   await repository.upsert({}, {})
-    //   // });
-    //   //
-    //   // await Promise.all(promises);
-    // }
-
-    // TODO Save all modification
+    await this.runStrategy(
+      push,
+      { repositoryId: identity.repositoryId, domainId: dbDomain.id },
+      serverDomain,
+    );
 
     if (push.finished) {
-      await this.syncEngine.domainRepository.update(domain.id, {isMigrated: true});
+      await this.syncEngine.domainRepository.update(dbDomain.id, {isMigrated: true});
     }
 
     // DEV
     return {entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z"} as any;
   }
 
-  // private async processEntityOperations(identity: MergeOperationIdentity, entities: EntityOperation[], repository: RepositoryBase) {
-  //   const promises = entities.map(async (operation) => {
-  //     switch (operation.operation) {
-  //       case "create":
-  //         // TODO should pass filtered otherOperations
-  //         return await this.createStrategy.handle(identity, repository, operation, this.filterOperationsByEntity(entities));
-  //         // TODO develop
-  //       case "update":
-  //         return await this.updateStrategy.handle(identity, repository, operation);
-  //       // TODO develop
-  //       case "delete":
-  //         return await this.deleteStrategy.handle(identity, repository, operation);
-  //     }
-  //   });
-  //
-  //   return Promise.all(promises);
-  // }
+  async runStrategy(push: PushOperation, identity: IdIdentity, syncDomain: ServerDomain) {
+    const strategyFnByType = {
+      "create-entity": this.createEntityStrategy.handle,
+      "update-entity": this.createEntityStrategy.handle,
+      "delete-entity": this.createEntityStrategy.handle,
+      "create-dynamic-field": this.createEntityStrategy.handle,
+      "update-dynamic-field": this.createEntityStrategy.handle,
+      "delete-dynamic-field": this.createEntityStrategy.handle,
+    }
+
+    for await (const modification of push.modifications) {
+      const repository = syncDomain.repositories.find(repo => repo.entityName === modification.entity);
+
+        if (!repository) {
+          console.warn(`Repository for entity ${modification.entity} not found`)
+          continue;
+        }
+
+      await strategyFnByType[modification.type](identity, repository, modification, push);
+    }
+  }
 
   sync(identity: Identity, operation: {}): Promise<{}> {
     return Promise.resolve(undefined);

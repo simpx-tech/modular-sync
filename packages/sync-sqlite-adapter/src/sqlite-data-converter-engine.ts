@@ -23,6 +23,10 @@ class InboundConverter implements DataConverterFlow {
       return data.toISOString();
     }
 
+    if (!data) {
+      return "";
+    }
+
     return data.toString();
   }
 
@@ -55,6 +59,10 @@ class InboundConverter implements DataConverterFlow {
   }
 
   asDate(data: unknown): number {
+    if (!data) {
+      return null;
+    }
+
     if (typeof data === "string" || typeof data === "number") {
       return new Date(data).getTime();
     }
@@ -63,7 +71,7 @@ class InboundConverter implements DataConverterFlow {
       return data.getTime();
     }
 
-    return undefined;
+    return null;
   }
 
   asConnection(data: unknown) {
@@ -79,6 +87,14 @@ class InboundConverter implements DataConverterFlow {
     }
 
     return undefined;
+  }
+
+  asStringified(data: unknown) {
+    try {
+      return JSON.stringify(data);
+    } catch (err) {
+      return "{}";
+    }
   }
 
   // TODO test this
@@ -128,6 +144,14 @@ class OutboundConverter implements DataConverterFlow {
   asId(field: number) {
     return field;
   }
+
+  asStringified(data: unknown) {
+    try {
+      return JSON.parse(data as string);
+    } catch (err) {
+      return {};
+    }
+  };
 
   convert(obj: Record<string, unknown>, schema: EntitySchema): any {
     if (!obj) return undefined;

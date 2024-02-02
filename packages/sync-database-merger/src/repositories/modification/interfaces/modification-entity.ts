@@ -16,11 +16,11 @@ export interface ModificationEntity {
   /**
    * When the modification was performed on the client
    */
-  updatedAt: Date;
+  changedAt: Date;
   /**
    * If this is an update, the new values of the fields (additive, not the whole entity)
    */
-  fieldOperations: Record<string, any>;
+  data: Record<string, any>;
 }
 
 export interface CreateModification {
@@ -31,7 +31,7 @@ export interface CreateModification {
   entityId: number | string;
   uuid: string;
   submittedAt: Date;
-  updatedAt: Date;
+  changedAt: Date;
   wasDeleted: boolean;
-  fieldOperations: Record<string, any>;
+  data: Record<string, any>;
 }

@@ -1,5 +1,9 @@
 import {ServerSyncEngine} from "../../src/server/server-sync-engine";
 
+/**
+ * MUST USE `setupAuthentication` BEFORE THIS
+ * @param syncEngine
+ */
 export async function setupRepositories(syncEngine: ServerSyncEngine) {
   await syncEngine.repositoryRepository.create({
     name: "test-repository",

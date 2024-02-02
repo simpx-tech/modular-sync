@@ -12,8 +12,13 @@ import {NotFoundException} from "./exceptions/not-found-exception";
 import {UnauthorizedException} from "./exceptions/unauthorized-exception";
 import {MigrationRunner} from "../migration/migration-runner";
 import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
-import {CREATE_REPOSITORY_SCHEMA} from "./constants/router-joi-schemas";
+import {
+  CREATE_REPOSITORY_SCHEMA,
+  DELETE_REPOSITORY_SCHEMA, GET_DOMAIN_BY_REPOSITORY_SCHEMA,
+  GET_REPOSITORY_SCHEMA
+} from "./constants/router-joi-schemas";
 
+// TODO separate server from client (core-common + core-client/core-server)
 export class ServerSyncEngine {
   readonly domains: ServerDomain[];
   readonly metadataDatabase: DatabaseAdapter;
@@ -58,13 +63,12 @@ export class ServerSyncEngine {
 
     await this.authEngine.runSetup(this);
 
-    this.routerAdapter.registerRoute(HttpMethod.POST, "repository", this.createRepositoryEndpoint.bind(this), { isPrivate: true, joiSchema: CREATE_REPOSITORY_SCHEMA });
-    this.routerAdapter.registerRoute(HttpMethod.DELETE, "repository", this.deleteRepositoryEndpoint.bind(this));
-    this.routerAdapter.registerRoute(HttpMethod.GET, "repository", this.getRepositoryEndpoint.bind(this));
-    this.routerAdapter.registerRoute(HttpMethod.GET, "repositories", this.getRepositoriesEndpoint.bind(this));
+    this.routerAdapter.registerRoute(HttpMethod.POST, "repository", this.createRepositoryEndpoint.bind(this), { isPrivate: true, bodyJoiSchema: CREATE_REPOSITORY_SCHEMA });
+    this.routerAdapter.registerRoute(HttpMethod.DELETE, "repository", this.deleteRepositoryEndpoint.bind(this), { isPrivate: true, queryJoiSchema: DELETE_REPOSITORY_SCHEMA });
+    this.routerAdapter.registerRoute(HttpMethod.GET, "repository", this.getRepositoryEndpoint.bind(this), { isPrivate: true, queryJoiSchema: GET_REPOSITORY_SCHEMA });
+    this.routerAdapter.registerRoute(HttpMethod.GET, "repositories", this.getRepositoriesEndpoint.bind(this), { isPrivate: true });
 
-    this.routerAdapter.registerRoute(HttpMethod.PUT, "domain", this.updateDomainEndpoint.bind(this));
-    this.routerAdapter.registerRoute(HttpMethod.GET, "domain", this.getDomainsByRepositoryEndpoint.bind(this));
+    this.routerAdapter.registerRoute(HttpMethod.GET, "domain", this.getDomainsByRepositoryEndpoint.bind(this), { isPrivate: true, queryJoiSchema: GET_DOMAIN_BY_REPOSITORY_SCHEMA });
 
     for await (const domain of this.domains) {
       // TODO allow slug parameters: /domain and /domain/:id
@@ -89,8 +93,9 @@ export class ServerSyncEngine {
     return repositoryData;
   }
 
-  async getRepositoriesEndpoint () {
-    return await this.repositoryRepository.getAll()
+  async getRepositoriesEndpoint (request: RouterRequest) {
+    const { id } = request.decodedToken;
+    return await this.repositoryRepository.getAllByField({ user: id });
   }
 
   async createRepositoryEndpoint(request: RouterRequest) {
@@ -122,23 +127,12 @@ export class ServerSyncEngine {
   }
 
   async deleteRepositoryEndpoint(request: RouterRequest) {
-    const { repositoryId } = request.query;
+    const {repositoryId} = request.query;
 
     await this.domainRepository.deleteByRepositoryId(repositoryId);
     await this.metadataDatabase.delete(REPOSITORY_ENTITY, repositoryId);
 
-    return { success: true };
-  }
-
-  async updateDomainEndpoint(request: RouterRequest) {
-    const data = request.body;
-    const { domainId } = request.query;
-
-    await this.domainRepository.update(domainId, {
-      isMigrated: data.isMigrated,
-    });
-
-    return { success: true }
+    return {success: true};
   }
 
   async getDomainsByRepositoryEndpoint(request: RouterRequest) {

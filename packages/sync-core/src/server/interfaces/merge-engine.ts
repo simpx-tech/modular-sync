@@ -1,7 +1,11 @@
 import {ServerSyncEngine} from "../server-sync-engine";
 import {ServerDomain} from "../server-domain";
+import {RepositoryBase} from "../../common/repository-base";
 
 export interface MergeEngine {
+  modificationRepository: RepositoryBase<any, any, any, any>;
+  dynamicFieldRepository: RepositoryBase<any, any, any, any>;
+
   runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void>;
   sync(identity: Identity, operation: any): Promise<{}>;
   push(identity: Identity, operation: PushOperation): Promise<PushSuccessReturn>;
@@ -28,10 +32,11 @@ export interface PushOperation {
 
 export interface EntityModification {
   entity: string,
-  changedAt: string,
+  changedAt: Date,
   type: EntityModificationType,
   creationUUID: string,
   uuid: string,
+  // TODO Change based on the `type`
   data: Record<string, any>
 }
 
@@ -49,8 +54,6 @@ export interface PullOptions {
   fromIndex: number;
   pageSize: number;
 }
-
-export type OperationType = "create" | "update" | "delete";
 
 export interface PushSuccessReturn {
   lastSubmittedAt: string;

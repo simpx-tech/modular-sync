@@ -14,7 +14,7 @@ import {DOMAIN_ENTITY} from "../repositories/domain/domain-repository-constants"
 import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
 
 export class RepositoryBase<
-  TEntity extends { id: string | number } = undefined,
+  TEntity extends { id?: string | number } = undefined,
   TCreate extends Record<string, any> = undefined,
   TUpdate extends Record<string, any> = undefined,
   TSchema extends EntitySchema = EntitySchema,
@@ -52,7 +52,8 @@ export class RepositoryBase<
         domain: SchemaType.Connection(DOMAIN_ENTITY),
         createdAt: SchemaType.Date,
         submittedAt: SchemaType.Date,
-        updatedAt: SchemaType.Date,
+        changedAt: SchemaType.Date,
+        deletedAt: SchemaType.Date,
         wasDeleted: SchemaType.Boolean,
       })
     }
@@ -90,12 +91,12 @@ export class RepositoryBase<
     return this.db.converter.outbound.convert(await this.db.getById(this.entityName, id), this.schema);
   }
 
-  async getByField(mapping: Partial<Record<keyof UseAOrB<TSchema, TSchema>, any>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
+  async getByField(mapping: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
     const input = this.db.converter.inbound.convert(mapping, this.schema);
     return this.db.converter.outbound.convert(await this.db.getByField(this.entityName, input), this.schema);
   }
 
-  async getAllByField(mapping: Partial<Record<keyof UseAOrB<TSchema, TSchema>, any>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
+  async getAllByField(mapping: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
     const input = this.db.converter.inbound.convert(mapping, this.schema);
     const all = await this.db.getAllByField(this.entityName, input)
     return all.map(item => this.db.converter.outbound.convert(item, this.schema));
@@ -116,7 +117,7 @@ export class RepositoryBase<
     return this.db.converter.outbound.convert(await this.db.update(this.entityName, id, input), this.schema);
   }
 
-  async upsert(search: Partial<Record<keyof UseAOrB<TSchema, TSchema>, any>>, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
+  async upsert(search: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
     const input = this.db.converter.inbound.convert(data, this.schema);
     const searchInput = this.db.converter.inbound.convert(search, this.schema);
     return this.db.converter.outbound.convert(await this.db.upsert(this.entityName, searchInput, input), this.schema);

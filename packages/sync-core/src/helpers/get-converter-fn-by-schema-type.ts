@@ -16,6 +16,8 @@ export function getConverterFnBySchemaType(schemaType: FieldType) {
       return "asJson";
     case SchemaType.Id:
       return "asId";
+    case SchemaType.Stringified:
+      return "asStringified";
   }
 
   if (schemaType?.type === "connection") {

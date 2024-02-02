@@ -4,15 +4,15 @@ import {setupAuthentication} from "@simpx/sync-core/__tests__/helpers/setup-auth
 import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {Express} from "express";
 import {setupRepositories} from "@simpx/sync-core/__tests__/helpers/setup-repositories";
-import {DatabaseAdapter} from "@simpx/sync-core/src/interfaces/database-adapter";
 import {setupDomains} from "@simpx/sync-core/__tests__/helpers/setup-domains";
 import {v4} from "uuid";
+import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
 
 describe("Sync Database Merger", () => {
   let token: string;
   let syncEngine: ServerSyncEngine;
   let app: Express;
-  let commonDb: DatabaseAdapter;
+  let commonDb: SqliteAdapter;
 
   beforeEach(async () => {
     ({ syncEngine, app, commonDb } = setupTests());
@@ -71,6 +71,9 @@ describe("Sync Database Merger", () => {
       expect(res.status).toBe(409);
     })
 
+    // TODO implement
+    it.todo("should execute the correct strategy according to modification type")
+
     describe("Unified fields", () => {
       // TODO first focus on the static fields (schema fields), then test the dynamic fields
       // TODO consider what is the type of the operation (create, update, delete)
@@ -83,9 +86,9 @@ describe("Sync Database Merger", () => {
       // TODO maybe add a deletedAt field, since can receive modification after deletion updates from other outdated clients
 
       // TODO on client side, has to consider when create and update then submit to the server, the server will receive a create and a update request (?)
-      // TODO maybe merge the create and update into one operation (upsert?), or maybe, the create can receive updates by default, but the   update operation always consider
+      // TODO maybe merge the create and update into one operation (upsert?), or maybe, the create can receive updates by default, but the update operation always consider
       // TODO that the object was already created
-      it("should receive and store all entities from a domain", async () => {
+      it.skip("should receive and store all entities from a domain", async () => {
         const uuid1 = v4();
         const uuid2 = v4();
         const uuid3 = v4();

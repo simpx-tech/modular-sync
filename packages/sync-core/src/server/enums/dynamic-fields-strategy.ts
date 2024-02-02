@@ -1,3 +1,4 @@
+// TODO implement the adapter for this (will be around the dbAdapter)
 export enum DynamicFieldsStrategy {
   /**
    * Store all dynamic fields inside a single field
