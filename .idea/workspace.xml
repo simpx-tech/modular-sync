@@ -126,7 +126,7 @@
     "nodejs_package_manager_path": "npm",
     "npm.modular-sync > test.executor": "Run",
     "npm.sync-core > test.executor": "Run",
-    "settings.editor.selected.configurable": "project.scopes",
+    "settings.editor.selected.configurable": "coverage",
     "ts.external.directory.path": "/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   },
@@ -345,7 +345,7 @@
       <workItem from="1706845102813" duration="1866000" />
       <workItem from="1706880983222" duration="15000" />
       <workItem from="1706902099421" duration="9417000" />
-      <workItem from="1706976759083" duration="11165000" />
+      <workItem from="1706976759083" duration="11418000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -531,7 +531,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706983763657</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="tests: fix tests, add coverage configuration">
+      <option name="closed" value="true" />
+      <created>1706994146708</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1706994146708</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -573,7 +581,8 @@
     <MESSAGE value="wip: add modification and dynamic fields repositories, implement CreateEntityStrategy" />
     <MESSAGE value="wip: add create, update and delete strategies, and it's tests" />
     <MESSAGE value="wip: add Create, Update and Delete Dynamic Field and it's tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip: add Create, Update and Delete Dynamic Field and it's tests" />
+    <MESSAGE value="tests: fix tests, add coverage configuration" />
+    <option name="LAST_COMMIT_MESSAGE" value="tests: fix tests, add coverage configuration" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -610,6 +619,6 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/modular_sync$All_Tests.info" NAME="All Tests Coverage Results" MODIFIED="1706993589327" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/modular_sync$All_Tests.info" NAME="All Tests Coverage Results" MODIFIED="1706993977142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
