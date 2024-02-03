@@ -13,7 +13,8 @@
     "src"
   ],
   "scripts": {
-    "test": "node ./__tests__/sync-incremental-modifications-engine.test.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "tsc": "tsc"
   }
 }

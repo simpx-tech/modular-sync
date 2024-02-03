@@ -120,6 +120,7 @@ export class SqliteAdapter implements DatabaseAdapter {
   }
 
   // TODO ignore deleted entities
+  // TODO add tests
   async updateByField(entity: string, mapping: Record<string, any>, data: UpsertData) {
     const formattedMapping = this.formatSelectMapping(mapping);
     const formattedData = this.formatUpdateData(data);
@@ -137,6 +138,7 @@ export class SqliteAdapter implements DatabaseAdapter {
     return { wasDeleted: returnValue?.changes > 0 };
   }
 
+  // TODO add test
   async deleteByField(entity: string, mapping: Record<string, any>) {
     const formattedMapping = this.formatSelectMapping(mapping);
     const returnValue = this.connection.prepare(`DELETE FROM ${entity} WHERE ${formattedMapping}`).run();

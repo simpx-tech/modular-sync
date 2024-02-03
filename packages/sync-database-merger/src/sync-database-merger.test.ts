@@ -7,6 +7,10 @@ import {setupRepositories} from "@simpx/sync-core/__tests__/helpers/setup-reposi
 import {setupDomains} from "@simpx/sync-core/__tests__/helpers/setup-domains";
 import {v4} from "uuid";
 import {SqliteAdapter} from "@simpx/sync-sqlite-adapter";
+import {expect} from "@jest/globals";
+import {DatabaseMerger} from "./sync-database-merger";
+import {PushOperationBuilder} from "@simpx/sync-core/src/helpers/push-operation-builder";
+import {EntityModificationType} from "@simpx/sync-core/src/server/interfaces/merge-engine";
 
 describe("Sync Database Merger", () => {
   let token: string;
@@ -26,10 +30,7 @@ describe("Sync Database Merger", () => {
 
   describe("push", () => {
     it("should create the domain if it doesn't exist yet", async () => {
-      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send({
-        entities: {},
-        finished: false,
-      }).set("Authorization", `Bearer ${token}`);
+      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send(new PushOperationBuilder().build()).set("Authorization", `Bearer ${token}`);
 
       const domains = await commonDb.raw({ sql: "SELECT * FROM sync_domains WHERE repository = 3", params: [], isQuery: true, fetchAll: true });
 
@@ -45,10 +46,7 @@ describe("Sync Database Merger", () => {
     })
 
     it("should update domain's isMigrated to true on last push call", async () => {
-      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send({
-        entities: {},
-        finished: true,
-      }).set("Authorization", `Bearer ${token}`);
+      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send(new PushOperationBuilder().setFinished(true).build()).set("Authorization", `Bearer ${token}`);
 
       const domains = await commonDb.raw({ sql: "SELECT * FROM sync_domains WHERE repository = 3", params: [], isQuery: true, fetchAll: true });
 
@@ -71,8 +69,146 @@ describe("Sync Database Merger", () => {
       expect(res.status).toBe(409);
     })
 
+    it(`should execute CreateEntityStrategy if operation is 'create-entity'`, async () => {
+      const uuid = v4();
+      const entityUUID = v4();
+
+      const spy = jest.spyOn((syncEngine.domains[0].mergeEngine as DatabaseMerger).createEntityStrategy, "handle");
+
+      const pushOp = new PushOperationBuilder().addModification({
+        entity: "test_entity",
+        operation: EntityModificationType.CreateEntity,
+        uuid: uuid,
+        changedAt: new Date("2023-01-01T00:00:00.000Z"),
+        creationUUID: entityUUID,
+        data: {
+          test: "test",
+          test2: "test2"
+        }
+      }).build();
+
+      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+
+      expect(res.status).toBe(200);
+      expect(spy).toHaveBeenCalled();
+    })
+
+    it("should execute UpdateEntityStrategy if operation is 'update-entity'", async () => {
+      const uuid = v4();
+      const entityUUID = v4();
+
+      const spy = jest.spyOn((syncEngine.domains[0].mergeEngine as DatabaseMerger).updateEntityStrategy, "handle");
+
+      const pushOp = new PushOperationBuilder().addModification({
+        entity: "test_entity",
+        operation: EntityModificationType.UpdateEntity,
+        uuid: uuid,
+        changedAt: new Date("2023-01-01T00:00:00.000Z"),
+        creationUUID: entityUUID,
+        data: {
+          test: "test",
+          test2: "test2"
+        }
+      }).build();
+
+      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("should execute DeleteEntityStrategy if operation is 'delete-entity'", async () => {
+      const uuid = v4();
+      const entityUUID = v4();
+
+      const spy = jest.spyOn((syncEngine.domains[0].mergeEngine as DatabaseMerger).deleteEntityStrategy, "handle");
+
+      const pushOp = new PushOperationBuilder().addModification({
+        entity: "test_entity",
+        operation: EntityModificationType.DeleteEntity,
+        uuid: uuid,
+        changedAt: new Date("2023-01-01T00:00:00.000Z"),
+        creationUUID: entityUUID,
+        data: {
+          test: "test",
+          test2: "test2"
+        }
+      }).build();
+
+      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("should execute CreateDynamicFieldStrategy if operation is 'create-dynamic-field'", async () => {
+      const uuid = v4();
+      const entityUUID = v4();
+
+      const spy = jest.spyOn((syncEngine.domains[0].mergeEngine as DatabaseMerger).createDynamicFieldStrategy, "handle");
+
+      const pushOp = new PushOperationBuilder().addModification({
+        entity: "test_entity",
+        operation: EntityModificationType.CreateDynamicField,
+        uuid: uuid,
+        changedAt: new Date("2023-01-01T00:00:00.000Z"),
+        creationUUID: entityUUID,
+        data: {
+          test: "test",
+          test2: "test2"
+        }
+      }).build();
+
+      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("should execute UpdateDynamicFieldStrategy if operation is 'update-dynamic-field'", async () => {
+      const uuid = v4();
+      const entityUUID = v4();
+
+      const spy = jest.spyOn((syncEngine.domains[0].mergeEngine as DatabaseMerger).updateDynamicFieldStrategy, "handle");
+
+      const pushOp = new PushOperationBuilder().addModification({
+        entity: "test_entity",
+        operation: EntityModificationType.UpdateDynamicField,
+        uuid: uuid,
+        changedAt: new Date("2023-01-01T00:00:00.000Z"),
+        creationUUID: entityUUID,
+        data: {
+          test: "test",
+          test2: "test2"
+        }
+      }).build();
+
+      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it("should execute DeleteDynamicFieldStrategy if operation is 'delete-dynamic-field'", async () => {
+      const uuid = v4();
+      const entityUUID = v4();
+
+      const spy = jest.spyOn((syncEngine.domains[0].mergeEngine as DatabaseMerger).deleteDynamicFieldStrategy, "handle");
+
+      const pushOp = new PushOperationBuilder().addModification({
+        entity: "test_entity",
+        operation: EntityModificationType.DeleteDynamicField,
+        uuid: uuid,
+        changedAt: new Date("2023-01-01T00:00:00.000Z"),
+        creationUUID: entityUUID,
+        data: {
+          test: "test",
+          test2: "test2"
+        }
+      }).build();
+
+      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
     // TODO implement
-    it.todo("should execute the correct strategy according to modification type")
     it.todo("should stop and revert the merge if the strategy fails")
 
     describe("Unified fields", () => {
@@ -91,49 +227,47 @@ describe("Sync Database Merger", () => {
       // TODO that the object was already created
       it.skip("should receive and store all entities from a domain", async () => {
         const uuid1 = v4();
-        const uuid2 = v4();
-        const uuid3 = v4();
+        const entityUUID1 = v4();
 
-        const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send({
-          modifications: [
-            {
-              entity: "test_entity",
-              changedAt: "2023-01-01T00:00:00.000Z",
-              type: "create-entity",
-              creationUUID: uuid1,
-              uuid: uuid1,
-              data: {
-                name: "name",
-                name2: "name2"
-              }
-            },
-            {
-              entity: "test_entity",
-              changedAt: "2023-01-01T00:00:00.000Z",
-              type: "create-entity",
-              creationUUID: uuid2,
-              uuid: uuid2,
-              data: {
-                name: "name",
-                name2: "name2"
-              }
-            },
-            {
-              entity: "test_entity",
-              changedAt: "2023-01-01T00:00:00.000Z",
-              type: "create-entity",
-              creationUUID: uuid3,
-              uuid: uuid3,
-              data: {
-                name: "name",
-                name2: "name2"
-              }
-            }
-          ],
-          submittedAt: new Date().toISOString(),
-          lastChangedAt: "2023-01-03T00:00:00.000Z",
-          finished: true,
-        });
+        const uuid2 = v4();
+        const entityUUID2 = v4();
+
+        const uuid3 = v4();
+        const entityUUID3 = v4();
+
+        const pushOp = new PushOperationBuilder().addModification({
+          entity: "test_entity",
+          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID1,
+          uuid: uuid1,
+          data: {
+            name: "name",
+            name2: "name2"
+          }
+        }).addModification({
+          entity: "test_entity",
+          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID2,
+          uuid: uuid2,
+          data: {
+            name: "name3",
+            name2: "name4"
+          }
+        }).addModification({
+          entity: "test_entity_2",
+          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID3,
+          uuid: uuid3,
+          data: {
+            name: "name5",
+            name2: "name6"
+          }
+        }).build();
+
+        const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
 
         expect(res.status).toBe(200);
 

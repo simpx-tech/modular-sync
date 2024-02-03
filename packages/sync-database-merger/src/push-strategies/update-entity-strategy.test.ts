@@ -36,7 +36,6 @@ describe('UpdateEntityStrategy', () => {
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     }
 
@@ -48,7 +47,6 @@ describe('UpdateEntityStrategy', () => {
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     }
 
@@ -75,6 +73,7 @@ describe('UpdateEntityStrategy', () => {
       {
         id: 1,
         ...entity1,
+        wasDeleted: false,
       },
       {
         id: 2,
@@ -83,6 +82,7 @@ describe('UpdateEntityStrategy', () => {
         test2: "test6",
         submittedAt: pushOp.submittedAt,
         changedAt: pushOp.modifications[0].changedAt,
+        wasDeleted: false,
       }
     ]);
   });
@@ -117,7 +117,6 @@ describe('UpdateEntityStrategy', () => {
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     }
 
@@ -130,10 +129,8 @@ describe('UpdateEntityStrategy', () => {
         test: "test",
         test2: "test2",
       },
-      entityId: 1,
-      repository: 1,
+      creationUUID: uuid1,
       domain: 1,
-
       submittedAt: new Date(),
       changedAt: new Date(),
       uuid: uuid1,
@@ -162,6 +159,7 @@ describe('UpdateEntityStrategy', () => {
       {
         id: 1,
         ...entity,
+        wasDeleted: false,
       }
     ]);
 
@@ -185,7 +183,6 @@ describe('UpdateEntityStrategy', () => {
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     }
 
@@ -222,8 +219,8 @@ describe('UpdateEntityStrategy', () => {
         changedAt: expect.any(Date),
         createdAt: expect.any(Date),
         deletedAt: null,
+        wasDeleted: false,
         submittedAt: expect.any(Date),
-        repository: 1,
         domain: 1,
       }
     ]);
@@ -238,8 +235,7 @@ describe('UpdateEntityStrategy', () => {
           test: "test5",
           test2: "test6",
         },
-        entityId: 1,
-        repository: 1,
+        creationUUID: uuid1,
         domain: 1,
         submittedAt: expect.any(Date),
         changedAt: expect.any(Date),

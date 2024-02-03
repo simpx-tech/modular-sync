@@ -54,7 +54,7 @@ describe('CreateEntityStrategy', () => {
         createdAt: pushOp.modifications[0].changedAt,
         deletedAt: null,
         submittedAt: pushOp.submittedAt,
-        repository: 1,
+        wasDeleted: false,
         domain: 1,
       }
     ]);
@@ -71,7 +71,6 @@ describe('CreateEntityStrategy', () => {
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     });
 
@@ -100,8 +99,8 @@ describe('CreateEntityStrategy', () => {
         changedAt: pushOp.modifications[0].changedAt,
         createdAt: pushOp.modifications[0].changedAt,
         deletedAt: null,
+        wasDeleted: false,
         submittedAt: pushOp.submittedAt,
-        repository: 1,
         domain: 1,
       }
     ]);
@@ -118,7 +117,6 @@ describe('CreateEntityStrategy', () => {
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     }
 
@@ -132,7 +130,6 @@ describe('CreateEntityStrategy', () => {
         test2: "test2",
       },
       creationUUID: uuid1,
-      repository: 1,
       domain: 1,
 
       submittedAt: new Date(),
@@ -163,6 +160,7 @@ describe('CreateEntityStrategy', () => {
       {
         id: 1,
         ...entity,
+        wasDeleted: false,
       }
     ]);
 
@@ -207,8 +205,8 @@ describe('CreateEntityStrategy', () => {
         changedAt: expect.any(Date),
         createdAt: expect.any(Date),
         deletedAt: null,
+        wasDeleted: false,
         submittedAt: expect.any(Date),
-        repository: 1,
         domain: 1,
       }
     ]);
@@ -223,8 +221,7 @@ describe('CreateEntityStrategy', () => {
           test: "test",
           test2: "test2",
         },
-        entityId: 1,
-        repository: 1,
+        creationUUID: uuid1,
         domain: 1,
         submittedAt: expect.any(Date),
         changedAt: expect.any(Date),

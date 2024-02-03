@@ -61,7 +61,7 @@ export class ExpressRouterAdapter implements RouterAdapter {
         const value = await callback(routerRequest);
         res.status(200).send(value);
       } catch (err) {
-        console.error(err)
+        console.error(err?.stack ?? err)
 
         if (err.isHttpError) {
           return this.returnHttpError(res, err);

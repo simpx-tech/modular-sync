@@ -21,11 +21,12 @@ describe("Repository", () => {
       test2: SchemaType.Integer,
       test3: SchemaType.Boolean,
       test4: SchemaType.Date,
-      repository: SchemaType.Connection(REPOSITORY_ENTITY),
       domain: SchemaType.Connection(DOMAIN_ENTITY),
+      creationUUID: SchemaType.String,
       createdAt: SchemaType.Date,
       submittedAt: SchemaType.Date,
-      updatedAt: SchemaType.Date,
+      deletedAt: SchemaType.Date,
+      changedAt: SchemaType.Date,
       wasDeleted: SchemaType.Boolean,
     })
   })

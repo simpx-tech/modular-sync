@@ -124,16 +124,22 @@ describe("Sqlite Data Converter Engine", () => {
         expect(convertedData).toEqual(new Date("2023-01-01T00:00:00.000Z").getTime());
       })
 
-      it("should fail if try to convert boolean to date", () => {
-        const data = true;
-        const convertedData = converter.inbound.asDate(data);
-        expect(convertedData).toBeUndefined();
-      })
-
       it("should convert date to date", () => {
         const data = new Date("2023-01-01T00:00:00.000Z");
         const convertedData = converter.inbound.asDate(data);
         expect(convertedData).toEqual(new Date("2023-01-01T00:00:00.000Z").getTime());
+      })
+
+      it("should return null if convert boolean to date", () => {
+        const data = true;
+        const convertedData = converter.inbound.asDate(data);
+        expect(convertedData).toBeNull();
+      })
+
+      it("should return null if convert undefined to date", () => {
+        const data = undefined;
+        const convertedData = converter.inbound.asDate(data);
+        expect(convertedData).toBeNull();
       })
     })
 
@@ -291,6 +297,12 @@ describe("Sqlite Data Converter Engine", () => {
       const data = 1672531200000; // 2023-01-01T00:00:00.000Z
       const convertedData = converter.outbound.asDate(data);
       expect(convertedData.getTime()).toEqual(new Date("2023-01-01T00:00:00.000Z").getTime());
+    })
+
+    it("should convert back null date", () => {
+      const data = null;
+      const convertedData = converter.outbound.asDate(data);
+      expect(convertedData).toBeNull()
     })
 
     it("should convert back to connection", () => {

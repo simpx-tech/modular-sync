@@ -14,7 +14,8 @@
     "src"
   ],
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

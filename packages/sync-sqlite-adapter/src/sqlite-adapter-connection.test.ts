@@ -3,25 +3,25 @@ import fs from "fs";
 import crypto from "crypto";
 import path from "path";
 import {__createTmpDirIfNotExists} from "@simpx/sync-core/__tests__/helpers/setup-tests";
+import * as os from "os";
 
 describe("SQLite Adapter Connection", () => {
   let sqliteAdapter: SqliteAdapter = null;
-  let dbPath: string;
+  let dbFileName: string;
 
   beforeEach(async () => {
-    dbPath = `${crypto.randomUUID()}.db`;
+    dbFileName = `${crypto.randomUUID()}.db`;
     __createTmpDirIfNotExists();
-    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(__dirname, "modular-sync-tmp", dbPath) });
+    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(os.tmpdir(), "modular-sync-tmp", dbFileName) });
   });
 
   afterEach(async () => {
     await sqliteAdapter.disconnect();
-    fs.unlinkSync(path.join(__dirname, "./data", dbPath));
   })
 
   it("should connect properly", async () => {
     await sqliteAdapter.connect();
-    const exists = fs.existsSync(path.join(__dirname, "./data", dbPath));
+    const exists = fs.existsSync(path.join(os.tmpdir(), "modular-sync-tmp", dbFileName));
     expect(exists).toBe(true);
   })
 

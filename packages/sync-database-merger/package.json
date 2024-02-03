@@ -18,7 +18,8 @@
     "url": "git+https://github.com/simpx-tech/modular-sync.git"
   },
   "scripts": {
-    "test": "node ./__tests__/sync-database-merger.test.js"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "bugs": {
     "url": "https://github.com/simpx-tech/modular-sync/issues"

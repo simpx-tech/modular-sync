@@ -7,4 +7,8 @@ module.exports = {
     },
     testMatch: ['**/*.test.ts'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    collectCoverageFrom: [
+        "src/**/*.{js,jsx,ts,tsx}",
+        "!**/node_modules/**",
+    ]
 };

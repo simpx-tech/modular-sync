@@ -32,6 +32,7 @@ export class CreateDynamicFieldStrategy implements PushStrategy {
       submittedAt: pushOp.submittedAt,
       createdAt: createOperation.changedAt,
       changedAt: createOperation.changedAt,
+      deletedAt: null,
       creationUUID: createOperation.creationUUID,
       wasDeleted: false,
     });

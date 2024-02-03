@@ -116,12 +116,12 @@ export class DatabaseMerger implements MergeEngine {
 
   async runStrategy(push: PushOperation, identity: IdIdentity, syncDomain: ServerDomain) {
     const strategyFnByType = {
-      "create-entity": this.createEntityStrategy.handle,
-      "update-entity": this.updateEntityStrategy.handle,
-      "delete-entity": this.deleteEntityStrategy.handle,
-      "create-dynamic-field": this.createDynamicFieldStrategy.handle,
-      "update-dynamic-field": this.updateDynamicFieldStrategy.handle,
-      "delete-dynamic-field": this.deleteDynamicFieldStrategy.handle,
+      "create-entity": this.createEntityStrategy.handle.bind(this.createEntityStrategy),
+      "update-entity": this.updateEntityStrategy.handle.bind(this.updateEntityStrategy),
+      "delete-entity": this.deleteEntityStrategy.handle.bind(this.deleteEntityStrategy),
+      "create-dynamic-field": this.createDynamicFieldStrategy.handle.bind(this.createDynamicFieldStrategy),
+      "update-dynamic-field": this.updateDynamicFieldStrategy.handle.bind(this.updateDynamicFieldStrategy),
+      "delete-dynamic-field": this.deleteDynamicFieldStrategy.handle.bind(this.deleteDynamicFieldStrategy),
     }
 
     for await (const modification of push.modifications) {

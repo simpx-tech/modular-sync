@@ -19,8 +19,6 @@ export class DeleteEntityStrategy implements PushStrategy {
       return;
     }
 
-    console.log(deleteOperation)
-
     const entity = await repository.updateByField({ creationUUID: deleteOperation.creationUUID }, {
       wasDeleted: true,
       deletedAt: deleteOperation.changedAt,

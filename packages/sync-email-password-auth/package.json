@@ -13,7 +13,8 @@
     "src"
   ],
   "scripts": {
-    "test": "node ./__tests__/sync-email-password-auth.test.js"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@simpx/sync-core": "1.0.0",

@@ -27,7 +27,6 @@ export class CreateEntityStrategy implements PushStrategy {
     await repository.upsert({ creationUUID: createOperation.creationUUID }, {
       ...createOperation.data,
       // TODO type to show these fields (at least as optional, as they are common)
-      repository: identity.repositoryId,
       domain: identity.domainId,
       createdAt: createOperation.changedAt,
       submittedAt: pushOp.submittedAt,

@@ -124,6 +124,7 @@ describe('UpdateDynamicFieldStrategy', () => {
       createdAt: new Date(),
       changedAt: new Date(),
       creationUUID: entityUUID,
+      deletedAt: null,
       wasDeleted: false,
     }
 
@@ -156,6 +157,7 @@ describe('UpdateDynamicFieldStrategy', () => {
         changedAt: pushOp.modifications[0].changedAt,
         creationUUID: pushOp.modifications[0].creationUUID,
         wasDeleted: false,
+        deletedAt: null,
       },
     ]);
 

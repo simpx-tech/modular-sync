@@ -49,7 +49,6 @@ describe('DeleteEntityStrategy', () => {
       changedAt: new Date(),
       createdAt: new Date(),
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
       wasDeleted: false,
       deletedAt: null,
@@ -62,7 +61,6 @@ describe('DeleteEntityStrategy', () => {
       changedAt: new Date(),
       createdAt: new Date(),
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
       wasDeleted: false,
       deletedAt: null,
@@ -111,7 +109,6 @@ describe('DeleteEntityStrategy', () => {
         uuid: entity2.creationUUID,
         changedAt: pushOp.modifications[0].changedAt,
         data: null,
-        repository: 1,
         domain: 1,
         operation: EntityModificationType.DeleteEntity,
         submittedAt: pushOp.submittedAt,
@@ -126,7 +123,6 @@ describe('DeleteEntityStrategy', () => {
       uuid: "test",
       changedAt: new Date(),
       data: null,
-      repository: 1,
       domain: 1,
       operation: EntityModificationType.DeleteEntity,
       submittedAt: new Date()
@@ -168,7 +164,6 @@ describe('DeleteEntityStrategy', () => {
       deletedAt: new Date(),
       wasDeleted: true,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
     }
 

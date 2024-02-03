@@ -17,19 +17,16 @@ describe("SQLite Adapter", () => {
 
     __createTmpDirIfNotExists();
 
-    sqliteAdapter = new SqliteAdapter({ databasePath: path.join(os.tmpdir(), "modular-sync-tmp", dbPath) });
+    const dbFullPath =  path.join(os.tmpdir(), "modular-sync-tmp", dbPath);
+
+    sqliteAdapter = new SqliteAdapter({ databasePath: dbFullPath });
     await sqliteAdapter.connect();
 
-    database = new BetterSqlite(path.join(__dirname, "./data", dbPath));
+    database = new BetterSqlite(dbFullPath);
     database.exec("CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
     database.exec("CREATE TABLE IF NOT EXISTS test2 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, table_id INTEGER, FOREIGN KEY(table_id) REFERENCES test(id))");
     database.exec("CREATE TABLE IF NOT EXISTS test3 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, name2 TEXT, UNIQUE(name, name2))");
     database.exec("CREATE TABLE IF NOT EXISTS test4 (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, name2 TEXT)");
-  })
-
-  afterEach(async () => {
-    await sqliteAdapter.disconnect();
-    fs.unlinkSync(path.join(__dirname, "./data", dbPath));
   })
 
   describe("createIfNotExists", () => {

@@ -20,6 +20,11 @@ export class PushOperationBuilder {
         this.finished = finished ?? false;
     }
 
+  setFinished(newFinished: boolean) {
+      this.finished = newFinished;
+      return this;
+  }
+
     addModification(modification: EntityModification) {
         this.modifications.push(modification);
         return this;

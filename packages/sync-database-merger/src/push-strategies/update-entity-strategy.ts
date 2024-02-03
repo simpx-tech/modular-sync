@@ -28,7 +28,6 @@ export class UpdateEntityStrategy implements PushStrategy {
 
     const entity = await repository.updateByField({ creationUUID: updateOperation.creationUUID }, {
       ...updateOperation.data,
-      repository: identity.repositoryId,
       domain: identity.domainId,
       submittedAt: pushOp.submittedAt,
       changedAt: updateOperation.changedAt,

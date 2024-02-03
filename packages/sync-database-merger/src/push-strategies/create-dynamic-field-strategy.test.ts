@@ -112,6 +112,7 @@ describe('CreateDynamicFieldStrategy', () => {
         changedAt: pushOp.modifications[0].changedAt,
         creationUUID: pushOp.modifications[0].creationUUID,
         wasDeleted: false,
+        deletedAt: null,
       },
     ]);
 
@@ -156,6 +157,7 @@ describe('CreateDynamicFieldStrategy', () => {
       submittedAt: new Date(),
       changedAt: new Date(),
       createdAt: new Date(),
+      deletedAt: null,
       wasDeleted: false,
     }
 
@@ -188,6 +190,7 @@ describe('CreateDynamicFieldStrategy', () => {
         createdAt: pushOp.modifications[0].changedAt,
         creationUUID: pushOp.modifications[0].creationUUID,
         wasDeleted: false,
+        deletedAt: null,
       },
     ]);
 

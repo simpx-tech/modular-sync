@@ -25,6 +25,9 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileColors">
+    <fileColor scope="TopLevelPackages" color="Blue" />
+  </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -39,6 +42,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="NamedScopeManager">
+    <scope name="TopLevelPackages" pattern="(file[modular-sync]:packages/sync-core/*||file[modular-sync]:packages/sync-database-merger/*||file[modular-sync]:packages/sync-email-password-auth/*||file[modular-sync]:packages/sync-express-router-adapter/*||file[modular-sync]:packages/sync-incremental-diff-engine/*||file[modular-sync]:packages/sync-sqlite-adapter/*)&amp;&amp;!file:packages/sync-core/.gitignore&amp;&amp;!file:packages/sync-core/jest.config.js&amp;&amp;!file:packages/sync-core/package.json&amp;&amp;!file:packages/sync-core/README.md&amp;&amp;!file:packages/sync-database-merger/.gitignore&amp;&amp;!file:packages/sync-database-merger/jest.config.js&amp;&amp;!file:packages/sync-database-merger/package.json&amp;&amp;!file:packages/sync-database-merger/README.md&amp;&amp;!file:packages/sync-email-password-auth/jest.config.js&amp;&amp;!file:packages/sync-email-password-auth/package.json&amp;&amp;!file:packages/sync-email-password-auth/README.md&amp;&amp;!file:packages/sync-incremental-diff-engine/package.json&amp;&amp;!file:packages/sync-incremental-diff-engine/README.md&amp;&amp;!file:packages/sync-sqlite-adapter/.gitignore&amp;&amp;!file:packages/sync-sqlite-adapter/index.ts&amp;&amp;!file:packages/sync-sqlite-adapter/jest.config.js&amp;&amp;!file:packages/sync-sqlite-adapter/package.json&amp;&amp;!file:packages/sync-sqlite-adapter/README.md&amp;&amp;!file:packages/sync-express-router-adapter/package.json&amp;&amp;!file:packages/sync-express-router-adapter/README.md" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -58,7 +64,7 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Jest.All Tests (1).executor": "Run",
-    "Jest.All Tests.executor": "Run",
+    "Jest.All Tests.executor": "Coverage",
     "Jest.CreateDynamicFieldStrategy.executor": "Run",
     "Jest.CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists.executor": "Debug",
     "Jest.CreateEntityStrategy.executor": "Run",
@@ -78,6 +84,7 @@
     "Jest.Repository.create.executor": "Debug",
     "Jest.Repository.executor": "Run",
     "Jest.Repository.should add metadata to the schema.executor": "Run",
+    "Jest.RepositoryFactory.create.executor": "Debug",
     "Jest.RepositoryFactory.executor": "Run",
     "Jest.SQLite Adapter Connection.executor": "Run",
     "Jest.SQLite Adapter.createEntity.executor": "Run",
@@ -97,6 +104,7 @@
     "Jest.Sync Database Merger.executor": "Run",
     "Jest.Sync Database Merger.push.Unified fields.executor": "Run",
     "Jest.Sync Database Merger.push.executor": "Debug",
+    "Jest.Sync Database Merger.push.should execute CreateEntityStrategy if operation is 'create-entity'.executor": "Debug",
     "Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead).executor": "Run",
     "Jest.Tests in __tests__/.executor": "Run",
     "Jest.UpdateDynamicFieldStrategy.executor": "Run",
@@ -118,7 +126,7 @@
     "nodejs_package_manager_path": "npm",
     "npm.modular-sync > test.executor": "Run",
     "npm.sync-core > test.executor": "Run",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "settings.editor.selected.configurable": "project.scopes",
     "ts.external.directory.path": "/home/vinicius/WebStorm/plugins/javascript-impl/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   },
@@ -150,50 +158,13 @@
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/constants/domain-repository-constants.ts" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.DeleteDynamicFieldStrategy">
+  <component name="RunManager" selected="Jest.All Tests">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="ALL" />
-      <method v="2" />
-    </configuration>
-    <configuration name="CreateDynamicFieldStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-dynamic-field-strategy.test.ts" />
-      <test-names>
-        <test-name value="CreateDynamicFieldStrategy" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-dynamic-field-strategy.test.ts" />
-      <test-names>
-        <test-name value="CreateDynamicFieldStrategy" />
-        <test-name value="should create the dynamic field if it doesn't exists" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="CreateEntityStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-entity-strategy.test.ts" />
-      <test-names>
-        <test-name value="CreateEntityStrategy" />
-      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="DeleteDynamicFieldStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
@@ -208,6 +179,19 @@
       </test-names>
       <method v="2" />
     </configuration>
+    <configuration name="RepositoryFactory.create" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-core" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-core/src/common/repository-factory.test.ts" />
+      <test-names>
+        <test-name value="RepositoryFactory" />
+        <test-name value="create" />
+      </test-names>
+      <method v="2" />
+    </configuration>
     <configuration name="Sync Core Test" type="JavaScriptTestRunnerJest">
       <config-file value="$PROJECT_DIR$/packages/sync-core/jest.config.js" />
       <node-interpreter value="project" />
@@ -216,6 +200,32 @@
       <envs />
       <scope-kind value="DIRECTORY" />
       <test-directory value="$PROJECT_DIR$/packages/sync-core/__tests__" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Sync Database Merger" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/sync-database-merger.test.ts" />
+      <test-names>
+        <test-name value="Sync Database Merger" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="Sync Database Merger.push.should execute CreateEntityStrategy if operation is 'create-entity'" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/sync-database-merger.test.ts" />
+      <test-names>
+        <test-name value="Sync Database Merger" />
+        <test-name value="push" />
+        <test-name value="should execute CreateEntityStrategy if operation is 'create-entity'" />
+      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="UpdateDynamicFieldStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
@@ -236,20 +246,20 @@
     <list>
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.Sync Core Test" />
-      <item itemvalue="Jest.CreateDynamicFieldStrategy" />
-      <item itemvalue="Jest.CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists" />
       <item itemvalue="Jest.DeleteDynamicFieldStrategy" />
+      <item itemvalue="Jest.RepositoryFactory.create" />
+      <item itemvalue="Jest.Sync Database Merger" />
+      <item itemvalue="Jest.Sync Database Merger.push.should execute CreateEntityStrategy if operation is 'create-entity'" />
       <item itemvalue="Jest.UpdateDynamicFieldStrategy" />
-      <item itemvalue="Jest.CreateEntityStrategy" />
       <item itemvalue="Node.js.backend.ts" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.RepositoryFactory.create" />
+        <item itemvalue="Jest.Sync Database Merger" />
+        <item itemvalue="Jest.Sync Database Merger.push.should execute CreateEntityStrategy if operation is 'create-entity'" />
         <item itemvalue="Jest.DeleteDynamicFieldStrategy" />
         <item itemvalue="Jest.UpdateDynamicFieldStrategy" />
-        <item itemvalue="Jest.CreateDynamicFieldStrategy" />
-        <item itemvalue="Jest.CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists" />
-        <item itemvalue="Jest.CreateEntityStrategy" />
       </list>
     </recent_temporary>
   </component>
@@ -335,7 +345,7 @@
       <workItem from="1706845102813" duration="1866000" />
       <workItem from="1706880983222" duration="15000" />
       <workItem from="1706902099421" duration="9417000" />
-      <workItem from="1706976759083" duration="5798000" />
+      <workItem from="1706976759083" duration="11165000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -513,7 +523,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706921663146</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="wip: add Create, Update and Delete Dynamic Field and it's tests">
+      <option name="closed" value="true" />
+      <created>1706983763657</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1706983763657</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -554,7 +572,8 @@
     <MESSAGE value="wip: change push structure, add router joi validation" />
     <MESSAGE value="wip: add modification and dynamic fields repositories, implement CreateEntityStrategy" />
     <MESSAGE value="wip: add create, update and delete strategies, and it's tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip: add create, update and delete strategies, and it's tests" />
+    <MESSAGE value="wip: add Create, Update and Delete Dynamic Field and it's tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip: add Create, Update and Delete Dynamic Field and it's tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -565,10 +584,16 @@
           <option name="timeStamp" value="8" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/packages/sync-sqlite-adapter/src/sqlite-adapter.ts</url>
-          <line>165</line>
+          <url>file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-entity-strategy.ts</url>
+          <line>17</line>
           <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="11" />
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-entity-strategy.ts</url>
+          <line>18</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -576,12 +601,15 @@
       <configuration name="JavaScriptTestRunnerJest">
         <watch expression="new Date(1706920894821).toISOString()" language="TypeScript" />
       </configuration>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.ts" line="39">
+      <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.ts" line="37">
         <watch expression="pushOp.submittedAt.toISOString()" language="TypeScript" />
       </inline-watch>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.test.ts" line="98">
+      <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.test.ts" line="96">
         <watch expression="pushOp.modifications[0].changedAt.toISOString()" language="TypeScript" />
       </inline-watch>
     </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/modular_sync$All_Tests.info" NAME="All Tests Coverage Results" MODIFIED="1706993589327" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
 </project>
