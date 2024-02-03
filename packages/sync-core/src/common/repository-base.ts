@@ -48,7 +48,6 @@ export class RepositoryBase<
       ...this.schema,
       ...(!isToIgnoreSyncFields && {
         creationUUID: SchemaType.String,
-        repository: SchemaType.Connection(REPOSITORY_ENTITY),
         domain: SchemaType.Connection(DOMAIN_ENTITY),
         createdAt: SchemaType.Date,
         submittedAt: SchemaType.Date,
@@ -67,6 +66,7 @@ export class RepositoryBase<
       throw new Error(`Couldn't find the Database Adapter for this domain when setting up the ${this.entityName} repository`);
     }
 
+    // TODO allow register modifications migrations (v1 -> v2 -> v3)
     this.syncEngine.migrationRunner.registerMigration(new class implements Migration {
       customName = `create-${domainName}-${entityName}`;
 
@@ -123,7 +123,7 @@ export class RepositoryBase<
     return this.db.converter.outbound.convert(await this.db.updateByField(this.entityName, searchInput, input), this.schema);
   }
 
-  async upsert(search: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
+  async upsert(search: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>, data: UseAOrB<TCreate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
     const input = this.db.converter.inbound.convert(data, this.schema);
     const searchInput = this.db.converter.inbound.convert(search, this.schema);
     return this.db.converter.outbound.convert(await this.db.upsert(this.entityName, searchInput, input), this.schema);

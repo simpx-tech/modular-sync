@@ -2,7 +2,6 @@ import {EntityModificationType} from "@simpx/sync-core/src/server/interfaces/mer
 
 export interface ModificationEntity {
   id: number | string;
-  repository: number | string;
   domain: number | string;
   entity: string;
   operation: EntityModificationType;
@@ -27,7 +26,6 @@ export interface ModificationEntity {
 
 // TODO be based on the entity schema, make a helper for this
 export interface CreateModification {
-  repository: number | string;
   domain: number | string;
   entity: string;
   operation: EntityModificationType;

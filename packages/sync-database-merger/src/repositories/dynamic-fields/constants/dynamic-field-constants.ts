@@ -4,11 +4,12 @@ export const DYNAMIC_FIELD_ENTITY = "sync_dynamic_field";
 
 export const DYNAMIC_FIELD_SCHEMA = {
   key: SchemaType.String,
-  value: SchemaType.Json,
+  value: SchemaType.String,
   entity: SchemaType.String,
-  entityId: SchemaType.Id,
+  creationUUID: SchemaType.String,
   wasDeleted: SchemaType.Boolean,
-  updatedAt: SchemaType.Date,
+  deletedAt: SchemaType.Date,
+  changedAt: SchemaType.Date,
   createdAt: SchemaType.Date,
   submittedAt: SchemaType.Date,
 }

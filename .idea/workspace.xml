@@ -59,8 +59,11 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Jest.All Tests (1).executor": "Run",
     "Jest.All Tests.executor": "Run",
+    "Jest.CreateDynamicFieldStrategy.executor": "Run",
+    "Jest.CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists.executor": "Debug",
     "Jest.CreateEntityStrategy.executor": "Run",
     "Jest.CreateEntityStrategy.should insert the entity if it not exists yet.executor": "Debug",
+    "Jest.DeleteDynamicFieldStrategy.executor": "Run",
     "Jest.DeleteEntityStrategy.executor": "Debug",
     "Jest.Domain Repository.create.executor": "Run",
     "Jest.Domain Repository.createIfNotExists.executor": "Run",
@@ -96,6 +99,7 @@
     "Jest.Sync Database Merger.push.executor": "Debug",
     "Jest.Sync Database Merger.push.should fail if domain is already migrated (user should call sync endpoint instead).executor": "Run",
     "Jest.Tests in __tests__/.executor": "Run",
+    "Jest.UpdateDynamicFieldStrategy.executor": "Run",
     "Jest.UpdateEntityStrategy.executor": "Run",
     "Jest.UpdateEntityStrategy.should fail if the entity doesn't exists.executor": "Debug",
     "Jest.jest.config.js.executor": "Run",
@@ -146,13 +150,38 @@
       <recent name="$PROJECT_DIR$/packages/sync-core/src/repositories/constants/domain-repository-constants.ts" />
     </key>
   </component>
-  <component name="RunManager" selected="Jest.DeleteEntityStrategy">
+  <component name="RunManager" selected="Jest.DeleteDynamicFieldStrategy">
     <configuration name="All Tests" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="ALL" />
+      <method v="2" />
+    </configuration>
+    <configuration name="CreateDynamicFieldStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
+      <envs />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-dynamic-field-strategy.test.ts" />
+      <test-names>
+        <test-name value="CreateDynamicFieldStrategy" />
+      </test-names>
+      <method v="2" />
+    </configuration>
+    <configuration name="CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
+      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-dynamic-field-strategy.test.ts" />
+      <test-names>
+        <test-name value="CreateDynamicFieldStrategy" />
+        <test-name value="should create the dynamic field if it doesn't exists" />
+      </test-names>
       <method v="2" />
     </configuration>
     <configuration name="CreateEntityStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
@@ -167,28 +196,15 @@
       </test-names>
       <method v="2" />
     </configuration>
-    <configuration name="CreateEntityStrategy.should insert the entity if it not exists yet" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/create-entity-strategy.test.ts" />
-      <test-names>
-        <test-name value="CreateEntityStrategy" />
-        <test-name value="should insert the entity if it not exists yet" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="DeleteEntityStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="DeleteDynamicFieldStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-dynamic-field-strategy.test.ts" />
       <test-names>
-        <test-name value="DeleteEntityStrategy" />
+        <test-name value="DeleteDynamicFieldStrategy" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -202,28 +218,15 @@
       <test-directory value="$PROJECT_DIR$/packages/sync-core/__tests__" />
       <method v="2" />
     </configuration>
-    <configuration name="UpdateEntityStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
+    <configuration name="UpdateDynamicFieldStrategy" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <jest-package value="$PROJECT_DIR$/node_modules/jest" />
       <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/update-entity-strategy.test.ts" />
+      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/update-dynamic-field-strategy.test.ts" />
       <test-names>
-        <test-name value="UpdateEntityStrategy" />
-      </test-names>
-      <method v="2" />
-    </configuration>
-    <configuration name="UpdateEntityStrategy.should fail if the entity doesn't exists" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <jest-package value="$PROJECT_DIR$/node_modules/jest" />
-      <working-dir value="$PROJECT_DIR$/packages/sync-database-merger" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/update-entity-strategy.test.ts" />
-      <test-names>
-        <test-name value="UpdateEntityStrategy" />
-        <test-name value="should fail if the entity doesn't exists" />
+        <test-name value="UpdateDynamicFieldStrategy" />
       </test-names>
       <method v="2" />
     </configuration>
@@ -233,20 +236,20 @@
     <list>
       <item itemvalue="Jest.All Tests" />
       <item itemvalue="Jest.Sync Core Test" />
-      <item itemvalue="Jest.DeleteEntityStrategy" />
-      <item itemvalue="Jest.UpdateEntityStrategy" />
-      <item itemvalue="Jest.UpdateEntityStrategy.should fail if the entity doesn't exists" />
+      <item itemvalue="Jest.CreateDynamicFieldStrategy" />
+      <item itemvalue="Jest.CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists" />
+      <item itemvalue="Jest.DeleteDynamicFieldStrategy" />
+      <item itemvalue="Jest.UpdateDynamicFieldStrategy" />
       <item itemvalue="Jest.CreateEntityStrategy" />
-      <item itemvalue="Jest.CreateEntityStrategy.should insert the entity if it not exists yet" />
       <item itemvalue="Node.js.backend.ts" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Jest.DeleteEntityStrategy" />
-        <item itemvalue="Jest.UpdateEntityStrategy.should fail if the entity doesn't exists" />
-        <item itemvalue="Jest.UpdateEntityStrategy" />
+        <item itemvalue="Jest.DeleteDynamicFieldStrategy" />
+        <item itemvalue="Jest.UpdateDynamicFieldStrategy" />
+        <item itemvalue="Jest.CreateDynamicFieldStrategy" />
+        <item itemvalue="Jest.CreateDynamicFieldStrategy.should create the dynamic field if it doesn't exists" />
         <item itemvalue="Jest.CreateEntityStrategy" />
-        <item itemvalue="Jest.CreateEntityStrategy.should insert the entity if it not exists yet" />
       </list>
     </recent_temporary>
   </component>
@@ -331,7 +334,8 @@
       <workItem from="1706838426136" duration="6669000" />
       <workItem from="1706845102813" duration="1866000" />
       <workItem from="1706880983222" duration="15000" />
-      <workItem from="1706902099421" duration="9270000" />
+      <workItem from="1706902099421" duration="9417000" />
+      <workItem from="1706976759083" duration="5798000" />
     </task>
     <task id="LOCAL-00001" summary="feat: add express-router package, add email-password-auth package">
       <option name="closed" value="true" />
@@ -501,7 +505,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706846180243</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="wip: add create, update and delete strategies, and it's tests">
+      <option name="closed" value="true" />
+      <created>1706921663146</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1706921663146</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -541,7 +553,8 @@
     <MESSAGE value="feat: move test to be aside of files" />
     <MESSAGE value="wip: change push structure, add router joi validation" />
     <MESSAGE value="wip: add modification and dynamic fields repositories, implement CreateEntityStrategy" />
-    <option name="LAST_COMMIT_MESSAGE" value="wip: add modification and dynamic fields repositories, implement CreateEntityStrategy" />
+    <MESSAGE value="wip: add create, update and delete strategies, and it's tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="wip: add create, update and delete strategies, and it's tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -551,13 +564,19 @@
           <line>6</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/packages/sync-sqlite-adapter/src/sqlite-adapter.ts</url>
+          <line>165</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="JavaScriptTestRunnerJest">
         <watch expression="new Date(1706920894821).toISOString()" language="TypeScript" />
       </configuration>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.ts" line="40">
+      <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.ts" line="39">
         <watch expression="pushOp.submittedAt.toISOString()" language="TypeScript" />
       </inline-watch>
       <inline-watch fileUrl="file://$PROJECT_DIR$/packages/sync-database-merger/src/push-strategies/delete-entity-strategy.test.ts" line="98">

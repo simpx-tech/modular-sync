@@ -33,7 +33,7 @@ export interface PushOperation {
 export interface EntityModification {
   entity: string,
   changedAt: Date,
-  type: EntityModificationType,
+  operation: EntityModificationType,
   creationUUID: string,
   uuid: string,
   // TODO Change based on the `type`

@@ -30,7 +30,7 @@ describe('CreateEntityStrategy', () => {
     const uuid1 = v4();
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      type: EntityModificationType.CreateEntity,
+      operation: EntityModificationType.CreateEntity,
       creationUUID: uuid1,
       uuid: uuid1,
       data: {
@@ -77,7 +77,7 @@ describe('CreateEntityStrategy', () => {
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      type: EntityModificationType.CreateEntity,
+      operation: EntityModificationType.CreateEntity,
       creationUUID: uuid1,
       uuid: uuid1,
       data: {
@@ -131,7 +131,7 @@ describe('CreateEntityStrategy', () => {
         test: "test",
         test2: "test2",
       },
-      entityId: 1,
+      creationUUID: uuid1,
       repository: 1,
       domain: 1,
 
@@ -144,7 +144,7 @@ describe('CreateEntityStrategy', () => {
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: modification.entity,
-      type: modification.operation,
+      operation: modification.operation,
       creationUUID: modification.uuid,
       uuid: modification.uuid,
       data: modification.data,
@@ -180,7 +180,7 @@ describe('CreateEntityStrategy', () => {
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      type: EntityModificationType.CreateEntity,
+      operation: EntityModificationType.CreateEntity,
       creationUUID: uuid1,
       uuid: uuid1,
       data: {

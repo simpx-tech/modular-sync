@@ -12,7 +12,7 @@ import {EntityModificationType} from "@simpx/sync-core/src/server/interfaces/mer
 import {v4} from "uuid";
 import {InternalServerErrorException} from "@simpx/sync-core/src/server/exceptions/internal-errror-exception";
 
-describe('DeleteEntityStrategy', () => {
+describe('DeleteDynamicFieldStrategy', () => {
   let syncEngine: ServerSyncEngine;
   let simpleRepository: RepositoryBase<any, any, any, any>;
   let mergeEngine: DatabaseMerger;
@@ -31,14 +31,14 @@ describe('DeleteEntityStrategy', () => {
   it("should fail if the entity doesn't exists", async () => {
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      operation: EntityModificationType.DeleteEntity,
+      operation: EntityModificationType.DeleteDynamicField,
       creationUUID: v4(),
       uuid: v4(),
       changedAt: new Date(),
-      data: null,
+      data: { key: "test" },
     }).build();
 
-    await expect(mergeEngine.deleteEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp)).rejects.toEqual(new InternalServerErrorException("Trying to delete an entity that does not exist"));
+    await expect(mergeEngine.deleteDynamicFieldStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp)).rejects.toEqual(new InternalServerErrorException("Trying to delete an dynamic field that does not exist"));
   });
 
   it('should delete the correct entity', async () => {
@@ -49,56 +49,49 @@ describe('DeleteEntityStrategy', () => {
       changedAt: new Date(),
       createdAt: new Date(),
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
       wasDeleted: false,
       deletedAt: null,
     }
 
-    const entity2 = {
-      test: "test3",
-      test2: "test4",
-      creationUUID: "test2",
-      changedAt: new Date(),
-      createdAt: new Date(),
+    const dynamicField = {
+      key: "test",
+      value: "test2",
+      entity: "test_entity",
       submittedAt: new Date(),
-      repository: 1,
-      domain: 1,
-      wasDeleted: false,
       deletedAt: null,
+      createdAt: new Date(),
+      changedAt: new Date(),
+      creationUUID: entity1.creationUUID,
+      wasDeleted: false,
     }
+
+    await mergeEngine.dynamicFieldRepository.create(dynamicField);
 
     await simpleRepository.create(entity1);
-    await simpleRepository.create(entity2);
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      operation: EntityModificationType.DeleteEntity,
-      creationUUID: entity2.creationUUID,
-      uuid: entity2.creationUUID,
+      operation: EntityModificationType.DeleteDynamicField,
+      creationUUID: entity1.creationUUID,
+      uuid: entity1.creationUUID,
       changedAt: new Date(),
-      data: null,
+      data: { key: "test" },
     }).build();
 
-    console.log()
+    await mergeEngine.deleteDynamicFieldStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
 
-    await mergeEngine.deleteEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+    const dynamicFields = await mergeEngine.dynamicFieldRepository.getAll();
 
-    const entities = await simpleRepository.getAll();
-
-    expect(entities).toEqual([
+    expect(dynamicFields).toEqual([
       {
         id: 1,
-        ...entity1,
-      },
-      {
-        id: 2,
-        ...entity2,
-        wasDeleted: true,
+        ...dynamicField,
         changedAt: pushOp.modifications[0].changedAt,
         deletedAt: pushOp.modifications[0].changedAt,
         submittedAt: pushOp.submittedAt,
-      }
+        wasDeleted: true,
+      },
     ]);
 
     const modifications = await mergeEngine.modificationRepository.getAll();
@@ -107,13 +100,14 @@ describe('DeleteEntityStrategy', () => {
       {
         id: 1,
         entity: "test_entity",
-        creationUUID: entity2.creationUUID,
-        uuid: entity2.creationUUID,
+        creationUUID: entity1.creationUUID,
+        uuid: pushOp.modifications[0].uuid,
         changedAt: pushOp.modifications[0].changedAt,
-        data: null,
-        repository: 1,
+        data: {
+          key: "test"
+        },
         domain: 1,
-        operation: EntityModificationType.DeleteEntity,
+        operation: EntityModificationType.DeleteDynamicField,
         submittedAt: pushOp.submittedAt,
       }
     ]);
@@ -126,9 +120,8 @@ describe('DeleteEntityStrategy', () => {
       uuid: "test",
       changedAt: new Date(),
       data: null,
-      repository: 1,
       domain: 1,
-      operation: EntityModificationType.DeleteEntity,
+      operation: EntityModificationType.DeleteDynamicField,
       submittedAt: new Date()
     }
 
@@ -136,7 +129,7 @@ describe('DeleteEntityStrategy', () => {
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      operation: EntityModificationType.DeleteEntity,
+      operation: EntityModificationType.DeleteDynamicField,
       creationUUID: "test",
       uuid: v4(),
       changedAt: new Date(),
@@ -145,7 +138,7 @@ describe('DeleteEntityStrategy', () => {
 
     const spy = jest.spyOn(simpleRepository, "updateByField");
 
-    await mergeEngine.deleteEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+    await mergeEngine.deleteDynamicFieldStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
 
     expect(spy).not.toHaveBeenCalled();
 
@@ -165,35 +158,50 @@ describe('DeleteEntityStrategy', () => {
       creationUUID: "test",
       changedAt: new Date(),
       createdAt: new Date(),
-      deletedAt: new Date(),
-      wasDeleted: true,
       submittedAt: new Date(),
-      repository: 1,
       domain: 1,
+      wasDeleted: false,
+      deletedAt: null,
     }
+
+    // TODO should mark all dynamic fields as deleted when delete entity? (maybe not necessary)
+    const dynamicField = {
+      key: "test",
+      value: "test2",
+      entity: "test_entity",
+      submittedAt: new Date(),
+      deletedAt: new Date(),
+      createdAt: new Date(),
+      changedAt: new Date(),
+      creationUUID: entity1.creationUUID,
+      wasDeleted: true,
+    }
+
+    await mergeEngine.dynamicFieldRepository.create(dynamicField);
 
     await simpleRepository.create(entity1);
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      operation: EntityModificationType.DeleteEntity,
+      operation: EntityModificationType.DeleteDynamicField,
       creationUUID: entity1.creationUUID,
       uuid: entity1.creationUUID,
       changedAt: new Date(),
-      data: null,
+      data: { key: "test" },
     }).build();
 
-    await mergeEngine.deleteEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+    await mergeEngine.deleteDynamicFieldStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
 
-    const entities = await simpleRepository.getAll();
+    const dynamicFields = await mergeEngine.dynamicFieldRepository.getAll();
 
-    expect(entities).toEqual([
+    expect(dynamicFields).toEqual([
       {
         id: 1,
-        ...entity1,
+        ...dynamicField,
         changedAt: pushOp.modifications[0].changedAt,
         deletedAt: pushOp.modifications[0].changedAt,
         submittedAt: pushOp.submittedAt,
+        wasDeleted: true,
       },
     ]);
   });

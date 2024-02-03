@@ -43,7 +43,6 @@ export class UpdateEntityStrategy implements PushStrategy {
       operation: EntityModificationType.UpdateEntity,
       data: updateOperation.data,
       creationUUID: updateOperation.creationUUID,
-      repository: identity.repositoryId,
       domain: identity.domainId,
       submittedAt: pushOp.submittedAt,
       changedAt: updateOperation.changedAt,

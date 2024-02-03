@@ -1,7 +1,7 @@
 export interface DynamicFieldEntity {
   id?: number | string;
   /**
-   * For database is the column name, for other entities, the ID of this field
+   * For a database merger is the column name, for other types, the ID of this field
    */
   key: string;
   /**
@@ -9,29 +9,33 @@ export interface DynamicFieldEntity {
    */
   value: string;
   entity: string;
-  entityId: number | string;
+  creationUUID: string;
   wasDeleted: boolean;
+  deletedAt: Date;
   submittedAt: Date;
-  updatedAt: Date;
+  changedAt: Date;
   createdAt: Date;
 }
 
 export interface CreateDynamicField {
-  uuid: string;
   key: string;
   value: string;
   entity: string;
-  entityId: number | string;
+  creationUUID: number | string;
   submittedAt: Date;
-  updatedAt: Date;
+  changedAt: Date;
+  createdAt: Date;
+  deletedAt: Date;
   wasDeleted: boolean;
 }
 
 export interface UpdateDynamicField {
-  value: string;
-  entity: string;
-  entityId: number | string;
-  submittedAt: Date;
-  updatedAt: Date;
-  wasDeleted: boolean;
+  value?: string;
+  entity?: string;
+  creationUUID?: string;
+  submittedAt?: Date;
+  changedAt?: Date;
+  createdAt?: Date;
+  deletedAt?: Date;
+  wasDeleted?: boolean;
 }

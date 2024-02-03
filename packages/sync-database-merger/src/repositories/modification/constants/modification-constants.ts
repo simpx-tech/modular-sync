@@ -7,14 +7,13 @@ export const MODIFICATION_ENTITY_BASE = "sync_modifications";
 
 // TODO allow use ModificationEntity here to ensure correct typing, has to create a custom helper in TS to achieve this
 export const MODIFICATION_SCHEMA = {
-  repository: SchemaType.Connection(REPOSITORY_ENTITY),
-  domain: SchemaType.Connection(DOMAIN_ENTITY),
   entity: SchemaType.String,
   // TODO add enum validation, add extra data, like Not Null, etc
   operation: SchemaType.String,
   creationUUID: SchemaType.String,
   uuid: SchemaType.String,
   submittedAt: SchemaType.Date,
+  domain: SchemaType.Connection(DOMAIN_ENTITY),
   changedAt: SchemaType.Date,
   data: SchemaType.Stringified,
 }

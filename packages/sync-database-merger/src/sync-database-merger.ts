@@ -15,6 +15,9 @@ import {DynamicFieldRepository} from "./repositories/dynamic-fields/dynamic-fiel
 import {IdIdentity} from "./interfaces/id-identity";
 import {UpdateEntityStrategy} from "./push-strategies/update-entity-strategy";
 import {DeleteEntityStrategy} from "./push-strategies/delete-entity-strategy";
+import {CreateDynamicFieldStrategy} from "./push-strategies/create-dynamic-field-strategy";
+import {UpdateDynamicFieldStrategy} from "./push-strategies/update-dynamic-field-strategy";
+import {DeleteDynamicFieldStrategy} from "./push-strategies/delete-dynamic-field-strategy";
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
@@ -25,6 +28,9 @@ export class DatabaseMerger implements MergeEngine {
   createEntityStrategy = new CreateEntityStrategy();
   updateEntityStrategy = new UpdateEntityStrategy();
   deleteEntityStrategy = new DeleteEntityStrategy();
+  createDynamicFieldStrategy = new CreateDynamicFieldStrategy();
+  updateDynamicFieldStrategy = new UpdateDynamicFieldStrategy();
+  deleteDynamicFieldStrategy = new DeleteDynamicFieldStrategy();
 
   async runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void> {
     this.syncEngine = syncEngine;
@@ -40,6 +46,9 @@ export class DatabaseMerger implements MergeEngine {
     await this.createEntityStrategy.runSetup(this);
     await this.updateEntityStrategy.runSetup(this);
     await this.deleteEntityStrategy.runSetup(this);
+    await this.createDynamicFieldStrategy.runSetup(this);
+    await this.updateDynamicFieldStrategy.runSetup(this);
+    await this.deleteDynamicFieldStrategy.runSetup(this);
   }
 
   async syncEndpoint(req: RouterRequest) {}
@@ -110,9 +119,9 @@ export class DatabaseMerger implements MergeEngine {
       "create-entity": this.createEntityStrategy.handle,
       "update-entity": this.updateEntityStrategy.handle,
       "delete-entity": this.deleteEntityStrategy.handle,
-      "create-dynamic-field": this.createEntityStrategy.handle,
-      "update-dynamic-field": this.createEntityStrategy.handle,
-      "delete-dynamic-field": this.createEntityStrategy.handle,
+      "create-dynamic-field": this.createDynamicFieldStrategy.handle,
+      "update-dynamic-field": this.updateDynamicFieldStrategy.handle,
+      "delete-dynamic-field": this.deleteDynamicFieldStrategy.handle,
     }
 
     for await (const modification of push.modifications) {
@@ -124,7 +133,7 @@ export class DatabaseMerger implements MergeEngine {
           throw new InternalServerErrorException("Internal Repository not found");
         }
 
-      await strategyFnByType[modification.type](identity, repository, modification, push);
+      await strategyFnByType[modification.operation](identity, repository, modification, push);
     }
   }
 
