@@ -37,23 +37,28 @@ export class SqliteAdapter implements DatabaseAdapter {
     }
   };
 
+  // TODO ignore deleted entities
   async getFirst<T = any>(entity: string): Promise<T> {
     return this.connection.prepare(`SELECT * FROM ${entity} LIMIT 1`).get() as T;
   }
 
+  // TODO ignore deleted entities
   async getById<T = any>(entity: string, id: number): Promise<T> {
     return this.connection.prepare(`SELECT * FROM ${entity} WHERE id = ?`).get(id) as T;
   }
 
+  // TODO ignore deleted entities
   async getAll<T = any>(entity: string): Promise<T> {
     return this.connection.prepare(`SELECT * FROM ${entity}`).all() as T;
   }
 
+  // TODO ignore deleted entities
   async getByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T> {
     const formattedMapping = this.formatSelectMapping(mapping);
     return this.connection.prepare(`SELECT * FROM ${entity} WHERE ${formattedMapping}`).get() as T;
   }
 
+  // TODO ignore deleted entities
   async getAllByField<T = any>(entity: string, mapping: Record<string, any>): Promise<T> {
     const formattedMapping = this.formatSelectMapping(mapping);
     return this.connection.prepare(`SELECT * FROM ${entity} WHERE ${formattedMapping}`).all() as T;
@@ -61,7 +66,7 @@ export class SqliteAdapter implements DatabaseAdapter {
 
   private formatSelectMapping(mapping: Record<string, any>) {
     return Object.entries(mapping).reduce((acc, [key, value], index) => {
-      return `${acc}${key} = ${this.applyQuotes(value)}${this.applyAnd(mapping, index)}`
+      return `${acc}${key} = ${this.formatNull(this.applyQuotes(value))}${this.applyAnd(mapping, index)}`
     }, "")
   }
 
@@ -71,6 +76,10 @@ export class SqliteAdapter implements DatabaseAdapter {
 
   private applyQuotes(value: any) {
     return typeof value === "string" ? `'${value}'` : value;
+  }
+
+  private formatNull(value: any) {
+    return value === null ? "NULL" : value;
   }
 
   private applyComma(mapping: Record<string, any>, index: number){
@@ -100,6 +109,7 @@ export class SqliteAdapter implements DatabaseAdapter {
     return this.getById(entity, result.lastInsertRowid as number);
   }
 
+  // TODO ignore deleted entities
   async update(entity: string, id: number, data: UpsertData) {
     await this.runMiddlewares('update');
     const formattedData = this.formatUpdateData(data);
@@ -109,6 +119,18 @@ export class SqliteAdapter implements DatabaseAdapter {
     return this.getById(entity, id);
   }
 
+  // TODO ignore deleted entities
+  async updateByField(entity: string, mapping: Record<string, any>, data: UpsertData) {
+    const formattedMapping = this.formatSelectMapping(mapping);
+    const formattedData = this.formatUpdateData(data);
+
+    // TODO should update only one?
+    this.connection.prepare(`UPDATE ${entity} SET ${formattedData} WHERE ${formattedMapping}`).run();
+
+    return this.getByField(entity, mapping);
+  }
+
+  // TODO use soft delete (update) instead of this
   async delete(entity: string, id: number) {
     await this.runMiddlewares('delete');
     const returnValue = this.connection.prepare(`DELETE FROM ${entity} WHERE id = ?`).run(id);
@@ -215,13 +237,13 @@ export class SqliteAdapter implements DatabaseAdapter {
 
   private formatInsertData(data: UpsertData) {
     return Object.entries(data).reduce<string>((acc, [key, value], index) => {
-      return `${acc}${this.applyQuotes(value)}${this.applyComma(data, index)}`
+      return `${acc}${this.formatNull(this.applyQuotes(value))}${this.applyComma(data, index)}`
     }, "")
   }
 
   private formatUpdateData(data: UpsertData) {
     return Object.entries(data).reduce<string>((acc, [key, value], index) => {
-      return `${acc}${key} = ${this.applyQuotes(value)}${this.applyComma(data, index)}`
+      return `${acc}${key} = ${this.formatNull(this.applyQuotes(value))}${this.applyComma(data, index)}`
     }, "")
   }
 

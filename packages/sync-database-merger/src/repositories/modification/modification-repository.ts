@@ -4,6 +4,6 @@ import {CreateModification, ModificationEntity} from "./interfaces/modification-
 
 export class ModificationRepository extends RepositoryBase<ModificationEntity, CreateModification, {}, {}> {
   constructor() {
-    super(MODIFICATION_ENTITY_BASE, MODIFICATION_SCHEMA, { unique: ["uuid"] });
+    super(MODIFICATION_ENTITY_BASE, MODIFICATION_SCHEMA, { unique: ["uuid"], isToIgnoreSyncFields: true });
   }
 }

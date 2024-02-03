@@ -1,11 +1,14 @@
-import {EntityModification, PushOperation} from "@simpx/sync-core/src/server/interfaces/merge-engine";
+import {
+  EntityModification,
+  EntityModificationType,
+  PushOperation
+} from "@simpx/sync-core/src/server/interfaces/merge-engine";
 import {RepositoryBase} from "@simpx/sync-core/src/common/repository-base";
-import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {IdIdentity} from "../interfaces/id-identity";
-import {InternalServerErrorException} from "@simpx/sync-core/src/server/exceptions/internal-errror-exception";
 import {DatabaseMerger} from "../sync-database-merger";
+import {PushStrategy} from "../interfaces/push-strategy";
 
-export class CreateEntityStrategy {
+export class CreateEntityStrategy implements PushStrategy {
   merger: DatabaseMerger;
 
   async runSetup(merger: DatabaseMerger) {
@@ -21,30 +24,28 @@ export class CreateEntityStrategy {
       return;
     }
 
-    const entity = await repository.upsert({ __creationUUID: createOperation.creationUUID }, {
+    const entity = await repository.upsert({ creationUUID: createOperation.creationUUID }, {
       ...createOperation.data,
+      // TODO type to show these fields (at least as optional, as they are common)
       repository: identity.repositoryId,
       domain: identity.domainId,
       createdAt: createOperation.changedAt,
       submittedAt: pushOp.submittedAt,
       changedAt: createOperation.changedAt,
+      creationUUID: createOperation.creationUUID,
       deletedAt: null,
-      wasDeleted: false,
     });
 
     await this.merger.modificationRepository.create({
       entity: createOperation.entity,
-      operation: "create",
+      operation: EntityModificationType.CreateEntity,
       data: createOperation.data,
-      entityId: entity.id,
-      // TODO add this
-      // entityUUID: createOperation.uuid,
+      creationUUID: createOperation.creationUUID,
       repository: identity.repositoryId,
       domain: identity.domainId,
       submittedAt: pushOp.submittedAt,
       changedAt: createOperation.changedAt,
       uuid: createOperation.uuid,
-      wasDeleted: false,
     });
   }
 }

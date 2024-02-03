@@ -130,6 +130,10 @@ class OutboundConverter implements DataConverterFlow {
   }
 
   asDate(field: number) {
+    if (!field) {
+      return null;
+    }
+
     return new Date(field);
   }
 

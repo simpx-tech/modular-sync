@@ -10,12 +10,11 @@ export const MODIFICATION_SCHEMA = {
   repository: SchemaType.Connection(REPOSITORY_ENTITY),
   domain: SchemaType.Connection(DOMAIN_ENTITY),
   entity: SchemaType.String,
+  // TODO add enum validation, add extra data, like Not Null, etc
   operation: SchemaType.String,
-  entityId: SchemaType.Id,
+  creationUUID: SchemaType.String,
   uuid: SchemaType.String,
   submittedAt: SchemaType.Date,
   changedAt: SchemaType.Date,
-  wasDeleted: SchemaType.Boolean,
   data: SchemaType.Stringified,
-  fieldOperations: SchemaType.Json,
 }

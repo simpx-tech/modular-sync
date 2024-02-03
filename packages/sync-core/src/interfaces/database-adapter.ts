@@ -15,6 +15,7 @@ export interface DatabaseAdapter<TId = number | string> {
   create<T = any>(entity: string, data: UpsertData): Promise<T>;
   createIfNotExists<T = any>(entity: string, keyFields: string[], data: UpsertData): Promise<T>;
   update<T = any>(entity: string, id: TId, data: UpsertData): Promise<T>;
+  updateByField<T = any>(entity: string, mapping: Record<string, any>, data: UpsertData): Promise<T>;
   upsert<T = any>(entity: string, search: Record<string, any>, data: UpsertData): Promise<T>;
 
   // TODO should do soft delete

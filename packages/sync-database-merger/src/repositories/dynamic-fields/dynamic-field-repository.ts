@@ -4,6 +4,6 @@ import {DYNAMIC_FIELD_ENTITY, DYNAMIC_FIELD_SCHEMA} from "./constants/dynamic-fi
 
 export class DynamicFieldRepository extends RepositoryBase<DynamicFieldEntity, CreateDynamicField, UpdateDynamicField, {}> {
   constructor() {
-    super(DYNAMIC_FIELD_ENTITY, DYNAMIC_FIELD_SCHEMA, { unique: ["key", "entityId"] });
+    super(DYNAMIC_FIELD_ENTITY, DYNAMIC_FIELD_SCHEMA, { unique: ["key", "entityId"], isToIgnoreSyncFields: true });
   }
 }

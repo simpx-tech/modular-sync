@@ -1,10 +1,12 @@
+import {EntityModificationType} from "@simpx/sync-core/src/server/interfaces/merge-engine";
+
 export interface ModificationEntity {
   id: number | string;
   repository: number | string;
   domain: number | string;
   entity: string;
-  operation: "create" | "update" | "delete";
-  entityId: number | string;
+  operation: EntityModificationType;
+  creationUUID: string;
   /**
    * When this modification was submitted to the sync server
    */
@@ -23,15 +25,15 @@ export interface ModificationEntity {
   data: Record<string, any>;
 }
 
+// TODO be based on the entity schema, make a helper for this
 export interface CreateModification {
   repository: number | string;
   domain: number | string;
   entity: string;
-  operation: "create" | "update" | "delete";
-  entityId: number | string;
+  operation: EntityModificationType;
+  creationUUID: string;
   uuid: string;
   submittedAt: Date;
   changedAt: Date;
-  wasDeleted: boolean;
   data: Record<string, any>;
 }

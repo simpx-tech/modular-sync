@@ -9,8 +9,9 @@ import {v4} from "uuid";
 import {setupRepositories} from "@simpx/sync-core/__tests__/helpers/setup-repositories";
 import {setupDomains} from "@simpx/sync-core/__tests__/helpers/setup-domains";
 import {setupAuthentication} from "@simpx/sync-core/__tests__/helpers/setup-authentication";
+import {InternalServerErrorException} from "@simpx/sync-core/src/server/exceptions/internal-errror-exception";
 
-describe('CreateEntityStrategy', () => {
+describe('UpdateEntityStrategy', () => {
   let syncEngine: ServerSyncEngine;
   let simpleRepository: RepositoryBase<any, any, any, any>;
   let mergeEngine: DatabaseMerger;
@@ -26,85 +27,83 @@ describe('CreateEntityStrategy', () => {
     mergeEngine = syncEngine.domains.find(domain => domain.name === "test-domain").mergeEngine as DatabaseMerger;
   });
 
-  it('should insert the entity if it not exists yet', async () => {
-    const uuid1 = v4();
-    const pushOp = new PushOperationBuilder().addModification({
-      entity: "test_entity",
-      type: EntityModificationType.CreateEntity,
-      creationUUID: uuid1,
-      uuid: uuid1,
-      data: {
-        test: "test",
-        test2: "test2",
-      },
-      changedAt: new Date(),
-    }).build();
-
-    await mergeEngine.createEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
-
-    const entities = await simpleRepository.getAll();
-
-    expect(entities).toEqual([
-      {
-        id: 1,
-        test: "test",
-        test2: "test2",
-        creationUUID: uuid1,
-        changedAt: pushOp.modifications[0].changedAt,
-        createdAt: pushOp.modifications[0].changedAt,
-        deletedAt: null,
-        submittedAt: pushOp.submittedAt,
-        repository: 1,
-        domain: 1,
-      }
-    ]);
-  });
-
-  it('should update the entity if it already exists', async () => {
-    const uuid1 = v4();
-
-    await simpleRepository.create({
+  it('should update the correct entity', async () => {
+    const entity1 = {
       test: "test",
       test2: "test2",
-      creationUUID: uuid1,
+      creationUUID: v4(),
       changedAt: new Date(),
       createdAt: new Date(),
       deletedAt: null,
       submittedAt: new Date(),
       repository: 1,
       domain: 1,
-    });
+    }
+
+    const entity2 = {
+      test: "test3",
+      test2: "test4",
+      creationUUID: v4(),
+      changedAt: new Date(),
+      createdAt: new Date(),
+      deletedAt: null,
+      submittedAt: new Date(),
+      repository: 1,
+      domain: 1,
+    }
+
+    await simpleRepository.create(entity1);
+    await simpleRepository.create(entity2);
 
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      type: EntityModificationType.CreateEntity,
-      creationUUID: uuid1,
-      uuid: uuid1,
+      type: EntityModificationType.UpdateEntity,
+      creationUUID: entity2.creationUUID,
+      uuid: entity2.creationUUID,
       data: {
-        test: "test2",
-        test2: "test3",
+        test: "test5",
+        test2: "test6",
       },
       changedAt: new Date(),
     }).build();
 
-    await mergeEngine.createEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+    await mergeEngine.updateEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
 
     const entities = await simpleRepository.getAll();
 
     expect(entities).toEqual([
       {
         id: 1,
-        test: "test2",
-        test2: "test3",
-        creationUUID: uuid1,
-        changedAt: pushOp.modifications[0].changedAt,
-        createdAt: pushOp.modifications[0].changedAt,
-        deletedAt: null,
+        ...entity1,
+      },
+      {
+        id: 2,
+        ...entity2,
+        test: "test5",
+        test2: "test6",
         submittedAt: pushOp.submittedAt,
-        repository: 1,
-        domain: 1,
+        changedAt: pushOp.modifications[0].changedAt,
       }
     ]);
+  });
+
+  it("should fail if the entity doesn't exists", async () => {
+    const uuid = v4();
+    const pushOp = new PushOperationBuilder().addModification({
+      entity: "test_entity",
+      type: EntityModificationType.UpdateEntity,
+      creationUUID: uuid,
+      uuid: uuid,
+      data: {
+        test: "test5",
+        test2: "test6",
+      },
+      changedAt: new Date(),
+    }).build();
+
+    const promise = mergeEngine.updateEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+
+    await expect(promise).rejects.toEqual(new InternalServerErrorException("Entity not found"));
   });
 
   it('should ignore this modification if the modification is already on the database', async () => {
@@ -126,7 +125,7 @@ describe('CreateEntityStrategy', () => {
 
     const modification = {
       entity: "test_entity",
-      operation: EntityModificationType.CreateEntity,
+      operation: EntityModificationType.UpdateEntity,
       data: {
         test: "test",
         test2: "test2",
@@ -153,7 +152,7 @@ describe('CreateEntityStrategy', () => {
 
     const spy = jest.spyOn(simpleRepository, "upsert");
 
-    await mergeEngine.createEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+    await mergeEngine.updateEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
 
     expect(spy).not.toHaveBeenCalled();
 
@@ -178,21 +177,37 @@ describe('CreateEntityStrategy', () => {
   it('should save the modification on the database', async () => {
     const uuid1 = v4();
 
+    const entity = {
+      test: "test",
+      test2: "test2",
+      creationUUID: uuid1,
+      changedAt: new Date(),
+      createdAt: new Date(),
+      deletedAt: null,
+      submittedAt: new Date(),
+      repository: 1,
+      domain: 1,
+    }
+
+    await simpleRepository.create(entity);
+
+    const modificationUuid = v4();
+
     const pushOp = new PushOperationBuilder().addModification({
       entity: "test_entity",
-      type: EntityModificationType.CreateEntity,
+      type: EntityModificationType.UpdateEntity,
       creationUUID: uuid1,
-      uuid: uuid1,
+      uuid: modificationUuid,
       data: {
-        test: "test",
-        test2: "test2",
+        test: "test5",
+        test2: "test6",
       },
       changedAt: new Date(),
     }).build();
 
-    const spy = jest.spyOn(simpleRepository, "upsert");
+    const spy = jest.spyOn(simpleRepository, "updateByField");
 
-    await mergeEngine.createEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
+    await mergeEngine.updateEntityStrategy.handle({ domainId: 1, repositoryId: 1 }, simpleRepository, pushOp.modifications[0], pushOp);
 
     expect(spy).toHaveBeenCalled();
 
@@ -201,8 +216,8 @@ describe('CreateEntityStrategy', () => {
     expect(entities).toEqual([
       {
         id: 1,
-        test: "test",
-        test2: "test2",
+        test: "test5",
+        test2: "test6",
         creationUUID: uuid1,
         changedAt: expect.any(Date),
         createdAt: expect.any(Date),
@@ -218,17 +233,17 @@ describe('CreateEntityStrategy', () => {
       {
         id: 1,
         entity: "test_entity",
-        operation: EntityModificationType.CreateEntity,
+        operation: EntityModificationType.UpdateEntity,
         data: {
-          test: "test",
-          test2: "test2",
+          test: "test5",
+          test2: "test6",
         },
         entityId: 1,
         repository: 1,
         domain: 1,
         submittedAt: expect.any(Date),
         changedAt: expect.any(Date),
-        uuid: uuid1,
+        uuid: modificationUuid,
       }
     ]);
   });

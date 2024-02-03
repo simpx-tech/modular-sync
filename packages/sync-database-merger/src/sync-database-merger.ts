@@ -12,8 +12,9 @@ import {CreateEntityStrategy} from "./push-strategies/create-entity-strategy";
 import {InternalServerErrorException} from "@simpx/sync-core/src/server/exceptions/internal-errror-exception";
 import {ModificationRepository} from "./repositories/modification/modification-repository";
 import {DynamicFieldRepository} from "./repositories/dynamic-fields/dynamic-field-repository";
-import {UnprocessableEntityException} from "@simpx/sync-core/src/server/exceptions/unprocessable-entity-exception";
 import {IdIdentity} from "./interfaces/id-identity";
+import {UpdateEntityStrategy} from "./push-strategies/update-entity-strategy";
+import {DeleteEntityStrategy} from "./push-strategies/delete-entity-strategy";
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
@@ -22,6 +23,8 @@ export class DatabaseMerger implements MergeEngine {
   dynamicFieldRepository = new DynamicFieldRepository();
 
   createEntityStrategy = new CreateEntityStrategy();
+  updateEntityStrategy = new UpdateEntityStrategy();
+  deleteEntityStrategy = new DeleteEntityStrategy();
 
   async runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void> {
     this.syncEngine = syncEngine;
@@ -35,6 +38,8 @@ export class DatabaseMerger implements MergeEngine {
     await this.dynamicFieldRepository.runSetup(domain);
 
     await this.createEntityStrategy.runSetup(this);
+    await this.updateEntityStrategy.runSetup(this);
+    await this.deleteEntityStrategy.runSetup(this);
   }
 
   async syncEndpoint(req: RouterRequest) {}
@@ -103,8 +108,8 @@ export class DatabaseMerger implements MergeEngine {
   async runStrategy(push: PushOperation, identity: IdIdentity, syncDomain: ServerDomain) {
     const strategyFnByType = {
       "create-entity": this.createEntityStrategy.handle,
-      "update-entity": this.createEntityStrategy.handle,
-      "delete-entity": this.createEntityStrategy.handle,
+      "update-entity": this.updateEntityStrategy.handle,
+      "delete-entity": this.deleteEntityStrategy.handle,
       "create-dynamic-field": this.createEntityStrategy.handle,
       "update-dynamic-field": this.createEntityStrategy.handle,
       "delete-dynamic-field": this.createEntityStrategy.handle,
@@ -114,8 +119,9 @@ export class DatabaseMerger implements MergeEngine {
       const repository = syncDomain.repositories.find(repo => repo.entityName === modification.entity);
 
         if (!repository) {
-          console.warn(`Repository for entity ${modification.entity} not found`)
-          continue;
+          // TODO test this
+          console.error(`Internal Repository for entity ${modification.entity} not found`)
+          throw new InternalServerErrorException("Internal Repository not found");
         }
 
       await strategyFnByType[modification.type](identity, repository, modification, push);

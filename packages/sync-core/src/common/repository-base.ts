@@ -47,7 +47,7 @@ export class RepositoryBase<
     this.schema = {
       ...this.schema,
       ...(!isToIgnoreSyncFields && {
-        __creationUUID: SchemaType.String,
+        creationUUID: SchemaType.String,
         repository: SchemaType.Connection(REPOSITORY_ENTITY),
         domain: SchemaType.Connection(DOMAIN_ENTITY),
         createdAt: SchemaType.Date,
@@ -115,6 +115,12 @@ export class RepositoryBase<
   async update(id: number | string, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
     const input = this.db.converter.inbound.convert(data, this.schema);
     return this.db.converter.outbound.convert(await this.db.update(this.entityName, id, input), this.schema);
+  }
+
+  async updateByField(mapping: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
+    const input = this.db.converter.inbound.convert(data, this.schema);
+    const searchInput = this.db.converter.inbound.convert(mapping, this.schema);
+    return this.db.converter.outbound.convert(await this.db.updateByField(this.entityName, searchInput, input), this.schema);
   }
 
   async upsert(search: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>, data: UseAOrB<TUpdate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {

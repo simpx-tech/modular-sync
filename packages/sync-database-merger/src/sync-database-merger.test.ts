@@ -73,6 +73,7 @@ describe("Sync Database Merger", () => {
 
     // TODO implement
     it.todo("should execute the correct strategy according to modification type")
+    it.todo("should stop and revert the merge if the strategy fails")
 
     describe("Unified fields", () => {
       // TODO first focus on the static fields (schema fields), then test the dynamic fields
