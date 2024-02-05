@@ -12,6 +12,7 @@ import {MapSchemaToType} from "../interfaces/repository";
 import {UseAOrB} from "../helpers/interfaces/use-a-or-b";
 import {DOMAIN_ENTITY} from "../repositories/domain/domain-repository-constants";
 import {REPOSITORY_ENTITY} from "../repositories/repository/repository-repository-constants";
+import {QueryBuilder} from "./query-builder";
 
 export class RepositoryBase<
   TEntity extends { id?: string | number } = undefined,
@@ -27,6 +28,7 @@ export class RepositoryBase<
 
   db: DatabaseAdapter;
 
+  // TODO schema options should come with the schema instead of a separated parameter
   constructor(entityName: string, schema: TSchema, schemaOptions: DefineEntityOptions = {}) {
     this.entityName = entityName;
     this.schema = schema;
@@ -83,28 +85,39 @@ export class RepositoryBase<
     return this.db.converter.outbound.convert(await this.db.create(this.entityName, input), this.schema)
   }
 
+  builder() {
+    return new QueryBuilder(this.entityName, this.db.converter, this.schema as EntitySchema & { id: string | number; });
+  }
+
+  async query(callback?: (builder: QueryBuilder) => QueryBuilder) {
+    const builder = callback ? callback(this.builder()) : this.builder();
+    const res = await this.db.query(builder);
+
+    if (Array.isArray(res)) {
+      return res.map(item => this.db.converter.outbound.convert(item, this.schema));
+    } else {
+      return this.db.converter.outbound.convert(res, this.schema);
+    }
+  }
+
   async getFirst(): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
-    return this.db.converter.outbound.convert(await this.db.getFirst(this.entityName), this.schema);
+    return this.query(b => b.fetchOne());
   };
 
   async getById(id: number | string): Promise<UseAOrB<TEntity, TSchema>> {
-    return this.db.converter.outbound.convert(await this.db.getById(this.entityName, id), this.schema);
+    return this.query(b => b.withId(id));
   }
 
   async getByField(mapping: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
-    const input = this.db.converter.inbound.convert(mapping, this.schema);
-    return this.db.converter.outbound.convert(await this.db.getByField(this.entityName, input), this.schema);
+    return this.query(b => b.where(mapping).fetchOne());
   }
 
   async getAllByField(mapping: Partial<Record<keyof UseAOrB<TEntity, TSchema>, any>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
-    const input = this.db.converter.inbound.convert(mapping, this.schema);
-    const all = await this.db.getAllByField(this.entityName, input)
-    return all.map(item => this.db.converter.outbound.convert(item, this.schema));
+    return this.query(b => b.where(mapping));
   }
 
   async getAll(): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {
-    const all = await this.db.getAll(this.entityName)
-    return all.map(item => this.db.converter.outbound.convert(item, this.schema));
+    return this.query();
   }
 
   async createIfNotExists(keyFields: string[], data: UseAOrB<TCreate, MapSchemaToType<TSchema>>): Promise<UseAOrB<TEntity, MapSchemaToType<TSchema>>> {

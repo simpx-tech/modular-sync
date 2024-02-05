@@ -7,6 +7,7 @@ import supertest from "supertest";
 import {setupTests} from "../../__tests__/helpers/setup-tests";
 import {setupAuthentication} from "../../__tests__/helpers/setup-authentication";
 import {MigrationRunner} from "../migration/migration-runner";
+import {QueryBuilder} from "../common/query-builder";
 
 describe("Server Sync Engine", () => {
   describe("Server Sync Engine Setup", () => {
@@ -74,7 +75,7 @@ describe("Server Sync Engine", () => {
       it ("should create repository on database", async () => {
         const res = await supertest(app).post("/sync/repository").set("Authorization", `Bearer ${token}`).send({ name: "test-repository" });
 
-        const data = await commonDb.getAll("sync_repositories");
+        const data = await commonDb.query(new QueryBuilder("sync_repositories"));
 
         expect(res.status).toBe(200);
         expect(data).toEqual([{
@@ -87,7 +88,7 @@ describe("Server Sync Engine", () => {
       it ("should create the domains from that repository on database", async () => {
         const res = await supertest(app).post("/sync/repository").set("Authorization", `Bearer ${token}`).send({ name: "test-repository" });
 
-        const data = await commonDb.getAll("sync_domains");
+        const data = await commonDb.query(new QueryBuilder("sync_domains"));
 
         expect(res.status).toBe(200);
         expect(data).toEqual([{

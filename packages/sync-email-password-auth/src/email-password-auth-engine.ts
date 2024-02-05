@@ -10,6 +10,9 @@ import {UnauthorizedException} from "@simpx/sync-core/src/server/exceptions/unau
 import {CreateUsersTableMigration} from "./migrations/create-users-table-migration";
 import {AUTH_SCHEMA} from "./constants/joi-schemas";
 import {USERS_ENTITY} from "@simpx/sync-core/src/server/constants/user-entity-name";
+import {QueryBuilder} from "@simpx/sync-core/src/common/query-builder";
+import {USERS_SCHEMA} from "./constants/users-schema";
+import {EntitySchema} from "@simpx/sync-core/src/interfaces/database-adapter";
 
 export class EmailPasswordAuthEngine implements AuthEngine {
   private syncEngine: ServerSyncEngine;
@@ -39,9 +42,8 @@ export class EmailPasswordAuthEngine implements AuthEngine {
   async authenticateUser(credentials: EmailPasswordCredentials){
     const { email, password } = credentials;
 
-    const user = await this.syncEngine.metadataDatabase.getByField<UserEntity>(USERS_ENTITY, {
-      email: email,
-    });
+    const userRaw = await this.syncEngine.metadataDatabase.query(new QueryBuilder(USERS_ENTITY, this.syncEngine.metadataDatabase.converter, USERS_SCHEMA).where({ email }).fetchOne());
+    const user = this.syncEngine.metadataDatabase.converter.outbound.convert(userRaw, USERS_SCHEMA);
 
     if (!user) {
       throw new UnauthorizedException("Wrong credentials");
@@ -65,26 +67,30 @@ export class EmailPasswordAuthEngine implements AuthEngine {
   async createUser(credentials: EmailPasswordCredentials) {
     const { encryptedPassword, salt } = await this.encryptPassword(credentials.password);
 
-    await this.syncEngine.metadataDatabase.create(USERS_ENTITY, {
+    const input = {
       email: credentials.email,
       password: encryptedPassword,
       syncActivated: true,
       salt,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    });
+    }
+
+    const res = await this.syncEngine.metadataDatabase.create(USERS_ENTITY, this.syncEngine.metadataDatabase.converter.inbound.convert(input, USERS_SCHEMA))
+
+    return this.syncEngine.metadataDatabase.converter.outbound.convert(res, USERS_SCHEMA)
   }
 
   async activateUser(credentials: { userId: string | number }) {
-    await this.syncEngine.metadataDatabase.update(USERS_ENTITY, credentials.userId, {
-      syncActivated: true,
-    })
+    const res = await this.syncEngine.metadataDatabase.update(USERS_ENTITY, credentials.userId, this.syncEngine.metadataDatabase.converter.inbound.convert({ syncActivated: true }, USERS_SCHEMA))
+
+    return this.syncEngine.metadataDatabase.converter.outbound.convert(res, USERS_SCHEMA)
   }
 
   async deactivateUser(credentials: { userId: string | number }) {
-    await this.syncEngine.metadataDatabase.update(USERS_ENTITY, credentials.userId, {
-      syncActivated: false,
-    })
+    const res = await this.syncEngine.metadataDatabase.update(USERS_ENTITY, credentials.userId, this.syncEngine.metadataDatabase.converter.inbound.convert({ syncActivated: false }, USERS_SCHEMA))
+
+    return this.syncEngine.metadataDatabase.converter.outbound.convert(res, USERS_SCHEMA)
   }
 
   private async encryptPassword(password: string, salt?: string) {

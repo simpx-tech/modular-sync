@@ -9,10 +9,13 @@ export interface MergeEngine {
   runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void>;
   sync(identity: Identity, operation: any): Promise<{}>;
   push(identity: Identity, operation: PushOperation): Promise<PushSuccessReturn>;
-  pull(identity: Identity, options: PullOptions): Promise<{}>;
+  pull(identity: Identity, options: PullOptions): Promise<PullSuccessReturn>;
 }
 
 export interface Identity {
+  /**
+   * Domain name
+   */
   domain: string;
   repositoryId: string | number;
 }
@@ -50,12 +53,20 @@ export enum EntityModificationType {
 }
 
 export interface PullOptions {
-  entity: string;
+  untilSubmittedAt: Date;
   fromIndex: number;
   pageSize: number;
 }
 
 export interface PushSuccessReturn {
-  lastSubmittedAt: string;
+  lastChangedAt: Date;
   status: "success"
+}
+
+export interface PullSuccessReturn {
+  modifications: EntityModification[];
+  lastChangedAt: Date;
+  lastSubmittedAt: Date;
+  lastIndex: number;
+  pageSize: number;
 }

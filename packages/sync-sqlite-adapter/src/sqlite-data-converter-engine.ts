@@ -18,6 +18,10 @@ class InboundConverter implements DataConverterFlow {
     }, {});
   }
 
+  convertField(field: string, value: unknown, schema: EntitySchema): any {
+    return this[getConverterFnBySchemaType(schema[field] ?? "string")](value);
+  }
+
   asString(data: unknown): string {
     if (data instanceof Date) {
       return data.toISOString();
@@ -89,7 +93,13 @@ class InboundConverter implements DataConverterFlow {
     return undefined;
   }
 
+  // TODO if it's a string, verify if string is valid, test it
   asStringified(data: unknown) {
+    if (typeof data === "string") {
+      JSON.parse(data);
+      return;
+    }
+
     try {
       return JSON.stringify(data);
     } catch (err) {
@@ -113,6 +123,21 @@ class InboundConverter implements DataConverterFlow {
 }
 
 class OutboundConverter implements DataConverterFlow {
+  convert(obj: Record<string, unknown>, schema: EntitySchema): any {
+    if (!obj) return undefined;
+
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      return {
+        ...acc,
+        [key]: this[getConverterFnBySchemaType(schema[key] ?? "string")](value as never)
+      }
+    }, {});
+  }
+
+  convertField(field: string, value: unknown, schema: EntitySchema): any {
+    return this[getConverterFnBySchemaType(schema[field] ?? "string")](value as never);
+  }
+
   asString(field: string): string {
     return field;
   }
@@ -156,15 +181,4 @@ class OutboundConverter implements DataConverterFlow {
       return {};
     }
   };
-
-  convert(obj: Record<string, unknown>, schema: EntitySchema): any {
-    if (!obj) return undefined;
-
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      return {
-        ...acc,
-        [key]: this[getConverterFnBySchemaType(schema[key] ?? "string")](value as never)
-      }
-    }, {});
-  }
 }

@@ -4,6 +4,7 @@ import {ServerSyncEngine} from "../../server/server-sync-engine";
 import {setupRepositories} from "../../../__tests__/helpers/setup-repositories";
 import {setupAuthentication} from "../../../__tests__/helpers/setup-authentication";
 import {DOMAIN_ENTITY} from "./domain-repository-constants";
+import {QueryBuilder} from "../../common/query-builder";
 
 describe("Domain Repository", () => {
   let commonDb: SqliteAdapter;
@@ -66,7 +67,7 @@ describe("Domain Repository", () => {
         isMigrated: false,
       });
 
-      const res = await commonDb.getAll("sync_domains");
+      const res = await commonDb.query(new QueryBuilder("sync_domains"));
       expect(res).toEqual([{ id: 1, name: "test", repository: 1, isMigrated: 0 }]);
     });
   });
@@ -110,7 +111,7 @@ describe("Domain Repository", () => {
       expect(deleted).toEqual({
         wasDeleted: true,
       });
-      expect(await commonDb.getAll("sync_domains")).toEqual([]);
+      expect(await commonDb.query( new QueryBuilder("sync_domains"))).toEqual([]);
     });
   })
 
@@ -150,7 +151,7 @@ describe("Domain Repository", () => {
         isMigrated: false,
       });
 
-      const domains = await commonDb.getAll("sync_domains");
+      const domains = await commonDb.query(new QueryBuilder("sync_domains"));
       expect(domains).toEqual([{
         id: 1,
         name: "test",

@@ -1,4 +1,5 @@
 import {DataConverterEngine} from "./data-converter-engine";
+import {QueryBuilder} from "../common/query-builder";
 
 export interface DatabaseAdapter<TId = number | string> {
   converter: DataConverterEngine;
@@ -7,11 +8,14 @@ export interface DatabaseAdapter<TId = number | string> {
   connect(): Promise<void>;
   // Should allow calling it twice without causing error
   disconnect(): Promise<void>;
-  getFirst<T = any>(entity: string): Promise<T>;
-  getById<T = any>(entity: string, id: TId): Promise<T>;
-  getByField<T = any>(entity: string, search: Record<string, any>): Promise<T>;
-  getAllByField<T = any>(entity: string, search: Record<string, any>): Promise<T>;
-  getAll<T = any>(entity: string): Promise<T>;
+
+  /**
+   * Performs a query on database using the QueryBuilder instance
+   *
+   * Entity name is inside the QueryBuilder
+   * @param builder
+   */
+  query(builder: QueryBuilder): Promise<any | any[]>;
   create<T = any>(entity: string, data: UpsertData): Promise<T>;
   createIfNotExists<T = any>(entity: string, keyFields: string[], data: UpsertData): Promise<T>;
   update<T = any>(entity: string, id: TId, data: UpsertData): Promise<T>;
@@ -50,6 +54,7 @@ export interface WasDeleted {
 
 export type UpsertData = Record<string, string | number | boolean>
 
+// TODO include options like required and default
 export type EntitySchema = Record<string, FieldType>
 
 export type ConnectionField = { type: string, entity: string }

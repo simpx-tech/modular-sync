@@ -81,6 +81,7 @@ export class ExpressRouterAdapter implements RouterAdapter {
       path: req.path,
       body: req.body,
       query: req.query,
+      params: req.params,
       rawRequest: req,
       headers: req.headers,
       token: this.extractToken(req),

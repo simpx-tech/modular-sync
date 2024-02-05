@@ -17,6 +17,7 @@ import {
   DELETE_REPOSITORY_SCHEMA, GET_DOMAIN_BY_REPOSITORY_SCHEMA,
   GET_REPOSITORY_SCHEMA
 } from "./constants/router-joi-schemas";
+import {QueryBuilder} from "../common/query-builder";
 
 // TODO separate server from client (core-common + core-client/core-server)
 export class ServerSyncEngine {
@@ -84,7 +85,7 @@ export class ServerSyncEngine {
   async getRepositoryEndpoint (request: RouterRequest) {
     const { repository } = request.query;
 
-    const repositoryData = await this.repositoryRepository.getByName(repository);
+    const repositoryData = await this.repositoryRepository.query((b) => b.where({ name: repository }));
 
     if (!repositoryData) {
       throw new NotFoundException("Repository not found")
@@ -95,7 +96,7 @@ export class ServerSyncEngine {
 
   async getRepositoriesEndpoint (request: RouterRequest) {
     const { id } = request.decodedToken;
-    return await this.repositoryRepository.getAllByField({ user: id });
+    return await this.repositoryRepository.query((builder) => builder.where({ user: id }));
   }
 
   async createRepositoryEndpoint(request: RouterRequest) {

@@ -44,41 +44,7 @@ describe("SQLite Adapter", () => {
     })
   })
 
-  it("should get the first item from a table", () => {
-    database.exec("INSERT INTO test (name) VALUES ('test'), ('test2'), ('test3')");
-
-    const promise = sqliteAdapter.getFirst("test");
-
-    return expect(promise).resolves.toEqual({ id: 1, name: "test" });
-  })
-
-  it("should get the an item by id", () => {
-    database.exec("INSERT INTO test (name) VALUES ('test'), ('test2'), ('test3')");
-
-    const promise = sqliteAdapter.getById("test", 2);
-
-    return expect(promise).resolves.toEqual({ id: 2, name: "test2" });
-  })
-
-  it("should list all items from a tests", () => {
-    database.exec("INSERT INTO test (name) VALUES ('test'), ('test2'), ('test3')");
-
-    const promise = sqliteAdapter.getAll("test");
-
-    return expect(promise).resolves.toEqual([{ id: 1, name: "test" }, { id: 2, name: "test2" }, { id: 3, name: "test3" }]);
-  })
-
-  it("should get an item by field", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('test')");
-    const promise = sqliteAdapter.getByField("test", { name: "test" });
-    return expect(promise).resolves.toEqual({ id: 1, name: "test" });
-  })
-
-  it("should list items by field", async () => {
-    database.exec("INSERT INTO test (name) VALUES ('oneValue'), ('oneValue'), ('anotherValue')");
-    const promise = sqliteAdapter.getAllByField("test", { "name": "oneValue" });
-    return expect(promise).resolves.toEqual([{ id: 1, name: "oneValue" }, { id: 2, name: "oneValue" }]);
-  })
+  // TODO add .query() test
 
   it("should create an item", async () => {
     const promise = sqliteAdapter.create("test", { name: "newItem" });

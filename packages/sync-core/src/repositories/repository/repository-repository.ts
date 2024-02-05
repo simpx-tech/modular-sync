@@ -7,10 +7,6 @@ export class RepositoryRepository extends RepositoryBase<RepositoryEntity, Creat
     super(REPOSITORY_ENTITY, REPOSITORY_SCHEMA, { unique: ["name", "user"] });
   }
 
-  async getByName(name: string) {
-    return this.db.getByField(REPOSITORY_ENTITY, { name })
-  }
-
   async update(id: string | number, data: {}): Promise<never> {
     throw new Error("Shouldn't update repository")
   }

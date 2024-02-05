@@ -1,5 +1,6 @@
 import {DatabaseAdapterOptions, Migration} from "../interfaces/migration";
 import {DatabaseAdapter, SchemaType} from "../interfaces/database-adapter";
+import {QueryBuilder} from "../common/query-builder";
 
 export class MigrationRunner {
   private readonly dbAdapter: DatabaseAdapter;
@@ -24,7 +25,7 @@ export class MigrationRunner {
       if (migration.runOnce) {
         const domain = migration.domain || "sync"
 
-        const exists = await this.dbAdapter.getByField(MigrationRunner.MIGRATION_ENTITY, { name: migration.constructor.name, domain })
+        const exists = await this.dbAdapter.query(new QueryBuilder(MigrationRunner.MIGRATION_ENTITY).where({ name: migration.constructor.name, domain }).fetchOne());
         if (exists) {
           continue;
         }

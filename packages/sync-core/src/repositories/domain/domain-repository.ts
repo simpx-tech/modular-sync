@@ -9,13 +9,13 @@ export class DomainRepository extends RepositoryBase<DomainEntity, CreateDomain,
   }
 
   async getAllByRepositoryId(repositoryId: number | string): Promise<DomainEntity[]> {
-    const repository = await this.syncEngine.repositoryRepository.getById(repositoryId);
+    const repository = await this.syncEngine.repositoryRepository.query(b => b.withId(repositoryId));
 
     if (!repository) {
       return [];
     }
 
-    const responseArray = await this.db.getAllByField<DomainEntity[]>(DOMAIN_ENTITY, { repository: repositoryId })
+    const responseArray = await this.query(b => b.where({ repository: repositoryId }));
 
     const existentDomains = responseArray.map((domain) => domain.name);
     const missingDomains = this.syncEngine.domains.filter((domain) => !existentDomains.includes(domain.name) && !domain.isVirtual).map((domain) => domain.name);

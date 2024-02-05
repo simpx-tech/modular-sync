@@ -30,7 +30,7 @@ describe("Sync Database Merger", () => {
 
   describe("push", () => {
     it("should create the domain if it doesn't exist yet", async () => {
-      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send(new PushOperationBuilder().build()).set("Authorization", `Bearer ${token}`);
+      const res = await supertest(app).post("/sync/repo/3/test-domain/push").send(new PushOperationBuilder().build()).set("Authorization", `Bearer ${token}`);
 
       const domains = await commonDb.raw({ sql: "SELECT * FROM sync_domains WHERE repository = 3", params: [], isQuery: true, fetchAll: true });
 
@@ -46,7 +46,7 @@ describe("Sync Database Merger", () => {
     })
 
     it("should update domain's isMigrated to true on last push call", async () => {
-      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "3" }).send(new PushOperationBuilder().setFinished(true).build()).set("Authorization", `Bearer ${token}`);
+      const res = await supertest(app).post("/sync/repo/3/test-domain/push").send(new PushOperationBuilder().setFinished(true).build()).set("Authorization", `Bearer ${token}`);
 
       const domains = await commonDb.raw({ sql: "SELECT * FROM sync_domains WHERE repository = 3", params: [], isQuery: true, fetchAll: true });
 
@@ -64,7 +64,7 @@ describe("Sync Database Merger", () => {
     it("should fail if domain is already migrated (user should call sync endpoint instead)", async () => {
       await syncEngine.domainRepository.update(1, { isMigrated: true });
 
-      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`);
+      const res = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`);
 
       expect(res.status).toBe(409);
     })
@@ -87,7 +87,7 @@ describe("Sync Database Merger", () => {
         }
       }).build();
 
-      const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+      const res = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
 
       expect(res.status).toBe(200);
       expect(spy).toHaveBeenCalled();
@@ -111,7 +111,7 @@ describe("Sync Database Merger", () => {
         }
       }).build();
 
-      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+      await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -134,7 +134,7 @@ describe("Sync Database Merger", () => {
         }
       }).build();
 
-      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+      await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -157,7 +157,7 @@ describe("Sync Database Merger", () => {
         }
       }).build();
 
-      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+      await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -180,7 +180,7 @@ describe("Sync Database Merger", () => {
         }
       }).build();
 
-      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+      await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -203,7 +203,7 @@ describe("Sync Database Merger", () => {
         }
       }).build();
 
-      await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+      await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
 
       expect(spy).toHaveBeenCalled();
     });
@@ -225,7 +225,7 @@ describe("Sync Database Merger", () => {
       // TODO on client side, has to consider when create and update then submit to the server, the server will receive a create and a update request (?)
       // TODO maybe merge the create and update into one operation (upsert?), or maybe, the create can receive updates by default, but the update operation always consider
       // TODO that the object was already created
-      it.skip("should receive and store all entities from a domain", async () => {
+      it("should receive and store all entities from a domain", async () => {
         const uuid1 = v4();
         const entityUUID1 = v4();
 
@@ -242,61 +242,61 @@ describe("Sync Database Merger", () => {
           creationUUID: entityUUID1,
           uuid: uuid1,
           data: {
-            name: "name",
-            name2: "name2"
+            test: "test",
+            test2: "test2"
           }
         }).addModification({
           entity: "test_entity",
-          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          changedAt: new Date("2023-01-02T00:00:00.000Z"),
           operation: EntityModificationType.CreateEntity,
           creationUUID: entityUUID2,
           uuid: uuid2,
           data: {
-            name: "name3",
-            name2: "name4"
+            test: "test3",
+            test2: "test4"
           }
         }).addModification({
           entity: "test_entity_2",
-          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          changedAt: new Date("2023-01-03T00:00:00.000Z"),
           operation: EntityModificationType.CreateEntity,
           creationUUID: entityUUID3,
           uuid: uuid3,
           data: {
-            name: "name5",
-            name2: "name6"
+            test: "test5",
+            test2: "test6"
           }
         }).build();
 
-        const res = await supertest(app).post("/sync/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
+        const res = await supertest(app).post("/sync/repo/1/test-domain/push").query({ repositoryId: "1" }).set("Authorization", `Bearer ${token}`).send(pushOp);
 
         expect(res.status).toBe(200);
 
-        expect(res.body).toEqual({ status: "success", lastSubmittedAt: "2023-01-03T00:00:00.000Z" });
+        expect(res.body).toEqual({ status: "success", lastChangedAt: "2023-01-03T00:00:00.000Z" });
 
         /* Should create the entities on the database */
         const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
         expect(testEntities).toEqual([{
           id: 1,
-          repository: 1,
           domain: 1,
           test: "test",
-          creationUUID: uuid1,
+          creationUUID: entityUUID1,
           test2: "test2",
           createdAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
-          updatedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
-          submittedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
           wasDeleted: 0,
+          deletedAt: null,
         }, {
           id: 2,
-          repository: 1,
           domain: 1,
-          creationUUID: uuid2,
+          creationUUID: entityUUID2,
           test: "test3",
           test2: "test4",
           createdAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
-          updatedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
-          submittedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
           wasDeleted: 0,
+          deletedAt: null,
         }])
 
         const testEntities2 = await commonDb.raw({ sql: "SELECT * FROM test_entity_2", params: [], isQuery: true, fetchAll: true });
@@ -304,13 +304,13 @@ describe("Sync Database Merger", () => {
           id: 1,
           test: "test5",
           test2: "test6",
-          creationUUID: uuid3,
-          repository: 1,
+          creationUUID: entityUUID3,
           domain: 1,
           createdAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
-          updatedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
-          submittedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
           wasDeleted: 0,
+          deletedAt: null,
         }])
 
         /* Should save the modification */
@@ -318,44 +318,39 @@ describe("Sync Database Merger", () => {
         const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
         expect(modifications).toEqual([{
           id: 1,
-          repository: 1,
           domain: 1,
           entity: "test_entity",
           operation: "create-entity",
           uuid: uuid1,
-          creationUUID: uuid1,
-          submittedAt: "2023-01-01T00:00:00.000Z",
-          updatedAt: "2023-01-01T00:00:00.000Z",
+          creationUUID: entityUUID1,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
           data: JSON.stringify({
             test: "test",
             test2: "test2",
           }),
         }, {
           id: 2,
-          repository: 1,
           domain: 1,
           entity: "test_entity",
           operation: "create-entity",
           uuid: uuid2,
-          creationUUID: uuid2,
-          submittedAt: "2023-01-02T00:00:00.000Z",
-          updatedAt: "2023-01-02T00:00:00.000Z",
-          wasDeleted: 0,
+          creationUUID: entityUUID2,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
           data: JSON.stringify({
             test: "test3",
             test2: "test4",
           }),
         }, {
           id: 3,
-          repository: 1,
           domain: 1,
           entity: "test_entity_2",
           operation: "create-entity",
           uuid: uuid3,
-          creationUUID: uuid3,
-          submittedAt: "2023-01-03T00:00:00.000Z",
-          updatedAt: "2023-01-03T00:00:00.000Z",
-          wasDeleted: 0,
+          creationUUID: entityUUID3,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
           data: JSON.stringify({
             test: "test5",
             test2: "test6",
@@ -363,24 +358,455 @@ describe("Sync Database Merger", () => {
         }])
       })
 
-      it.todo("should allow receive the same entities without problem (and not create duplicates)")
+      it("should allow receive the same entities without problem (and not create duplicates)", async () => {
+        const uuid1 = v4();
+        const entityUUID1 = v4();
 
-      it.todo("should allow receive the same entities and update them if necessary (and not create duplicates)")
+        const uuid2 = v4();
+        const entityUUID2 = v4();
 
-      it.todo("should ignore entities that doesn't exists on server and add a warning on log")
+        const uuid3 = v4();
+        const entityUUID3 = v4();
+
+        const pushOp = new PushOperationBuilder().addModification({
+          entity: "test_entity",
+          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID1,
+          uuid: uuid1,
+          data: {
+            test: "test",
+            test2: "test2"
+          }
+        }).addModification({
+          entity: "test_entity",
+          changedAt: new Date("2023-01-02T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID2,
+          uuid: uuid2,
+          data: {
+            test: "test3",
+            test2: "test4"
+          }
+        }).addModification({
+          entity: "test_entity_2",
+          changedAt: new Date("2023-01-03T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID3,
+          uuid: uuid3,
+          data: {
+            test: "test5",
+            test2: "test6"
+          }
+        }).build();
+
+        const res = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
+        const res2 = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
+
+        expect(res.status).toBe(200);
+        expect(res2.status).toBe(200);
+
+        expect(res.body).toEqual({ status: "success", lastChangedAt: "2023-01-03T00:00:00.000Z" });
+        expect(res2.body).toEqual({ status: "success", lastChangedAt: "2023-01-03T00:00:00.000Z" });
+
+        /* Should create the entities on the database */
+        const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
+        expect(testEntities).toEqual([{
+          id: 1,
+          domain: 1,
+          test: "test",
+          creationUUID: entityUUID1,
+          test2: "test2",
+          createdAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
+          wasDeleted: 0,
+          deletedAt: null,
+        }, {
+          id: 2,
+          domain: 1,
+          creationUUID: entityUUID2,
+          test: "test3",
+          test2: "test4",
+          createdAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
+          wasDeleted: 0,
+          deletedAt: null,
+        }])
+
+        const testEntities2 = await commonDb.raw({ sql: "SELECT * FROM test_entity_2", params: [], isQuery: true, fetchAll: true });
+        expect(testEntities2).toEqual([{
+          id: 1,
+          test: "test5",
+          test2: "test6",
+          creationUUID: entityUUID3,
+          domain: 1,
+          createdAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
+          wasDeleted: 0,
+          deletedAt: null,
+        }])
+
+        /* Should save the modification */
+        const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
+        expect(modifications).toEqual([{
+          id: 1,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create-entity",
+          uuid: uuid1,
+          creationUUID: entityUUID1,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          data: JSON.stringify({
+            test: "test",
+            test2: "test2",
+          }),
+        }, {
+          id: 2,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create-entity",
+          uuid: uuid2,
+          creationUUID: entityUUID2,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          data: JSON.stringify({
+            test: "test3",
+            test2: "test4",
+          }),
+        }, {
+          id: 3,
+          domain: 1,
+          entity: "test_entity_2",
+          operation: "create-entity",
+          uuid: uuid3,
+          creationUUID: entityUUID3,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          data: JSON.stringify({
+            test: "test5",
+            test2: "test6",
+          }),
+        }])
+      })
+
+      it("should allow receive the same entities and update them if necessary (and not create duplicates)", async () => {
+        const uuid1 = v4();
+        const entityUUID1 = v4();
+
+        const uuid2 = v4();
+        const entityUUID2 = v4();
+
+        const uuid3 = v4();
+        const entityUUID3 = v4();
+
+        const pushOp = new PushOperationBuilder().addModification({
+          entity: "test_entity",
+          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID1,
+          uuid: uuid1,
+          data: {
+            test: "test6",
+            test2: "test5"
+          }
+        }).addModification({
+          entity: "test_entity",
+          changedAt: new Date("2023-01-02T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID2,
+          uuid: uuid2,
+          data: {
+            test: "test4",
+            test2: "test3"
+          }
+        }).addModification({
+          entity: "test_entity_2",
+          changedAt: new Date("2023-01-03T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID3,
+          uuid: uuid3,
+          data: {
+            test: "test2",
+            test2: "test1"
+          }
+        }).build();
+
+        const res = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
+        const res2 = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
+
+        expect(res.status).toBe(200);
+        expect(res2.status).toBe(200);
+
+        expect(res.body).toEqual({ status: "success", lastChangedAt: "2023-01-03T00:00:00.000Z" });
+        expect(res2.body).toEqual({ status: "success", lastChangedAt: "2023-01-03T00:00:00.000Z" });
+
+        /* Should create the entities on the database */
+        const testEntities = await commonDb.raw({ sql: "SELECT * FROM test_entity", params: [], isQuery: true, fetchAll: true });
+        expect(testEntities).toEqual([{
+          id: 1,
+          domain: 1,
+          test: "test6",
+          creationUUID: entityUUID1,
+          test2: "test5",
+          createdAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
+          wasDeleted: 0,
+          deletedAt: null,
+        }, {
+          id: 2,
+          domain: 1,
+          creationUUID: entityUUID2,
+          test: "test4",
+          test2: "test3",
+          createdAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
+          wasDeleted: 0,
+          deletedAt: null,
+        }])
+
+        const testEntities2 = await commonDb.raw({ sql: "SELECT * FROM test_entity_2", params: [], isQuery: true, fetchAll: true });
+        expect(testEntities2).toEqual([{
+          id: 1,
+          test: "test2",
+          test2: "test1",
+          creationUUID: entityUUID3,
+          domain: 1,
+          createdAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          changedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          submittedAt: pushOp.submittedAt.getTime(),
+          wasDeleted: 0,
+          deletedAt: null,
+        }])
+
+        /* Should save the modification */
+        const modifications = await commonDb.raw({ sql: "SELECT * FROM sync_modifications", params: [], isQuery: true, fetchAll: true });
+        expect(modifications).toEqual([{
+          id: 1,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create-entity",
+          uuid: uuid1,
+          creationUUID: entityUUID1,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-01T00:00:00.000Z").getTime(),
+          data: JSON.stringify({
+            test: "test6",
+            test2: "test5",
+          }),
+        }, {
+          id: 2,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create-entity",
+          uuid: uuid2,
+          creationUUID: entityUUID2,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-02T00:00:00.000Z").getTime(),
+          data: JSON.stringify({
+            test: "test4",
+            test2: "test3",
+          }),
+        }, {
+          id: 3,
+          domain: 1,
+          entity: "test_entity_2",
+          operation: "create-entity",
+          uuid: uuid3,
+          creationUUID: entityUUID3,
+          submittedAt: pushOp.submittedAt.getTime(),
+          changedAt: new Date("2023-01-03T00:00:00.000Z").getTime(),
+          data: JSON.stringify({
+            test: "test2",
+            test2: "test1",
+          }),
+        }])
+      })
+
+      it("should fail if pass entity that doesn't exists", async () => {
+        const uuid1 = v4();
+        const entityUUID1 = v4();
+
+        const pushOp = new PushOperationBuilder().addModification({
+          entity: "non_existent_entity",
+          changedAt: new Date("2023-01-01T00:00:00.000Z"),
+          operation: EntityModificationType.CreateEntity,
+          creationUUID: entityUUID1,
+          uuid: uuid1,
+          data: {
+            test: "test6",
+            test2: "test5"
+          }
+        }).build();
+
+        const res = await supertest(app).post("/sync/repo/1/test-domain/push").set("Authorization", `Bearer ${token}`).send(pushOp);
+
+        expect(res.status).toBe(500);
+      })
     })
 
     describe("separated fields", () => {})
   });
 
   describe("pull", () => {
-    it.todo("should fail if it was not migrated yet")
+    it("should fail if it was not migrated yet", async () => {
+      const res = await supertest(app).post("/sync/repo/1/test-domain/pull").set("Authorization", `Bearer ${token}`).send({
+        untilSubmittedAt: new Date(),
+        fromIndex: 0,
+        pageSize: 10,
+      });
 
-    it.todo("should return all entities from a domain")
+      expect(res.status).toBe(409);
+      expect(res.body).toEqual({ error: "conflict", code: 409,  message: "Domain is not migrated yet" });
+    })
+
+    it("should return all entities from a domain", async () => {
+      // Add some entities to the database
+      const uuid1 = v4();
+      const uuid2 = v4();
+      const uuid3 = v4();
+
+      await syncEngine.domains[0].repositories[0].create({
+        test: "test",
+        test2: "test2",
+        domain: 1,
+        creationUUID: uuid1,
+        createdAt: new Date(),
+        submittedAt: new Date(),
+        changedAt: new Date(),
+        deletedAt: null,
+        wasDeleted: false,
+      });
+      await syncEngine.domains[0].repositories[0].create({
+        test: "test3",
+        test2: "test4",
+        domain: 1,
+        creationUUID: uuid2,
+        createdAt: new Date(),
+        submittedAt: new Date(),
+        changedAt: new Date(),
+        deletedAt: null,
+        wasDeleted: false,
+      });
+      await syncEngine.domains[0].repositories[1].create({
+        test: "test5",
+        test2: "test6",
+        domain: 1,
+        creationUUID: uuid3,
+        createdAt: new Date(),
+        submittedAt: new Date(),
+        changedAt: new Date(),
+        deletedAt: new Date(),
+        wasDeleted: true,
+      });
+
+      await syncEngine.domains[0].mergeEngine.modificationRepository.create({
+        domain: 1,
+        entity: "test_entity",
+        operation: EntityModificationType.CreateEntity,
+        uuid: v4(),
+        creationUUID: uuid1,
+        submittedAt: new Date(),
+        changedAt: new Date(),
+        data: {
+          test: "test",
+          test2: "test2",
+        },
+      });
+      await syncEngine.domains[0].mergeEngine.modificationRepository.create({
+        domain: 1,
+        entity: "test_entity",
+        operation: EntityModificationType.CreateEntity,
+        uuid: v4(),
+        creationUUID: uuid2,
+        submittedAt: new Date(),
+        changedAt: new Date(),
+        data: {
+          test: "test3",
+          test2: "test4",
+        },
+      });
+      await syncEngine.domains[0].mergeEngine.modificationRepository.create({
+        domain: 1,
+        entity: "test_entity_2",
+        operation: EntityModificationType.CreateEntity,
+        uuid: v4(),
+        creationUUID: uuid3,
+        submittedAt: new Date(),
+        changedAt: new Date(),
+        data: {
+          test: "test5",
+          test2: "test6",
+        }
+      });
+
+      await syncEngine.domainRepository.update(1, { isMigrated: true });
+
+      const res = await supertest(app).post("/sync/repo/1/test-domain/pull").set("Authorization", `Bearer ${token}`).send({
+        untilSubmittedAt: new Date(),
+        fromIndex: 0,
+        pageSize: 10,
+      });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        modifications: [{
+          id: 1,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create-entity",
+          changedAt: expect.any(String),
+          creationUUID: uuid1,
+          submittedAt: expect.any(String),
+          uuid: expect.any(String),
+          data: {
+            test: "test",
+            test2: "test2",
+          },
+        }, {
+          id: 2,
+          domain: 1,
+          entity: "test_entity",
+          operation: "create-entity",
+          changedAt: expect.any(String),
+          creationUUID: uuid2,
+          submittedAt: expect.any(String),
+          uuid: expect.any(String),
+          data: {
+            test: "test3",
+            test2: "test4",
+          },
+        }, {
+          id: 3,
+          domain: 1,
+          entity: "test_entity_2",
+          operation: "create-entity",
+          changedAt: expect.any(String),
+          submittedAt: expect.any(String),
+          creationUUID: uuid3,
+          uuid: expect.any(String),
+          data: {
+            test: "test5",
+            test2: "test6",
+          },
+        }],
+        lastChangedAt: expect.any(String),
+        lastSubmittedAt: expect.any(String),
+        lastIndex: 3,
+        pageSize: 10,
+      });
+    })
+
+    it.todo("should paginate the return correctly")
+
+    it.todo("should ignore modifications that were send after the untilSubmittedAt")
 
     it.todo("should indicate that is the last page")
-
-    it.todo("lastSubmittedAt should match the lasted submittedAt from returned entities")
   });
 
   describe("sync", () => {});

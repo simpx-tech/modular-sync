@@ -15,11 +15,15 @@ export class DeleteDynamicFieldStrategy implements PushStrategy {
       creationUUID: deleteOperation.creationUUID,
     });
 
+    console.log(modificationInDb)
+
     if (modificationInDb) {
       return;
     }
 
     const dynamicField= await this.merger.dynamicFieldRepository.updateByField({ creationUUID: deleteOperation.creationUUID, key: deleteOperation.data.key }, { wasDeleted: true, deletedAt: deleteOperation.changedAt, submittedAt: pushOp.submittedAt, changedAt: deleteOperation.changedAt });
+
+    console.log(dynamicField)
 
     if (!dynamicField) {
       throw new InternalServerErrorException("Trying to delete an dynamic field that does not exist");

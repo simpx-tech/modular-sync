@@ -7,6 +7,7 @@ import {setupRepositories} from "@simpx/sync-core/__tests__/helpers/setup-reposi
 import {setupDomains} from "@simpx/sync-core/__tests__/helpers/setup-domains";
 import {AuthEngine} from "@simpx/sync-core/src/server/interfaces/auth-engine";
 import jwt from "jsonwebtoken";
+import {QueryBuilder} from "@simpx/sync-core/src/common/query-builder";
 
 describe("EmailPasswordAuthEngine", () => {
   let syncEngine: ServerSyncEngine;
@@ -27,7 +28,7 @@ describe("EmailPasswordAuthEngine", () => {
     it('should create a new user with a random salt', async () => {
       await authEngine.createUser({ email: "test999@gmail.com", password: "123456" });
 
-      const res = await syncEngine.metadataDatabase.getByField("sync_users", { email: "test999@gmail.com" });
+      const res = await syncEngine.metadataDatabase.query(new QueryBuilder("sync_users").where({ email: "test999@gmail.com"}).fetchOne());
 
       expect(res).toEqual({
         id: 2,
@@ -49,7 +50,7 @@ describe("EmailPasswordAuthEngine", () => {
 
       await authEngine.activateUser({ userId: 1 });
 
-      const res = await syncEngine.metadataDatabase.getById("sync_users", 1);
+      const res = await syncEngine.metadataDatabase.query(new QueryBuilder("sync_users").withId(1));
 
       expect(res).toEqual({
         id: 1,
@@ -67,7 +68,7 @@ describe("EmailPasswordAuthEngine", () => {
     it('should deactivate the user', async () => {
       await authEngine.deactivateUser({ userId: 1 });
 
-      const res = await syncEngine.metadataDatabase.getById("sync_users", 1);
+      const res = await syncEngine.metadataDatabase.query(new QueryBuilder("sync_users").withId(1));
 
       expect(res).toEqual({
         id: 1,

@@ -33,6 +33,7 @@ export class CreateEntityStrategy implements PushStrategy {
       changedAt: createOperation.changedAt,
       creationUUID: createOperation.creationUUID,
       deletedAt: null,
+      wasDeleted: false,
     });
 
     await this.merger.modificationRepository.create({

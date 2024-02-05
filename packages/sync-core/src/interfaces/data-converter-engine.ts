@@ -13,6 +13,7 @@ export interface DataConverterEngine {
 
 export type DataConverterFlow = {
   convert(obj: Record<string, any>, schema: EntitySchema): any;
+  convertField(field: string, value: any, schema: EntitySchema): any;
 } & {
   [K in (FieldLiteralType | "connection") as `as${Capitalize<K>}`]: (data: unknown) => any;
 }

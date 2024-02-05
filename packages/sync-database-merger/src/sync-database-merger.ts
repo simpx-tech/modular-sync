@@ -1,6 +1,6 @@
 import {
   PullOptions, PushOperation, Identity,
-  MergeEngine, PushSuccessReturn,
+  MergeEngine, PushSuccessReturn, EntityModificationType, PullSuccessReturn, EntityModification,
 } from "@simpx/sync-core/src/server/interfaces/merge-engine";
 import {ServerSyncEngine} from "@simpx/sync-core/src/server/server-sync-engine";
 import {HttpMethod} from "@simpx/sync-core/src/interfaces/http-method";
@@ -18,9 +18,11 @@ import {DeleteEntityStrategy} from "./push-strategies/delete-entity-strategy";
 import {CreateDynamicFieldStrategy} from "./push-strategies/create-dynamic-field-strategy";
 import {UpdateDynamicFieldStrategy} from "./push-strategies/update-dynamic-field-strategy";
 import {DeleteDynamicFieldStrategy} from "./push-strategies/delete-dynamic-field-strategy";
+import {lessThan} from "@simpx/sync-core/src/common/query-operations";
 
 export class DatabaseMerger implements MergeEngine {
   private syncEngine: ServerSyncEngine;
+  private domain: ServerDomain;
 
   modificationRepository = new ModificationRepository();
   dynamicFieldRepository = new DynamicFieldRepository();
@@ -34,14 +36,15 @@ export class DatabaseMerger implements MergeEngine {
 
   async runSetup(domain: ServerDomain, syncEngine: ServerSyncEngine): Promise<void> {
     this.syncEngine = syncEngine;
+    this.domain = domain;
 
     // TODO add Joi validations
-    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/sync`, this.syncEndpoint.bind(this));
-    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/pull`, this.pullEndpoint.bind(this));
-    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `${domain.name}/push`, this.pushEndpoint.bind(this));
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `repo/:repositoryId/${this.domain.name}/push`, this.pushEndpoint.bind(this));
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `repo/:repositoryId/${this.domain.name}/pull`, this.pullEndpoint.bind(this));
+    this.syncEngine.routerAdapter.registerRoute(HttpMethod.POST, `repo/:repositoryId/${this.domain.name}/sync`, this.syncEndpoint.bind(this));
 
-    await this.modificationRepository.runSetup(domain);
-    await this.dynamicFieldRepository.runSetup(domain);
+    await this.modificationRepository.runSetup(this.domain);
+    await this.dynamicFieldRepository.runSetup(this.domain);
 
     await this.createEntityStrategy.runSetup(this);
     await this.updateEntityStrategy.runSetup(this);
@@ -51,8 +54,6 @@ export class DatabaseMerger implements MergeEngine {
     await this.deleteDynamicFieldStrategy.runSetup(this);
   }
 
-  async syncEndpoint(req: RouterRequest) {}
-
   /**
    * This endpoint is used to migrate a domain.
    * It receives all entities of a domain from
@@ -60,21 +61,47 @@ export class DatabaseMerger implements MergeEngine {
    * @param req
    */
   async pushEndpoint(req: RouterRequest) {
-    const { repositoryId } = req.query as { domain: string, repositoryId: string };
-    const path = req.path;
-    const prefix = this.syncEngine.routerAdapter.path;
+    const { repositoryId } = req.params as { repositoryId: string };
 
-    return await this.push({ domain: this.getDomainFromPath(prefix, path), repositoryId }, req.body as PushOperation);
+    return await this.push({ domain: this.domain.name, repositoryId }, req.body as PushOperation);
   }
 
-  private getDomainFromPath(prefix: string, path: string) {
-    return new RegExp(`.*${prefix}\\/(.*)\\/.*`, 'g').exec(path)[1];
+  async pullEndpoint(req: RouterRequest) {
+    const { repositoryId } = req.params as { repositoryId: string };
+
+    return await this.pull({ domain: this.domain.name, repositoryId }, req.body as PullOptions);
   }
 
-  async pullEndpoint(req: RouterRequest) {}
+  async pull(identity: Identity, options: PullOptions): Promise<PullSuccessReturn> {
+    const domainsFromRepo = await this.syncEngine.domainRepository.getAllByRepositoryId(identity.repositoryId);
 
-  pull(identity: Identity, options: PullOptions): Promise<{}> {
-    return Promise.resolve(undefined);
+    const domainDb = domainsFromRepo.find(domain => domain.name === identity.domain)
+
+    if (!domainDb) {
+      throw new NotFoundException("Domain entity not found");
+    }
+
+    if (!domainDb.isMigrated) {
+      throw new ConflictException("Domain is not migrated yet");
+    }
+
+    const modifications = await this.modificationRepository.query(b =>
+        b.where({
+          domain: domainDb.id,
+          submittedAt: lessThan(options.untilSubmittedAt)
+        })
+      .limit(options.pageSize)
+      .startFrom(options.fromIndex)
+      .orderBy({ changedAt: "asc" })
+    );
+
+    return {
+      modifications,
+      lastChangedAt: modifications.slice(-1)[0]?.changedAt,
+      lastSubmittedAt: modifications.slice(-1)[0]?.submittedAt,
+      lastIndex: options.fromIndex + modifications.length,
+      pageSize: options.pageSize,
+    };
   }
 
   /**
@@ -110,25 +137,24 @@ export class DatabaseMerger implements MergeEngine {
       await this.syncEngine.domainRepository.update(dbDomain.id, {isMigrated: true});
     }
 
-    // DEV
-    return {entities: {}, lastSubmittedAt: "2023-01-03T00:00:00.000Z"} as any;
+    return {status: "success", lastChangedAt: push.modifications.slice(-1)[0]?.changedAt };
   }
 
   async runStrategy(push: PushOperation, identity: IdIdentity, syncDomain: ServerDomain) {
     const strategyFnByType = {
-      "create-entity": this.createEntityStrategy.handle.bind(this.createEntityStrategy),
-      "update-entity": this.updateEntityStrategy.handle.bind(this.updateEntityStrategy),
-      "delete-entity": this.deleteEntityStrategy.handle.bind(this.deleteEntityStrategy),
-      "create-dynamic-field": this.createDynamicFieldStrategy.handle.bind(this.createDynamicFieldStrategy),
-      "update-dynamic-field": this.updateDynamicFieldStrategy.handle.bind(this.updateDynamicFieldStrategy),
-      "delete-dynamic-field": this.deleteDynamicFieldStrategy.handle.bind(this.deleteDynamicFieldStrategy),
+      [EntityModificationType.CreateEntity]: this.createEntityStrategy.handle.bind(this.createEntityStrategy),
+      [EntityModificationType.UpdateEntity]: this.updateEntityStrategy.handle.bind(this.updateEntityStrategy),
+      [EntityModificationType.DeleteEntity]: this.deleteEntityStrategy.handle.bind(this.deleteEntityStrategy),
+      [EntityModificationType.CreateDynamicField]: this.createDynamicFieldStrategy.handle.bind(this.createDynamicFieldStrategy),
+      [EntityModificationType.UpdateDynamicField]: this.updateDynamicFieldStrategy.handle.bind(this.updateDynamicFieldStrategy),
+      [EntityModificationType.DeleteDynamicField]: this.deleteDynamicFieldStrategy.handle.bind(this.deleteDynamicFieldStrategy),
     }
 
     for await (const modification of push.modifications) {
       const repository = syncDomain.repositories.find(repo => repo.entityName === modification.entity);
 
         if (!repository) {
-          // TODO test this
+          // TODO add test of this
           console.error(`Internal Repository for entity ${modification.entity} not found`)
           throw new InternalServerErrorException("Internal Repository not found");
         }
@@ -136,6 +162,8 @@ export class DatabaseMerger implements MergeEngine {
       await strategyFnByType[modification.operation](identity, repository, modification, push);
     }
   }
+
+  async syncEndpoint(req: RouterRequest) {}
 
   sync(identity: Identity, operation: {}): Promise<{}> {
     return Promise.resolve(undefined);
